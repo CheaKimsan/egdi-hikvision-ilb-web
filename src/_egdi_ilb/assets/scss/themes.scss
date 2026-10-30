@@ -1,0 +1,13 @@
+@use 'variable-dark' as dark;
+
+:root {
+  color-scheme: light;
+  --app-background: #ffffff;
+  --app-foreground: #282c34;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --app-background: #{dark.$color-dark-background};
+  --app-foreground: #{dark.$color-dark-foreground};
+}
