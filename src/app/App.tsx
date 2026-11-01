@@ -1,11 +1,12 @@
 import React from "react";
 import AppRoute from "./routing/AppRoute";
+import { AuthProvider } from "./modules/auth/AuthContext";
 
 function App() {
   return (
-    <React.Fragment>
+    <AuthProvider>
       <AppRoute />
-    </React.Fragment>
+    </AuthProvider>
   );
 }
 

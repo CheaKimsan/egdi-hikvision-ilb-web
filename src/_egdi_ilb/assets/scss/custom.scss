@@ -1,3 +1,271 @@
+// _login.scss
+
 * {
   box-sizing: border-box;
+}
+
+// ---------- Variables ----------
+$primary: #75101d;
+$primary-dark: #620b17;
+$green: #165c3c;
+$accent: #fa6266;
+$accent-soft: #fff4f4;
+
+$text: #263238;
+$text-muted: #526170;
+$text-subtle: #8290a0;
+$text-faint: #aeb6c0;
+$placeholder: #a7b2bf;
+
+$surface: #fff;
+$surface-muted: #f0f4f8;
+$field-bg: #fafbfc;
+$field-border: #e1e5e9;
+
+$font-sans: 'Inter Variable', Inter, sans-serif;
+$transition: 200ms ease;
+
+$bp-mobile: 520px;
+$bp-short: 760px;
+
+// ---------- Mixins ----------
+@mixin mobile {
+  @media (max-width: $bp-mobile) {
+    @content;
+  }
+}
+
+@mixin short-screen {
+  @media (max-height: $bp-short) {
+    @content;
+  }
+}
+
+// ---------- Layout ----------
+.login-page {
+  align-items: center;
+  background: linear-gradient(115deg, #fbf8f8 0%, #f5f7f8 100%);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+
+  @include mobile {
+    padding: 12px;
+  }
+
+  @include short-screen {
+    align-items: flex-start;
+  }
+}
+
+.login-card {
+  background: $surface;
+  border-radius: 16px;
+  border-top: 4px solid $primary;
+  box-shadow: 0 20px 40px -10px rgba(34, 37, 41, 0.08), 0 0 1px rgba(34, 37, 41, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-height: 734px;
+  padding: 40px 42px 38px;
+  width: min(450px, 100%);
+
+  @include mobile {
+    min-height: min(734px, calc(100vh - 24px));
+    padding: 32px 24px 28px;
+  }
+
+  @include short-screen {
+    min-height: 680px;
+  }
+}
+
+// ---------- Logo ----------
+.login-logo {
+  align-self: center;
+  height: 120px;
+  margin-bottom: 48px;
+
+  img {
+    display: block;
+    height: 100%;
+    width: auto;
+  }
+}
+
+// ---------- Heading ----------
+.login-heading {
+  text-align: center;
+
+  h1 {
+    color: $green;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0;
+
+    @include mobile {
+      font-size: 20px;
+    }
+  }
+
+  p {
+    color: $primary;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    margin: 4px 0 0;
+
+    @include mobile {
+      font-size: 12px;
+      letter-spacing: 0.9px;
+    }
+  }
+}
+
+// ---------- Date & time ----------
+.login-datetime {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+
+.login-clock {
+  color: $primary;
+  font: 700 32px/1.2 $font-sans;
+  letter-spacing: 1px;
+
+  @include mobile {
+    font-size: 28px;
+  }
+}
+
+.login-date {
+  background: $surface-muted;
+  border-radius: 999px;
+  color: $text-muted;
+  font: 500 13px $font-sans;
+  margin-top: 8px;
+  padding: 6px 16px;
+}
+
+// ---------- Form ----------
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+
+  // Fluent <Field> wrapper
+  .input-group {
+    position: relative;
+    width: 100%;
+  }
+
+  // Fluent <Input> root element (className is applied to the root span)
+  .login-input {
+    --colorCompoundBrandStroke: #{$primary};
+    --colorCompoundBrandStrokePressed: #{$primary-dark};
+
+    background: $field-bg;
+    border-color: $field-border;
+    border-radius: 12px;
+    min-height: 52px;
+    width: 100%;
+
+    // Fluent draws the bottom focus line with ::after
+    &::after {
+      border-radius: 0 0 12px 12px;
+    }
+
+    input {
+      font-size: 15px;
+      color: $text;
+
+      &::placeholder {
+        color: $placeholder;
+      }
+    }
+  }
+
+  // Fluent <Button> – override brand tokens + raise specificity
+  .login-submit {
+    --colorBrandBackground: #{$primary};
+    --colorBrandBackgroundHover: #{$primary-dark};
+    --colorBrandBackgroundPressed: #{$primary-dark};
+    --colorNeutralForegroundOnBrand: #{$surface};
+
+    background: $primary;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba($primary, 0.2);
+    color: $surface;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 700;
+    height: 56px;
+    margin-top: 12px;
+    transition:
+      background-color $transition,
+      transform $transition,
+      box-shadow $transition;
+    width: 100%;
+
+    &:hover {
+      background: $primary-dark;
+      box-shadow: 0 6px 16px rgba($primary, 0.3);
+      color: $surface;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      background: $primary-dark;
+      box-shadow: 0 2px 8px rgba($primary, 0.2);
+      color: $surface;
+      transform: translateY(1px);
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba($primary, 0.4);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.login-field-error {
+  color: #b42318;
+  font-size: 13px;
+  margin: 0;
+}
+// ---------- Footer ----------
+.login-footer {
+  color: $text-subtle;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-top: auto;
+  padding-top: 32px;
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+
+  span {
+    color: $text-faint;
+    display: inline-block;
+    font: 700 13px $font-sans;
+    margin-top: 4px;
+  }
+}
+
+// ---------- Utility ----------
+.visually-hidden {
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
