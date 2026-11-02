@@ -3,10 +3,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button, Field, Input } from "@fluentui/react-components";
 import { Eye20Regular, EyeOff20Regular } from "@fluentui/react-icons";
+import { useLocation, useNavigate, type Location } from "react-router-dom";
 import { formatDate, formatTime } from "../../../../_egdi_ilb/helpers/fmtDateTime";
 import Logo from "../../../../_egdi_ilb/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import { useAuth } from "../AuthContext";
+import ParticleBackground from "../../../shared/ParticalBackground";
+
 
 const validationSchema = Yup.object({
     username: Yup.string().required("សូមបញ្ចូលលេខសម្គាល់"),
@@ -17,6 +20,9 @@ const LoginPage: React.FC = () => {
     const [now, setNow] = useState(() => new Date());
     const [showPassword, setShowPassword] = useState(false);
     const { login } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = (location.state as { from?: Location } | null)?.from;
 
     const formik = useFormik({
         initialValues: {
@@ -26,10 +32,16 @@ const LoginPage: React.FC = () => {
         validationSchema,
         onSubmit: (values, { setStatus }) => {
             const authenticated = login(values.username, values.password);
+            if (authenticated) {
+                const destination = from
+                    ? `${from.pathname}${from.search}${from.hash}`
+                    : "/";
+                navigate(destination, { replace: true });
+                return;
+            }
+
             setStatus(
-                authenticated
-                    ? undefined
-                    : "លេខសម្គាល់ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ"
+                "លេខសម្គាល់ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ"
             );
         },
     });
@@ -41,6 +53,9 @@ const LoginPage: React.FC = () => {
 
     return (
         <main className="login-page">
+            {/* 👇 2. Add the particle background right here */}
+            <ParticleBackground />
+
             <section className="login-card" aria-labelledby="login-title">
                 <div className="login-logo">
                     <img src={Logo} alt="General Department of Immigration" />
@@ -61,7 +76,6 @@ const LoginPage: React.FC = () => {
                 <form className="login-form" noValidate onSubmit={formik.handleSubmit}>
                     <Field
                         className="input-group"
-                        label={<span className="visually-hidden">{AppConfig.username}</span>}
                         validationState={
                             formik.touched.username && formik.errors.username ? "error" : "none"
                         }
@@ -69,26 +83,32 @@ const LoginPage: React.FC = () => {
                             formik.touched.username ? formik.errors.username : undefined
                         }
                     >
-                        <Input
-                            id="login-username"
-                            name="username"
-                            className="login-input"
-                            autoComplete="username"
-                            placeholder={`${AppConfig.username} *`}
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.username}
-                            onChange={(_, data) => {
-                                formik.setStatus(undefined);
-                                formik.setFieldValue("username", data.value);
-                            }}
-                            onBlur={() => formik.setFieldTouched("username", true)}
-                        />
+                        <div className="custom-input-wrapper">
+                            <Input
+                                id="login-username"
+                                name="username"
+                                className="login-input"
+                                autoComplete="username"
+                                placeholder="" // Hide native placeholder
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.username}
+                                onChange={(_, data) => {
+                                    formik.setStatus(undefined);
+                                    formik.setFieldValue("username", data.value);
+                                }}
+                                onBlur={() => formik.setFieldTouched("username", true)}
+                            />
+                            {!formik.values.username && (
+                                <span className="custom-placeholder">
+                                    {AppConfig.username} <span className="required">*</span>
+                                </span>
+                            )}
+                        </div>
                     </Field>
 
                     <Field
                         className="input-group"
-                        label={<span className="visually-hidden">{AppConfig.password}</span>}
                         validationState={
                             formik.touched.password && formik.errors.password ? "error" : "none"
                         }
@@ -96,33 +116,40 @@ const LoginPage: React.FC = () => {
                             formik.touched.password ? formik.errors.password : undefined
                         }
                     >
-                        <Input
-                            id="login-password"
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            className="login-input"
-                            autoComplete="current-password"
-                            placeholder={`${AppConfig.password} *`}
-                            appearance="outline"
-                            size="large"
-                            contentAfter={
-                                <Button
-                                    type="button"
-                                    appearance="subtle"
-                                    size="small"
-                                    icon={showPassword ? <EyeOff20Regular /> : <Eye20Regular />}
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                    aria-pressed={showPassword}
-                                    onClick={() => setShowPassword((visible) => !visible)}
-                                />
-                            }
-                            value={formik.values.password}
-                            onChange={(_, data) => {
-                                formik.setStatus(undefined);
-                                formik.setFieldValue("password", data.value);
-                            }}
-                            onBlur={() => formik.setFieldTouched("password", true)}
-                        />
+                        <div className="custom-input-wrapper">
+                            <Input
+                                id="login-password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                className="login-input"
+                                autoComplete="current-password"
+                                placeholder="" // Hide native placeholder
+                                appearance="outline"
+                                size="large"
+                                contentAfter={
+                                    <Button
+                                        type="button"
+                                        appearance="subtle"
+                                        size="small"
+                                        icon={showPassword ? <EyeOff20Regular /> : <Eye20Regular />}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                        aria-pressed={showPassword}
+                                        onClick={() => setShowPassword((visible) => !visible)}
+                                    />
+                                }
+                                value={formik.values.password}
+                                onChange={(_, data) => {
+                                    formik.setStatus(undefined);
+                                    formik.setFieldValue("password", data.value);
+                                }}
+                                onBlur={() => formik.setFieldTouched("password", true)}
+                            />
+                            {!formik.values.password && (
+                                <span className="custom-placeholder">
+                                    {AppConfig.password} <span className="required">*</span>
+                                </span>
+                            )}
+                        </div>
                     </Field>
 
                     {formik.status && (

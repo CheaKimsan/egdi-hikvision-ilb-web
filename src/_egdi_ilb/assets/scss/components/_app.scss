@@ -1,41 +1,387 @@
-@use '../variables' as *;
+// _header.scss
 
-.App {
-  text-align: center;
+// Variables for consistency
+$header-bg: #ffffff;
+$header-border: #f1f3f4;
+$btn-bg: #f1f3f4;
+$btn-bg-hover: #e8eaed;
+$icon-color: #5f6368;
+$brand-red: #75101d;
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: $header-bg;
+  border-bottom: 1px solid $header-border;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.app-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0 auto;
+  padding: 12px 24px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+// --- Brand ---
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.app-header-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 4px;
+  border: 1px solid $header-border;
+}
+
+.app-header-brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-header-brand-kh {
+  color: $brand-red;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.app-header-brand-en {
+  color: #64748b;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// --- Actions ---
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+// Circular Buttons (Matches screenshot)
+.app-header-icon-button,
+.app-header-profile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: $btn-bg;
+  color: $icon-color;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+
+  // Standardize icon sizing
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover {
+    background: $btn-bg-hover;  
+    color: #202124; // Darker icon on hover
+  }
+
+  &:focus-visible {
+    outline: 2px solid $brand-red;
+    outline-offset: 2px;
   }
 }
 
-.App-header {
-  background-color: $color-app-header;
-  min-height: 100vh;
+// Add a slight margin adjustment for the profile icon so it centers perfectly
+.app-header-profile svg {
+  margin-top: 2px;
+}
+
+// Optional: Notification Dot
+.app-header-notification-dot {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  width: 8px;
+  height: 8px;
+  background-color: #fa6266; // Accent red
+  border-radius: 50%;
+  border: 2px solid $header-bg;
+}
+
+// --- Responsive ---
+@media (max-width: 1024px) {
+  .app-header-brand-en {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-header-inner {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  
+  .app-header-actions {
+    gap: 8px; // Tighter spacing on mobile
+  }
+}
+
+// ==========================================
+// Custom Profile Popover Styles
+// ==========================================
+
+// Target Fluent UI's popover surface to remove default padding
+.profile-menu-surface {
+  padding: 0 !important;
+  border-radius: 20px !important;
+  width: 320px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid #e5e7eb !important;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.profile-menu-header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 24px 24px 16px;
+}
+
+.profile-menu-email {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.profile-menu-avatar-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.profile-menu-camera-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  display: grid;
+  place-items: center;
+  color: #4b5563;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: background 0.2s;
+  
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+.profile-menu-greeting {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .verified-icon {
+    color: #3b82f6; // Blue checkmark
+  }
+}
+
+.profile-menu-role {
+  display: block;
+  margin: -12px 0 16px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.profile-menu-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #2563eb; // Blue text
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #eff6ff;
+  }
+}
+
+// Language Toggle
+.profile-menu-lang-toggle {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: #ffffff;
+  gap: 8px;
+  margin: 8px 24px 16px;
+  background: #f3f4f6;
+  padding: 4px;
+  border-radius: 999px;
+
+  button {
+    flex: 1;
+    padding: 8px 0;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.active {
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+  }
 }
 
-.App-link {
-  color: $color-app-link;
+.profile-menu-divider {
+  border: 0;
+  height: 1px;
+  background: #f3f4f6;
+  margin: 0 24px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+// Theme Toggle Row
+.profile-menu-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+}
+
+.profile-menu-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+// Custom CSS Toggle Switch
+.custom-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .slider {
+      background-color: #e5e7eb; // light mode background
+    }
+
+    &:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #f59e0b; // sun color
+    }
   }
 
-  to {
-    transform: rotate(360deg);
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #e5e7eb;
+    transition: .4s;
+    border-radius: 34px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      transition: .4s;
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
   }
+}
+
+// Footer Actions
+.profile-menu-footer {
+  display: flex;
+  align-items: center;
+  margin: 16px 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.footer-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f9fafb;
+  }
+  
+  &.signout-btn {
+    color: #111827;
+  }
+}
+
+.footer-divider {
+  width: 1px;
+  height: 24px;
+  background: #e5e7eb;
+}
+
+.text-green { color: #10b981; }
+.text-red { color: #ef4444; }
+
+.profile-menu-version {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  padding-bottom: 16px;
 }

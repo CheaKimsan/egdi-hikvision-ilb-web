@@ -41,7 +41,8 @@ $bp-short: 760px;
   }
 }
 
-// ---------- Layout ----------
+// ---------- Login-Page ----------
+
 .login-page {
   align-items: center;
   background: linear-gradient(115deg, #fbf8f8 0%, #f5f7f8 100%);
@@ -49,6 +50,10 @@ $bp-short: 760px;
   justify-content: center;
   min-height: 100vh;
   padding: 16px;
+  
+  // Added for Particle Background
+  position: relative;
+  overflow: hidden; 
 
   @include mobile {
     padding: 12px;
@@ -69,6 +74,10 @@ $bp-short: 760px;
   min-height: 734px;
   padding: 40px 42px 38px;
   width: min(450px, 100%);
+
+  // Added for Particle Background
+  position: relative;
+  z-index: 10;
 
   @include mobile {
     min-height: min(734px, calc(100vh - 24px));
@@ -157,34 +166,121 @@ $bp-short: 760px;
   gap: 16px;
   margin-top: 32px;
 
+    .custom-input-wrapper {
+    position: relative;
+    width: 100%;
+
+    .custom-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 16px; // Adjust this if it doesn't align perfectly with the input text
+      transform: translateY(-50%);
+      color: $placeholder;
+      font-family: inherit;
+      font-size: 15px;
+      pointer-events: none; // Allows user to click through to the input
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .required {
+        color: $accent; // Red asterisk (#fa6266)
+      }
+    }
+  }
+
   // Fluent <Field> wrapper
   .input-group {
     position: relative;
     width: 100%;
   }
 
-  // Fluent <Input> root element (className is applied to the root span)
+  // Fluent <Input> root element
   .login-input {
-    --colorCompoundBrandStroke: #{$primary};
-    --colorCompoundBrandStrokePressed: #{$primary-dark};
-
     background: $field-bg;
-    border-color: $field-border;
     border-radius: 12px;
     min-height: 52px;
     width: 100%;
 
-    // Fluent draws the bottom focus line with ::after
+    // 1. Ensure the native Fluent border follows our 12px radius
+    &::before {
+      border-radius: 12px;
+      border-color: $field-border;
+      transition: border-color $transition;
+    }
+
+    // 2. Completely hide the messy bottom focus line
     &::after {
-      border-radius: 0 0 12px 12px;
+      display: none !important;
+    }
+
+    // 3. Hover state
+    &:hover {
+      background: $surface;
+      &::before {
+        border-color: $text-subtle;
+      }
+    }
+
+    // 4. Clean focus ring (respects the 12px radius perfectly)
+    &:focus-within {
+      background: $surface;
+      box-shadow: 0 0 0 3px rgba($primary, 0.12); // Soft outer glow
+
+      &::before {
+        border-color: $primary;
+        border-width: 2px; // Thicker border on focus
+      }
+    }
+
+    // 5. Invalid / Error state (Fluent adds aria-invalid="true" to the input)
+    &:has(input[aria-invalid='true']) {
+      background: $accent-soft;
+
+      &::before {
+        border-color: $accent;
+      }
+
+      &:focus-within {
+        box-shadow: 0 0 0 3px rgba($accent, 0.18);
+      }
     }
 
     input {
-      font-size: 15px;
       color: $text;
+      caret-color: $primary;
+      font-size: 15px;
 
       &::placeholder {
         color: $placeholder;
+        opacity: 1;
+        transition: color $transition;
+      }
+
+      // Fade placeholder slightly once typing begins
+      &:focus::placeholder {
+        color: $text-faint;
+      }
+    }
+
+    // Password reveal toggle (contentAfter button)
+    button {
+      border-radius: 8px;
+      margin-right: 4px;
+      transition: background-color $transition, color $transition;
+
+      &:hover {
+        background: rgba($primary, 0.08);
+        color: $primary;
+      }
+
+      &:active {
+        background: rgba($primary, 0.16);
+      }
+
+      &:focus-visible {
+        outline: 2px solid rgba($primary, 0.4);
+        outline-offset: 1px;
       }
     }
   }
@@ -238,6 +334,7 @@ $bp-short: 760px;
   font-size: 13px;
   margin: 0;
 }
+
 // ---------- Footer ----------
 .login-footer {
   color: $text-subtle;
