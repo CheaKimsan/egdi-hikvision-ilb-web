@@ -1,0 +1,53 @@
+@use 'sass:color';
+@use '../variables' as *;
+
+.user-management-table {
+  
+  [role='columnheader'],
+  th {
+    min-height: 56px;
+    padding: 15px 20px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  [role='cell'],
+  td {
+    min-height: 64px;
+    padding: 15px 20px;
+    font-size: 15px;
+  }
+}
+
+.ilb-action-cell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.fui-Button.ilb-kebab-btn {
+  color: $icon-color;
+
+  &:hover {
+    background: $btn-bg-hover;
+  }
+}
+
+.fui-MenuItem.text-danger {
+  color: #b91c1c;
+
+  .fui-MenuItem__icon {
+    color: inherit;
+  }
+}
+
+.fui-Button.ilb-btn-danger {
+  background: $brand-red;
+  border-color: transparent;
+  color: #ffffff;
+
+  &:hover:not(:disabled),
+  &:active:not(:disabled) {
+    background: color.adjust($brand-red, $lightness: -6%);
+    color: #ffffff;
+  }
+}

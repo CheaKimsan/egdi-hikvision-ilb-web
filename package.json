@@ -15,12 +15,15 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "formik": "^2.4.9",
+    "lottie-react": "^3.1.2",
+    "lucide-react": "^1.66.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^6.30.6",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "zustand": "^5.0.16"
   },
   "scripts": {
     "start": "craco start",

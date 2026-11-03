@@ -1,0 +1,100 @@
+import { memo, useState } from "react";
+import {
+    Button, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem, MenuDivider,
+    Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions,
+} from "@fluentui/react-components";
+import {
+    EditRegular,
+    DeleteRegular,
+    MoreVertical20Regular,
+} from "@fluentui/react-icons";
+import type { AuthUser } from "../../../auth/AuthContext";
+
+type Props = {
+    row: AuthUser;
+    onEdit: (row: AuthUser) => void;
+    onDelete: (id: string) => Promise<void> | void;
+};
+
+export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
+    const [openDelete, setOpenDelete] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    async function handleConfirmDelete() {
+        setLoading(true);
+        try {
+            await onDelete(row.id);
+            setOpenDelete(false);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <>
+            <div className="ilb-action-cell" data-no-row-click="true">
+                <Menu positioning={{ position: "below", align: "end" }}>
+                    <MenuTrigger disableButtonEnhancement>
+                        <Button
+                            appearance="subtle"
+                            size="small"
+                            icon={<MoreVertical20Regular />}
+                            aria-label="Row actions"
+                            className="ilb-kebab-btn"
+                        />
+                    </MenuTrigger>
+                    <MenuPopover>
+                        <MenuList>
+                            <MenuItem
+                                icon={<EditRegular fontSize={16} />}
+                                onClick={() => onEdit(row)}
+                            >
+                                Edit user
+                            </MenuItem>
+                            <MenuDivider />
+                            <MenuItem
+                                icon={<DeleteRegular fontSize={16} />}
+                                onClick={() => setOpenDelete(true)}
+                                className="text-danger"
+                            >
+                                Delete user
+                            </MenuItem>
+                        </MenuList>
+                    </MenuPopover>
+                </Menu>
+            </div>
+
+            <Dialog
+                open={openDelete}
+                onOpenChange={(_, data) => !loading && setOpenDelete(data.open)}
+            >
+                <DialogSurface>
+                    <DialogBody>
+                        <DialogTitle>Delete user</DialogTitle>
+                        <DialogContent>
+                            Are you sure you want to delete <b>{row.displayName}</b>?
+                            This action cannot be undone.
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                appearance="secondary"
+                                disabled={loading}
+                                onClick={() => setOpenDelete(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                appearance="primary"
+                                disabled={loading}
+                                onClick={handleConfirmDelete}
+                                className="ilb-btn-danger"
+                            >
+                                {loading ? "Deleting…" : "Delete"}
+                            </Button>
+                        </DialogActions>
+                    </DialogBody>
+                </DialogSurface>
+            </Dialog>
+        </>
+    );
+});
