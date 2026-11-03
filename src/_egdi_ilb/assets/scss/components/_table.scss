@@ -14,7 +14,7 @@
   [role='cell'],
   td {
     min-height: 64px;
-    padding: 15px 20px;
+    padding: 13px 20px;
     font-size: 15px;
   }
 }
@@ -49,5 +49,149 @@
   &:active:not(:disabled) {
     background: color.adjust($brand-red, $lightness: -6%);
     color: #ffffff;
+  }
+}
+.user-management-page {
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  color: #1e293b;
+  text-align: left;
+}
+
+.user-management-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0 0 6px;
+    color: #1e293b;
+    font-size: 24px;
+    line-height: 1.3;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+.user-management-create-button {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.user-management-count {
+  flex-shrink: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.user-management-toolbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .fui-Input {
+    width: 280px;
+    max-width: 100%;
+    padding-left: 12px;
+    border: 1px solid transparent !important;
+    border-radius: 999px !important;
+    background-color: #f8fafc !important;
+    transition: all 0.2s ease !important;
+
+    &::after {
+      display: none !important;
+    }
+
+    &:hover {
+      background-color: #f1f5f9 !important;
+    }
+
+    &:focus-within {
+      border-color: #75101d !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 0 0 3px rgba(117, 16, 29, 0.12) !important;
+    }
+
+    input {
+      padding-top: 8px;
+      padding-bottom: 8px;
+      color: #1e293b;
+      font-size: 0.9rem;
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+
+    .fui-Input__contentBefore svg {
+      color: #94a3b8;
+    }
+
+    .fui-Button {
+      min-width: 24px !important;
+      padding: 0 !important;
+      border: none !important;
+      border-radius: 50% !important;
+      background: transparent !important;
+      color: #94a3b8 !important;
+
+      &:hover {
+        color: #ef4444 !important;
+      }
+    }
+  }
+}
+
+.user-management-table {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &.active {
+    background: #ecfdf5;
+    color: #047857;
+  }
+
+  &.inactive {
+    background: #fff1f2;
+    color: #9f1239;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-management-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .user-management-create-button {
+    align-self: flex-end;
+  }
+
+  .user-management-toolbar {
+    justify-content: stretch;
+
+    input {
+      width: 100%;
+    }
   }
 }

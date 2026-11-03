@@ -1,7 +1,10 @@
 import React from "react";
 import { Avatar } from "@fluentui/react-components";
+import { ChevronLeftRegular, ChevronRightRegular } from "@fluentui/react-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../app/modules/auth/AuthContext";
+import { dummyDevices } from "../../../app/modules/device-management/data/devices";
+import { dummyUsers } from "../../data/dummy";
 import {
     deviceConfigurationItems,
     mainItems,
@@ -16,35 +19,63 @@ const Sidebar: React.FC = () => {
     const navigate = useNavigate();
     const displayName = user?.displayName ?? user?.username ?? "User";
     const setActiveItem = useSidebarStore((state) => state.setActiveItem);
+    const isCollapsed = useSidebarStore((state) => state.isCollapsed);
+    const toggleCollapsed = useSidebarStore((state) => state.toggleCollapsed);
     const allItems = [...mainItems, ...deviceConfigurationItems, ...systemItems];
     const activeItem =
         allItems.find(({ path }) => path === location.pathname)?.label ?? "Dashboard";
 
     const renderItems = (items: NavigationItem[]) =>
-        items.map(({ label, icon: Icon, badge, path }) => (
-            <button
-                key={label}
-                type="button"
-                className={`app-sidebar-link${activeItem === label ? " active" : ""}`}
-                aria-label={label}
-                aria-current={activeItem === label ? "page" : undefined}
-                title={label}
-                onClick={() => {
-                    setActiveItem(label);
-                    navigate(path);
-                }}
-            >
-                <Icon size={22} strokeWidth={2} aria-hidden="true" />
-                <span className="app-sidebar-label">{label}</span>
-                {badge && <span className="app-sidebar-badge">{badge}</span>}
-            </button>
-        ));
+        items.map(({ label, icon: Icon, countKey, path }) => {
+            const count = countKey === "devices"
+                ? dummyDevices.length
+                : countKey === "users"
+                    ? dummyUsers.length
+                    : undefined;
+
+            return (
+                <button
+                    key={label}
+                    type="button"
+                    className={`app-sidebar-link${activeItem === label ? " active" : ""}`}
+                    aria-label={count !== undefined ? `${label}, ${count} items` : label}
+                    aria-current={activeItem === label ? "page" : undefined}
+                    title={label}
+                    onClick={() => {
+                        setActiveItem(label);
+                        navigate(path);
+                    }}
+                >
+                    <Icon size={22} strokeWidth={2} aria-hidden="true" />
+                    <span className="app-sidebar-label">{label}</span>
+                    {count !== undefined && count > 0 && (
+                        <span className="app-sidebar-badge">{count}</span>
+                    )}
+                </button>
+            );
+        });
 
     return (
-        <aside className="app-sidebar" aria-label="Main navigation">
+        <aside className={`app-sidebar${isCollapsed ? " is-collapsed" : ""}`} aria-label="Main navigation">
             <nav className="app-sidebar-navigation">
                 <div className="app-sidebar-group">
-                    <h2 className="app-sidebar-heading">Overview</h2>
+                    <div className="app-sidebar-heading-row">
+                        <h2 className="app-sidebar-heading">Overview</h2>
+                        <button
+                            type="button"
+                            className="app-sidebar-toggle"
+                            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                            aria-expanded={!isCollapsed}
+                            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                            onClick={toggleCollapsed}
+                        >
+                            {isCollapsed ? (
+                                <ChevronRightRegular aria-hidden="true" />
+                            ) : (
+                                <ChevronLeftRegular aria-hidden="true" />
+                            )}
+                        </button>
+                    </div>
                     {renderItems(mainItems)}
                 </div>
                 <div className="app-sidebar-group">

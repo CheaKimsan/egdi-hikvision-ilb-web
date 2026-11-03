@@ -5,9 +5,10 @@ import ActionCell from "./ActionCell";
 type Handlers = {
     onEdit: (row: AuthUser) => void;
     onDelete: (id: string) => Promise<void> | void;
+    onToggleStatus: (id: string, status: AuthUser["status"]) => void;
 };
 
-export function Columns({ onEdit, onDelete }: Handlers): Column<AuthUser>[] {
+export function Columns({ onEdit, onDelete, onToggleStatus }: Handlers): Column<AuthUser>[] {
     return [
         {
             key: "id",
@@ -26,11 +27,6 @@ export function Columns({ onEdit, onDelete }: Handlers): Column<AuthUser>[] {
             dataIndex: "username"
         },
         {
-            key: "email",
-            title: "Email",
-            dataIndex: "email"
-        },
-        {
             key: "role",
             title: "Role",
             render: (row) => (
@@ -42,12 +38,57 @@ export function Columns({ onEdit, onDelete }: Handlers): Column<AuthUser>[] {
             ),
         },
         {
+            key: "status",
+            title: "Status",
+            render: (row) => (
+                <span className={`status-badge ${row.status}`}>
+                    {row.status}
+                </span>
+            ),
+        },
+        {
+            key: "lastLoginAt",
+            title: "Last Login",
+            render: (row) => {
+                if (!row.lastLoginAt) {
+                    return <span className="user-last-login-empty">Never</span>;
+                }
+
+                const date = new Date(row.lastLoginAt);
+                if (Number.isNaN(date.getTime())) {
+                    return <span className="user-last-login-empty">—</span>;
+                }
+
+                const ageInHours = Math.max(
+                    0,
+                    Math.floor((Date.now() - date.getTime()) / (60 * 60 * 1000)),
+                );
+                const ageInDays = Math.floor(ageInHours / 24);
+                const label = ageInHours < 1
+                    ? "Less than an hour ago"
+                    : ageInHours < 24
+                        ? `${ageInHours} ${ageInHours === 1 ? "hour" : "hours"} ago`
+                        : `${ageInDays} ${ageInDays === 1 ? "day" : "days"} ago`;
+
+                return (
+                    <time dateTime={date.toISOString()} title={date.toLocaleString()}>
+                        {label}
+                    </time>
+                );
+            },
+        },
+        {
             key: "actions",
             title: "Actions",
             align: "right",
             width: 100,
             render: (row) => (
-                <ActionCell row={row} onEdit={onEdit} onDelete={onDelete} />
+                <ActionCell
+                    row={row}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onToggleStatus={onToggleStatus}
+                />
             ),
         },
     ];

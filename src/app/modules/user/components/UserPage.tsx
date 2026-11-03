@@ -1,32 +1,51 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Input } from "@fluentui/react-components";
-import { SearchRegular } from "@fluentui/react-icons";
-import { dummyUsers } from "../../../../_egdi_ilb/data/dummy";
+import { AddRegular, SearchRegular } from "@fluentui/react-icons";
+import CustomBtn from "../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../_egdi_ilb/helpers/shared/table/MainTable";
-import type { AuthUser } from "../../auth/AuthContext";
+import { useUsersStore } from "../core/store";
+import type { FireUser } from "../core/model";
+import CreateUserPage from "./form/CreateUserPage";
 import { Columns } from "./table/Columns";
 
 const UserPage: React.FC = () => {
-    const [search, setSearch] = useState("");
-    const [users, setUsers] = useState<AuthUser[]>(() =>
-        dummyUsers.map(({ password: _password, ...user }) => user),
+    const search = useUsersStore((state) => state.search);
+    const setSearch = useUsersStore((state) => state.setSearch);
+    const users = useUsersStore((state) => state.rows);
+    const deleteUser = useUsersStore((state) => state.deleteUser);
+    const setUserStatus = useUsersStore((state) => state.setUserStatus);
+    const openCreate = useUsersStore((state) => state.openCreate);
+    const openEdit = useUsersStore((state) => state.openEdit);
+
+    const handleEdit = useCallback((row: FireUser) => openEdit(row), [openEdit]);
+
+    const handleDelete = useCallback((id: string) => deleteUser(id), [deleteUser]);
+
+    const handleToggleStatus = useCallback(
+        (id: string, status: FireUser["status"]) => setUserStatus(id, status),
+        [setUserStatus],
     );
 
-    const handleEdit = useCallback((row: AuthUser) => {
-        console.log("edit", row); // open your edit dialog here
-    }, []);
-
-    const handleDelete = useCallback((id: string) => {
-        setUsers((prev) => prev.filter((u) => u.id !== id));
-    }, []);
-
     const tableColumns = useMemo(
-        () => Columns({ onEdit: handleEdit, onDelete: handleDelete }),
-        [handleEdit, handleDelete],
+        () =>
+            Columns({
+                onEdit: handleEdit,
+                onDelete: handleDelete,
+                onToggleStatus: handleToggleStatus,
+            }),
+        [handleEdit, handleDelete, handleToggleStatus],
     );
 
     const filteredUsers = users.filter((user) =>
-        [user.id, user.displayName, user.username, user.email, user.role]
+        [
+            user.id,
+            user.displayName,
+            user.username,
+            user.email,
+            user.role,
+            user.status,
+            user.lastLoginAt ?? "",
+        ]
             .some((value) => value.toLowerCase().includes(search.trim().toLowerCase())),
     );
 
@@ -37,6 +56,14 @@ const UserPage: React.FC = () => {
                     <h1 id="user-management-title">User Management</h1>
                     <p>View and manage user accounts and roles.</p>
                 </div>
+                <CustomBtn
+                    type="add"
+                    label="Create user"
+                    icon={<AddRegular />}
+                    className="user-management-create-button"
+                    size="medium"
+                    onClick={openCreate}
+                />
             </header>
 
             <div className="user-management-toolbar">
@@ -58,6 +85,7 @@ const UserPage: React.FC = () => {
                     pagination
                 />
             </div>
+            <CreateUserPage />
         </section>
     );
 };

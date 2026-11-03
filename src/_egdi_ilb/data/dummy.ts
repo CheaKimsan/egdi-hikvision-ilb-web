@@ -3,7 +3,7 @@ import NoAvatar from "../assets/images/no_avatar.jpeg";
 
 
 // Development-only credentials. Replace with server-side authentication before production.
-export const dummyUsers: DummyUser[] = [
+const dummyUserSeeds: Omit<DummyUser, "createdAt" | "updatedAt">[] = [
     {
         id: "0001",
         username: "admin",
@@ -12,6 +12,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Demo Administrator",
         avatarUrl: NoAvatar,
         role: "Administrator",
+        status: "active",
     },
     {
         id: "0002",
@@ -21,6 +22,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Chan Sokha",
         avatarUrl: NoAvatar,
         role: "Administrator",
+        status: "active",
     },
     {
         id: "0003",
@@ -30,6 +32,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Sok Dara",
         avatarUrl: NoAvatar,
         role: "Operator",
+        status: "active",
     },
     {
         id: "0004",
@@ -39,6 +42,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Heng Vanna",
         avatarUrl: NoAvatar,
         role: "Operator",
+        status: "active",
     },
     {
         id: "0005",
@@ -48,6 +52,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Kim Sreyneang",
         avatarUrl: NoAvatar,
         role: "Operator",
+        status: "inactive",
     },
     {
         id: "0006",
@@ -57,6 +62,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Pich Rithy",
         avatarUrl: NoAvatar,
         role: "Border Officer",
+        status: "active",
     },
     {
         id: "0007",
@@ -66,6 +72,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Ouk Malis",
         avatarUrl: NoAvatar,
         role: "Border Officer",
+        status: "active",
     },
     {
         id: "0008",
@@ -75,6 +82,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Lim Bopha",
         avatarUrl: NoAvatar,
         role: "Visa Officer",
+        status: "active",
     },
     {
         id: "0009",
@@ -84,6 +92,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Tep Vibol",
         avatarUrl: NoAvatar,
         role: "Visa Officer",
+        status: "inactive",
     },
     {
         id: "0010",
@@ -93,6 +102,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Mao Channary",
         avatarUrl: NoAvatar,
         role: "Viewer",
+        status: "active",
     },
 
     {
@@ -103,6 +113,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Yim Piseth",
         avatarUrl: NoAvatar,
         role: "Administrator",
+        status: "active",
     },
     {
         id: "0012",
@@ -112,6 +123,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Roeun Kunthea",
         avatarUrl: NoAvatar,
         role: "Operator",
+        status: "active",
     },
     {
         id: "0013",
@@ -121,6 +133,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Nhem Sambath",
         avatarUrl: NoAvatar,
         role: "Operator",
+        status: "active",
     },
     {
         id: "0014",
@@ -130,6 +143,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Kong Chanthou",
         avatarUrl: NoAvatar,
         role: "Border Officer",
+        status: "active",
     },
     {
         id: "0015",
@@ -139,6 +153,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Chea Veasna",
         avatarUrl: NoAvatar,
         role: "Border Officer",
+        status: "active",
     },
     {
         id: "0016",
@@ -148,6 +163,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Seng Sophea",
         avatarUrl: NoAvatar,
         role: "Border Officer",
+        status: "inactive",
     },
     {
         id: "0017",
@@ -157,6 +173,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Hout Rattana",
         avatarUrl: NoAvatar,
         role: "Visa Officer",
+        status: "active",
     },
     {
         id: "0018",
@@ -166,6 +183,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Sao Mony",
         avatarUrl: NoAvatar,
         role: "Visa Officer",
+        status: "active",
     },
     {
         id: "0019",
@@ -175,6 +193,7 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Phan Dalin",
         avatarUrl: NoAvatar,
         role: "Viewer",
+        status: "active",
     },
     {
         id: "0020",
@@ -184,5 +203,18 @@ export const dummyUsers: DummyUser[] = [
         displayName: "Mom Srey",
         avatarUrl: NoAvatar,
         role: "Viewer",
+        status: "active",
     },
 ];
+
+const demoTimestamp = new Date().toISOString();
+
+export const dummyUsers: DummyUser[] = dummyUserSeeds.map((user, index) => ({
+    ...user,
+    createdAt: demoTimestamp,
+    updatedAt: demoTimestamp,
+    lastLoginAt:
+        index < 18
+            ? new Date(Date.now() - index * 60 * 60 * 1000).toISOString()
+            : undefined,
+}));
