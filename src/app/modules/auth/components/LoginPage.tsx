@@ -8,7 +8,7 @@ import { formatDate, formatTime } from "../../../../_egdi_ilb/helpers/fmtDateTim
 import Logo from "../../../../_egdi_ilb/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import { useAuth } from "../AuthContext";
-import ParticleBackground from "../../../shared/ParticalBackground";
+import ParticleBackground from "../../../../_egdi_ilb/helpers/shared/ParticalBackground";
 
 
 const validationSchema = Yup.object({
@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
             if (authenticated) {
                 const destination = from
                     ? `${from.pathname}${from.search}${from.hash}`
-                    : "/";
+                    : "/management";
                 navigate(destination, { replace: true });
                 return;
             }
@@ -53,7 +53,7 @@ const LoginPage: React.FC = () => {
 
     return (
         <main className="login-page">
-            {/* 👇 2. Add the particle background right here */}
+
             <ParticleBackground />
 
             <section className="login-card" aria-labelledby="login-title">
