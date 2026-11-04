@@ -32,52 +32,6 @@
   margin-left: auto;
 }
 
-.device-management-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-
-  .fui-Input {
-    width: 280px;
-    max-width: 100%;
-    padding-left: 12px;
-    border: 1px solid transparent !important;
-    border-radius: 999px !important;
-    background-color: #f8fafc !important;
-    transition: all 0.2s ease !important;
-
-    &::after {
-      display: none !important;
-    }
-
-    &:hover {
-      background-color: #f1f5f9 !important;
-    }
-
-    &:focus-within {
-      border-color: #75101d !important;
-      background-color: #ffffff !important;
-      box-shadow: 0 0 0 3px rgba(117, 16, 29, 0.12) !important;
-    }
-
-    input {
-      padding-top: 8px;
-      padding-bottom: 8px;
-      color: #1e293b;
-      font-size: 0.9rem;
-
-      &::placeholder {
-        color: #94a3b8;
-      }
-    }
-
-    .fui-Input__contentBefore svg {
-      color: #94a3b8;
-    }
-  }
-}
-
 .device-management-count {
   color: #64748b;
   font-size: 14px;
@@ -107,14 +61,43 @@
 }
 
 .device-form-drawer {
+  .device-form {
+    gap: 20px;
+  }
+
   .device-form-fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 16px;
+    gap: 16px 14px;
   }
 
   .device-form-full-width {
     grid-column: 1 / -1;
+  }
+
+  .device-form-section {
+    padding: 18px;
+    border: 1px solid #e8ebf0;
+    border-radius: 12px;
+    background: #ffffff;
+  }
+
+  .device-form-section-heading {
+    margin-bottom: 16px;
+
+    h3 {
+      margin: 0 0 4px;
+      color: #273449;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      color: #758195;
+      font-size: 11px;
+      line-height: 1.5;
+    }
   }
 
   .fui-Field {
@@ -128,6 +111,14 @@
     height: 48px;
     min-height: 48px;
   }
+
+  .device-form-password-setting {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    padding-top: 21px;
+  }
+
 }
 
 @media (max-width: 600px) {
@@ -153,7 +144,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .device-form-drawer .device-form-full-width {
-    grid-column: auto;
+  .device-form-drawer .device-form-section {
+    padding: 15px;
   }
+
 }

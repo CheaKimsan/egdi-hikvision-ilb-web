@@ -3,7 +3,6 @@ import {
     FileText,
     LayoutDashboard,
     Network,
-    PanelsTopLeft,
     Server,
     Settings,
     Shield,
@@ -21,15 +20,15 @@ export interface NavigationItem {
 
 export const mainItems: NavigationItem[] = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/management" },
-    { label: "Camera Management", icon: Camera, path: "/management/camera-management" },
-    { label: "Plate Numbers", icon: FileText, path: "/management/plate-numbers" },
-    { label: "Border Control", icon: Shield, path: "/management/border-control" },
 ];
 
 export const deviceConfigurationItems: NavigationItem[] = [
     { label: "Device Management", icon: Server, path: "/management/device-management" },
-    { label: "Network Settings", icon: Network, path: "/management/network-settings" },
-    { label: "Channel Settings", icon: PanelsTopLeft, path: "/management/channel-settings" },
+    { label: "Camera Management", icon: Camera, path: "/management/camera-management" },
+    { label: "File Management", icon: FileText, path: "/management/file-management" },
+
+    // { label: "Network Settings", icon: Network, path: "/management/network-settings" },
+    // { label: "Channel Settings", icon: PanelsTopLeft, path: "/management/channel-settings" },
 ];
 
 export const systemItems: NavigationItem[] = [

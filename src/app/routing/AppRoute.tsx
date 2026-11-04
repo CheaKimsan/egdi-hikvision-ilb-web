@@ -11,6 +11,7 @@ import LoginPage from "../modules/auth/components/LoginPage";
 import UserPage from "../modules/account/users/components/UserPage";
 import RolePage from "../modules/account/roles/components/RolePage";
 import DeviceManagementPage from "../modules/account/device-management/components/DeviceManagementPage";
+import NetworkPage from "../modules/account/network/components/NetworkPage";
 
 const ProtectedRoute = () => {
     const { user } = useAuth();
@@ -28,6 +29,7 @@ const AppRoute = () => (
                     <Route path="user" element={<UserPage />} />
                     <Route path="role" element={<RolePage />} />
                     <Route path="device-management" element={<DeviceManagementPage />} />
+                    {/* <Route path="network-settings" element={<NetworkPage />} /> */}
                     <Route path="*" element={null} />
                 </Route>
             </Route>

@@ -37,12 +37,12 @@ const DeviceManagementPage: React.FC = () => {
         setDevices((current) => current.filter((device) => device.id !== id));
     }, []);
 
-    const handleToggleStatus = useCallback(
-        (id: string, status: ManagedDevice["status"]) => {
+    const handleToggleActivation = useCallback(
+        (id: string, activated: boolean) => {
             setDevices((current) =>
                 current.map((device) =>
                     device.id === id
-                        ? { ...device, status, updatedAt: new Date().toISOString() }
+                        ? { ...device, activated }
                         : device,
                 ),
             );
@@ -55,30 +55,27 @@ const DeviceManagementPage: React.FC = () => {
             Columns({
                 onEdit: handleEdit,
                 onDelete: handleDelete,
-                onToggleStatus: handleToggleStatus,
+                onToggleActivation: handleToggleActivation,
             }),
-        [handleEdit, handleDelete, handleToggleStatus],
+        [handleEdit, handleDelete, handleToggleActivation],
     );
 
     const filteredDevices = devices.filter((device) =>
         [
             device.id,
-            String(device.deviceNumber),
             device.name,
             device.type,
             device.model,
-            device.serialNumber,
-            device.firmwareVersion,
-            device.encodingVersion,
-            device.webVersion,
-            device.pluginVersion,
-            String(device.channelCount),
-            String(device.hddCount),
-            String(device.alarmInputCount),
-            String(device.alarmOutputCount),
-            device.ipAddress ?? "",
-            device.location ?? "",
-            device.status,
+            device.serialNo ?? "",
+            device.siteId,
+            device.siteName,
+            device.firmware ?? "",
+            device.ip ?? "",
+            String(device.httpPort),
+            String(device.sdkPort),
+            device.username,
+            device.activated ? "activated" : "not activated",
+            device.online ? "online" : "offline",
         ].some((value) => value.toLowerCase().includes(search.trim().toLowerCase())),
     );
 
@@ -87,7 +84,7 @@ const DeviceManagementPage: React.FC = () => {
             <header className="device-management-header">
                 <div>
                     <h1 id="device-management-title">Device Management</h1>
-                    <p>View device details, firmware versions, and connected hardware.</p>
+                    <p>Manage device identity, site assignment, and connection settings.</p>
                 </div>
                 <CustomBtn
                     type="add"
@@ -99,7 +96,7 @@ const DeviceManagementPage: React.FC = () => {
                 />
             </header>
 
-            <div className="device-management-toolbar">
+            <div className="search-toolbar">
                 <SearchField value={search} onChange={setSearch} placeholder="Search devices..." />
             </div>
 

@@ -1,22 +1,20 @@
-export type ManagedDeviceStatus = "active" | "inactive";
-
-export interface ManagedDevice {
+export type Device = {
     id: string;
     name: string;
-    deviceNumber: number;
-    type: "Camera" | "NVR" | "Access Control" | "Terminal Server";
+    type: "mvr" | "camera" | "lightbar";
     model: string;
-    serialNumber: string;
-    firmwareVersion: string;
-    encodingVersion: string;
-    webVersion: string;
-    pluginVersion: string;
-    channelCount: number;
-    hddCount: number;
-    alarmInputCount: number;
-    alarmOutputCount: number;
-    ipAddress?: string;
-    location?: string;
-    status: ManagedDeviceStatus;
-    updatedAt: string;
-}
+    serialNo?: string;
+    siteId: string;
+    siteName: string;
+    firmware?: string;
+    ip?: string;
+    httpPort: number;
+    sdkPort: number;
+    username: string;
+    hasPassword: boolean;
+    activated: boolean;
+    online: boolean;
+    lastSeen?: string;
+};
+
+export type ManagedDevice = Device;
