@@ -1,12 +1,14 @@
 import { memo, useState } from "react";
 import {
-    Button, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem, MenuDivider,
+    Button, Menu, MenuTrigger, MenuPopover, MenuList, MenuItem,
     Dialog, DialogSurface, DialogBody, DialogTitle, DialogContent, DialogActions,
 } from "@fluentui/react-components";
 import {
     EditRegular,
     DeleteRegular,
     MoreVertical20Regular,
+    DismissRegular,
+    CheckmarkRegular,
 } from "@fluentui/react-icons";
 import type { AuthUser } from "../../../auth/AuthContext";
 
@@ -14,11 +16,15 @@ type Props = {
     row: AuthUser;
     onEdit: (row: AuthUser) => void;
     onDelete: (id: string) => Promise<void> | void;
+    onToggleStatus: (id: string, status: AuthUser["status"]) => void;
 };
 
-export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
+export default memo(function ActionCell({ row, onEdit, onDelete, onToggleStatus }: Props) {
     const [openDelete, setOpenDelete] = useState(false);
+    const [openStatusConfirmation, setOpenStatusConfirmation] = useState(false);
     const [loading, setLoading] = useState(false);
+    const nextStatus = row.status === "active" ? "inactive" : "active";
+    const statusAction = row.status === "active" ? "Deactivate" : "Activate";
 
     async function handleConfirmDelete() {
         setLoading(true);
@@ -51,7 +57,16 @@ export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
                             >
                                 Edit user
                             </MenuItem>
-                            <MenuDivider />
+                            <MenuItem
+                                icon={
+                                    row.status === "active"
+                                        ? <DismissRegular fontSize={16} />
+                                        : <CheckmarkRegular fontSize={16} />
+                                }
+                                onClick={() => setOpenStatusConfirmation(true)}
+                            >
+                                {statusAction}
+                            </MenuItem>
                             <MenuItem
                                 icon={<DeleteRegular fontSize={16} />}
                                 onClick={() => setOpenDelete(true)}
@@ -90,6 +105,38 @@ export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
                                 className="ilb-btn-danger"
                             >
                                 {loading ? "Deleting…" : "Delete"}
+                            </Button>
+                        </DialogActions>
+                    </DialogBody>
+                </DialogSurface>
+            </Dialog>
+
+            <Dialog
+                open={openStatusConfirmation}
+                onOpenChange={(_, data) => setOpenStatusConfirmation(data.open)}
+            >
+                <DialogSurface>
+                    <DialogBody>
+                        <DialogTitle>{statusAction} user</DialogTitle>
+                        <DialogContent>
+                            Are you sure you want to {statusAction.toLowerCase()}{" "}
+                            <b>{row.displayName}</b>?
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                appearance="secondary"
+                                onClick={() => setOpenStatusConfirmation(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                appearance="primary"
+                                onClick={() => {
+                                    onToggleStatus(row.id, nextStatus);
+                                    setOpenStatusConfirmation(false);
+                                }}
+                            >
+                                {statusAction}
                             </Button>
                         </DialogActions>
                     </DialogBody>

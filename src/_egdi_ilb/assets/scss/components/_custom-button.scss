@@ -1,0 +1,64 @@
+.custom-btn {
+  gap: 8px;
+  border-radius: 8px !important;
+  font-weight: 600;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+
+  &:focus-visible {
+    outline: 2px solid #75101d;
+    outline-offset: 2px;
+  }
+
+  &.custom-btn--primary,
+  &.custom-btn--add,
+  &.custom-btn--submit,
+  &.custom-btn--danger {
+    border-color: #75101d;
+    background-color: #75101d;
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      border-color: #620b17;
+      background-color: #620b17;
+      color: #ffffff;
+    }
+
+    &:active:not(:disabled) {
+      border-color: #4c0812;
+      background-color: #4c0812;
+      color: #ffffff;
+    }
+  }
+
+  &.custom-btn--edit,
+  &.custom-btn--cancel,
+  &.custom-btn--next,
+  &.custom-btn--close {
+    border-color: #e5c9cd;
+    background-color: #ffffff;
+    color: #75101d;
+
+    &:hover:not(:disabled) {
+      border-color: #d7aeb4;
+      background-color: #f8eff0;
+      color: #620b17;
+    }
+  }
+
+  &.custom-btn--selected {
+    border-color: #75101d;
+    background-color: #f4ebed;
+    color: #75101d;
+  }
+
+  &.custom-btn--medium {
+    min-height: 36px;
+    padding: 0 16px;
+  }
+
+  .custom-btn__content {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+  }
+}

@@ -6,4 +6,8 @@ export interface DummyUser {
     displayName: string;
     avatarUrl: string;
     role: string;
+    status: "active" | "inactive";
+    lastLoginAt?: string;
+    createdAt: any;
+    updatedAt: any;
 }

@@ -4,11 +4,11 @@ import * as Yup from "yup";
 import { Button, Field, Input } from "@fluentui/react-components";
 import { Eye20Regular, EyeOff20Regular } from "@fluentui/react-icons";
 import { useLocation, useNavigate, type Location } from "react-router-dom";
-import { formatDate, formatTime } from "../../../../_egdi_ilb/helpers/fmtDateTime";
+import { formatDate, formatTime } from "../../../../_egdi_ilb/helpers/shared/formation/fmtDateTime";
 import Logo from "../../../../_egdi_ilb/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import { useAuth } from "../AuthContext";
-import ParticleBackground from "../../../../_egdi_ilb/helpers/shared/ParticalBackground";
+import ParticleBackground from "../../../../_egdi_ilb/helpers/shared/animation/ParticalBackground";
 
 
 const validationSchema = Yup.object({

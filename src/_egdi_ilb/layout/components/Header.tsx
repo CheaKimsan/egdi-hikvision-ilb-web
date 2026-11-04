@@ -120,7 +120,7 @@ const Header: React.FC = () => {
                                 </div>
 
                                 <h2 className="profile-menu-greeting">
-                                    Hi {displayName}! <CheckCircle2 size={18} className="verified-icon" />
+                                    Hi {displayName}! <ShieldCheck size={18} className="verified-icon" />
                                 </h2>
                                 {user?.role && <span className="profile-menu-role">{user.role}</span>}
 
