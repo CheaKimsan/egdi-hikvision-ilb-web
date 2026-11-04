@@ -10,7 +10,8 @@ import {
     DismissRegular,
     CheckmarkRegular,
 } from "@fluentui/react-icons";
-import type { AuthUser } from "../../../auth/AuthContext";
+import type { AuthUser } from "../../../../auth/AuthContext";
+import ConfirmDeleteDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmDeleteDialog";
 
 type Props = {
     row: AuthUser;
@@ -55,7 +56,7 @@ export default memo(function ActionCell({ row, onEdit, onDelete, onToggleStatus 
                                 icon={<EditRegular fontSize={16} />}
                                 onClick={() => onEdit(row)}
                             >
-                                Edit user
+                                Edit
                             </MenuItem>
                             <MenuItem
                                 icon={
@@ -72,50 +73,28 @@ export default memo(function ActionCell({ row, onEdit, onDelete, onToggleStatus 
                                 onClick={() => setOpenDelete(true)}
                                 className="text-danger"
                             >
-                                Delete user
+                                Delete
                             </MenuItem>
                         </MenuList>
                     </MenuPopover>
                 </Menu>
             </div>
 
-            <Dialog
+
+            <ConfirmDeleteDialog
                 open={openDelete}
-                onOpenChange={(_, data) => !loading && setOpenDelete(data.open)}
-            >
-                <DialogSurface>
-                    <DialogBody>
-                        <DialogTitle>Delete user</DialogTitle>
-                        <DialogContent>
-                            Are you sure you want to delete <b>{row.displayName}</b>?
-                            This action cannot be undone.
-                        </DialogContent>
-                        <DialogActions>
-                            <Button
-                                appearance="secondary"
-                                disabled={loading}
-                                onClick={() => setOpenDelete(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                appearance="primary"
-                                disabled={loading}
-                                onClick={handleConfirmDelete}
-                                className="ilb-btn-danger"
-                            >
-                                {loading ? "Deleting…" : "Delete"}
-                            </Button>
-                        </DialogActions>
-                    </DialogBody>
-                </DialogSurface>
-            </Dialog>
+                title="user"
+                name={row.displayName}
+                loading={loading}
+                onConfirm={handleConfirmDelete}
+                onCancel={() => !loading && setOpenDelete(false)}
+            />
 
             <Dialog
                 open={openStatusConfirmation}
                 onOpenChange={(_, data) => setOpenStatusConfirmation(data.open)}
             >
-                <DialogSurface>
+                <DialogSurface data-no-row-click="true">
                     <DialogBody>
                         <DialogTitle>{statusAction} user</DialogTitle>
                         <DialogContent>

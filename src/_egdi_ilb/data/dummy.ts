@@ -1,4 +1,5 @@
 import { DummyUser } from "../../app/modules/auth/core/model";
+import { ManagedDevice } from "../../app/modules/account/device-management/core/model";
 import NoAvatar from "../assets/images/no_avatar.jpeg";
 
 
@@ -218,3 +219,26 @@ export const dummyUsers: DummyUser[] = dummyUserSeeds.map((user, index) => ({
             ? new Date(Date.now() - index * 60 * 60 * 1000).toISOString()
             : undefined,
 }));
+
+
+// ------------------------- device dummy data -------------------------
+export const dummyDevices: ManagedDevice[] = [
+    {
+        id: "DEV-0255",
+        name: "Embedded Terminal Server",
+        deviceNumber: 255,
+        type: "Terminal Server",
+        model: "DS-TP50-09I",
+        serialNumber: "Not available",
+        firmwareVersion: "V1.0.0 build 15:27:59",
+        encodingVersion: "V5.6.0 118358 build 260818 14:57:42",
+        webVersion: "V4.0.1.105151 build 260905",
+        pluginVersion: "V4.0.2608.1",
+        channelCount: 1,
+        hddCount: 1,
+        alarmInputCount: 2,
+        alarmOutputCount: 1,
+        status: "active",
+        updatedAt: "2026-11-03T08:30:00.000Z",
+    },
+];

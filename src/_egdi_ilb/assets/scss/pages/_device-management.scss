@@ -106,6 +106,30 @@
   }
 }
 
+.device-form-drawer {
+  .device-form-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 16px;
+  }
+
+  .device-form-full-width {
+    grid-column: 1 / -1;
+  }
+
+  .fui-Field {
+    min-width: 0;
+    align-self: start;
+  }
+
+  .fui-Input,
+  .fui-Dropdown {
+    box-sizing: border-box;
+    height: 48px;
+    min-height: 48px;
+  }
+}
+
 @media (max-width: 600px) {
   .device-management-header {
     align-items: flex-start;
@@ -123,5 +147,13 @@
     .fui-Input {
       width: 100%;
     }
+  }
+
+  .device-form-drawer .device-form-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .device-form-drawer .device-form-full-width {
+    grid-column: auto;
   }
 }

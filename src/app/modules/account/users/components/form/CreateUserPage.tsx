@@ -12,8 +12,11 @@ import { CameraRegular, DeleteRegular, PersonAddRegular } from "@fluentui/react-
 import NoAvatar from "../../../../../../_egdi_ilb/assets/images/no_avatar.jpeg";
 import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
 import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
+import ConfirmCreateDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmEditDialog";
 import { useUsersStore, type UserDrawerMode } from "../../core/store";
 import type { FireUser } from "../../core/model";
+import { useRolesStore } from "../../../roles/core/store";
 
 type UserFormValues = {
     firstName: string;
@@ -28,14 +31,6 @@ type UserFormField = Exclude<keyof UserFormValues, "avatarUrl">;
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-const userRoles = [
-    "Administrator",
-    "Operator",
-    "Border Officer",
-    "Visa Officer",
-    "Viewer",
-];
-
 const splitName = (displayName: string) => {
     const [firstName = "", ...lastNameParts] = displayName.trim().split(/\s+/);
     return { firstName, lastName: lastNameParts.join(" ") };
@@ -44,11 +39,17 @@ const splitName = (displayName: string) => {
 const CreateUserPage: React.FC = () => {
     const drawer = useUsersStore((state) => state.drawer);
     const rows = useUsersStore((state) => state.rows);
+    const roles = useRolesStore((state) => state.rows);
+    const userRoles = useMemo(() => roles.map((role) => role.name), [roles]);
     const addUser = useUsersStore((state) => state.addUser);
     const updateUser = useUsersStore((state) => state.updateUser);
     const closeDrawer = useUsersStore((state) => state.closeDrawer);
     const avatarInputRef = useRef<HTMLInputElement>(null);
     const [avatarError, setAvatarError] = useState("");
+    const [confirmCreateOpen, setConfirmCreateOpen] = useState(false);
+    const [pendingCreateUser, setPendingCreateUser] = useState<FireUser | null>(null);
+    const [confirmEditOpen, setConfirmEditOpen] = useState(false);
+    const [pendingEditUser, setPendingEditUser] = useState<FireUser | null>(null);
 
     const mode: UserDrawerMode = drawer.mode;
     const isView = mode === "view";
@@ -60,10 +61,10 @@ const CreateUserPage: React.FC = () => {
             ...splitName(drawer.user?.displayName ?? ""),
             username: drawer.user?.username ?? "",
             email: drawer.user?.email ?? "",
-            role: drawer.user?.role ?? "Operator",
+            role: drawer.user?.role ?? userRoles[0] ?? "",
             avatarUrl: drawer.user?.avatarUrl ?? "",
         }),
-        [drawer.user],
+        [drawer.user, userRoles],
     );
 
     useEffect(() => {
@@ -108,7 +109,7 @@ const CreateUserPage: React.FC = () => {
                     .oneOf(userRoles, "Select a valid role")
                     .required("Role is required"),
             }),
-        [drawer.user?.id, rows],
+        [drawer.user?.id, rows, userRoles],
     );
 
     const formik = useFormik<UserFormValues>({
@@ -124,22 +125,57 @@ const CreateUserPage: React.FC = () => {
             };
 
             if (mode === "edit" && drawer.user) {
-                updateUser({ ...drawer.user, ...savedValues, updatedAt: now });
+                setPendingEditUser({
+                    ...drawer.user,
+                    ...savedValues,
+                    updatedAt: now,
+                });
+                setConfirmEditOpen(true);
+                setSubmitting(false);
+                return;
             } else if (mode === "create") {
-                const user: FireUser = {
+                setPendingCreateUser({
                     id: String(Date.now()),
                     ...savedValues,
                     status: "active",
                     createdAt: now,
                     updatedAt: now,
-                };
-                addUser(user);
+                });
+                setConfirmCreateOpen(true);
+                setSubmitting(false);
+                return;
             }
 
             setSubmitting(false);
             closeDrawer();
         },
     });
+
+    const confirmCreate = () => {
+        if (!pendingCreateUser) return;
+        addUser(pendingCreateUser);
+        setPendingCreateUser(null);
+        setConfirmCreateOpen(false);
+        closeDrawer();
+    };
+
+    const cancelCreateConfirmation = () => {
+        setConfirmCreateOpen(false);
+        setPendingCreateUser(null);
+    };
+
+    const confirmEdit = () => {
+        if (!pendingEditUser) return;
+        updateUser(pendingEditUser);
+        setPendingEditUser(null);
+        setConfirmEditOpen(false);
+        closeDrawer();
+    };
+
+    const cancelEditConfirmation = () => {
+        setConfirmEditOpen(false);
+        setPendingEditUser(null);
+    };
 
     const fieldProps = (field: UserFormField, reserveMessageSpace = false) => ({
         validationState:
@@ -185,6 +221,7 @@ const CreateUserPage: React.FC = () => {
     };
 
     return (
+        <>
         <OpenDrawer
             open={drawer.open}
             title={title}
@@ -415,6 +452,21 @@ const CreateUserPage: React.FC = () => {
                 )}
             </form>
         </OpenDrawer>
+        <ConfirmCreateDialog
+            open={confirmCreateOpen}
+            title="user"
+            name={pendingCreateUser?.displayName}
+            onConfirm={confirmCreate}
+            onCancel={cancelCreateConfirmation}
+        />
+        <ConfirmEditDialog
+            open={confirmEditOpen}
+            title="user"
+            name={pendingEditUser?.displayName}
+            onConfirm={confirmEdit}
+            onCancel={cancelEditConfirmation}
+        />
+        </>
     );
 };
 
