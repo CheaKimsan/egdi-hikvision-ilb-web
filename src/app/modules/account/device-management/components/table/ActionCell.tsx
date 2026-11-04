@@ -70,7 +70,7 @@ export default memo(function ActionCell({
                                 icon={<EditRegular fontSize={16} />}
                                 onClick={() => onEdit(row)}
                             >
-                                Edit device
+                                Edit
                             </MenuItem>
                             <MenuItem
                                 icon={
@@ -87,7 +87,7 @@ export default memo(function ActionCell({
                                 onClick={() => setOpenDelete(true)}
                                 className="text-danger"
                             >
-                                Delete device
+                                Delete
                             </MenuItem>
                         </MenuList>
                     </MenuPopover>

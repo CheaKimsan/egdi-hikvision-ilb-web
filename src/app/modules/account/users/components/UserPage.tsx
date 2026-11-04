@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { Input } from "@fluentui/react-components";
-import { AddRegular, SearchRegular } from "@fluentui/react-icons";
+import { AddRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
 import { useUsersStore } from "../core/store";
@@ -68,16 +67,7 @@ const UserPage: React.FC = () => {
             </header>
 
             <div className="user-management-toolbar">
-                {/* <Input
-                    aria-label="Search users"
-                    contentBefore={<SearchRegular />}
-                    placeholder="Search users"
-                    value={search}
-                    onChange={(_event, data) => setSearch(data.value)}
-                /> */}
-
                 <SearchField value={search} onChange={setSearch} placeholder="Search users..." />
-
             </div>
 
             <div className="user-management-table">

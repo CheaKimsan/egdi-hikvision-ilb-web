@@ -10,7 +10,7 @@ import AppLayout from "../../_egdi_ilb/layout/AppLayout";
 import LoginPage from "../modules/auth/components/LoginPage";
 import UserPage from "../modules/account/users/components/UserPage";
 import RolePage from "../modules/account/roles/components/RolePage";
-import DeviceManagementPage from "../modules/device-management/components/DeviceManagementPage";
+import DeviceManagementPage from "../modules/account/device-management/components/DeviceManagementPage";
 
 const ProtectedRoute = () => {
     const { user } = useAuth();

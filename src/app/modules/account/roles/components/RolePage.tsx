@@ -12,7 +12,7 @@ import {
     Input,
     Textarea,
 } from "@fluentui/react-components";
-import { AddRegular, SearchRegular } from "@fluentui/react-icons";
+import { AddRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
 import { useUsersStore } from "../../users/core/store";

@@ -1,5 +1,5 @@
 import { DummyUser } from "../../app/modules/auth/core/model";
-import { ManagedDevice } from "../../app/modules/device-management/core/model";
+import { ManagedDevice } from "../../app/modules/account/device-management/core/model";
 import NoAvatar from "../assets/images/no_avatar.jpeg";
 
 

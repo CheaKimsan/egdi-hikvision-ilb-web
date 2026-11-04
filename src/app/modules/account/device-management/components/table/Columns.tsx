@@ -1,4 +1,4 @@
-import type { Column } from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import type { Column } from "../../../../../../_egdi_ilb/helpers/shared/table/MainTable";
 import type { ManagedDevice } from "../../core/model";
 import ActionCell from "./ActionCell";
 
@@ -18,7 +18,7 @@ export function Columns({
         { key: "name", title: "Device name", dataIndex: "name" },
         { key: "model", title: "Model", dataIndex: "model" },
         { key: "serialNumber", title: "Serial No.", dataIndex: "serialNumber" },
-        { key: "firmwareVersion", title: "Firmware version", dataIndex: "firmwareVersion" },
+        { key: "IP", title: "IP Address", dataIndex: "ipAddress" },
         {
             key: "status",
             title: "Status",

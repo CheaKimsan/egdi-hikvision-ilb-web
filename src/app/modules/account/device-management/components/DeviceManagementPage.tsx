@@ -1,19 +1,36 @@
 import { useCallback, useMemo, useState } from "react";
-import { Input } from "@fluentui/react-components";
-import { AddRegular, SearchRegular } from "@fluentui/react-icons";
-import CustomBtn from "../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import MainTable from "../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import { AddRegular } from "@fluentui/react-icons";
+import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
+import MainTable from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
 import type { ManagedDevice } from "../core/model";
 import { Columns } from "./table/Columns";
-import { dummyDevices } from "../../../../_egdi_ilb/data/dummy";
-import SearchField from "../../../../_egdi_ilb/helpers/shared/search/SearchField";
+import { dummyDevices } from "../../../../../_egdi_ilb/data/dummy";
+import SearchField from "../../../../../_egdi_ilb/helpers/shared/search/SearchField";
+import CreateDevicePage from "./form/CreateDevicePage";
 
 const DeviceManagementPage: React.FC = () => {
     const [search, setSearch] = useState("");
     const [devices, setDevices] = useState<ManagedDevice[]>(() => [...dummyDevices]);
+    const [deviceFormOpen, setDeviceFormOpen] = useState(false);
+    const [editingDevice, setEditingDevice] = useState<ManagedDevice | null>(null);
 
     const handleEdit = useCallback((row: ManagedDevice) => {
-        console.log("edit device", row);
+        setEditingDevice(row);
+        setDeviceFormOpen(true);
+    }, []);
+
+    const handleCreate = useCallback(() => {
+        setEditingDevice(null);
+        setDeviceFormOpen(true);
+    }, []);
+
+    const handleSave = useCallback((device: ManagedDevice) => {
+        setDevices((current) => {
+            const exists = current.some((item) => item.id === device.id);
+            return exists
+                ? current.map((item) => (item.id === device.id ? device : item))
+                : [...current, device];
+        });
     }, []);
 
     const handleDelete = useCallback((id: string) => {
@@ -74,10 +91,11 @@ const DeviceManagementPage: React.FC = () => {
                 </div>
                 <CustomBtn
                     type="add"
-                    label="Add device"
+                    label="Create device"
                     icon={<AddRegular />}
                     className="device-management-create-button"
                     size="medium"
+                    onClick={handleCreate}
                 />
             </header>
 
@@ -94,6 +112,13 @@ const DeviceManagementPage: React.FC = () => {
                     pagination
                 />
             </div>
+            <CreateDevicePage
+                open={deviceFormOpen}
+                device={editingDevice}
+                devices={devices}
+                onClose={() => setDeviceFormOpen(false)}
+                onSave={handleSave}
+            />
         </section>
     );
 };
