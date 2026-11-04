@@ -9,9 +9,9 @@ import {
     Option,
 } from "@fluentui/react-components";
 import { CameraRegular, DeleteRegular, PersonAddRegular } from "@fluentui/react-icons";
-import NoAvatar from "../../../../../_egdi_ilb/assets/images/no_avatar.jpeg";
-import OpenDrawer from "../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
-import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
+import NoAvatar from "../../../../../../_egdi_ilb/assets/images/no_avatar.jpeg";
+import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
+import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
 import { useUsersStore, type UserDrawerMode } from "../../core/store";
 import type { FireUser } from "../../core/model";
 

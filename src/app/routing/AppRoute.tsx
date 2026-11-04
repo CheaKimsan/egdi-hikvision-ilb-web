@@ -8,7 +8,7 @@ import {
 import { useAuth } from "../modules/auth/AuthContext";
 import AppLayout from "../../_egdi_ilb/layout/AppLayout";
 import LoginPage from "../modules/auth/components/LoginPage";
-import UserPage from "../modules/user/components/UserPage";
+import UserPage from "../modules/account/users/components/UserPage";
 import DeviceManagementPage from "../modules/device-management/components/DeviceManagementPage";
 
 const ProtectedRoute = () => {

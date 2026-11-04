@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { dummyUsers } from "../../../../_egdi_ilb/data/dummy";
+import { dummyUsers } from "../../../../../_egdi_ilb/data/dummy";
 import type { FireUser } from "./model";
 
 type UserDrawerMode = "create" | "view" | "edit";

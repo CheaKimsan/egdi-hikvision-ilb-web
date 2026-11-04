@@ -8,6 +8,7 @@ import {
     Settings,
     Shield,
     Users,
+    UserShield,
     type LucideIcon,
 } from "lucide-react";
 
@@ -33,6 +34,6 @@ export const deviceConfigurationItems: NavigationItem[] = [
 
 export const systemItems: NavigationItem[] = [
     { label: "User Management", icon: Users, path: "/management/user", countKey: "users" },
-    { label: "Role Management", icon: FileText, path: "/management/role" },
+    { label: "Role Management", icon: UserShield, path: "/management/role" },
     { label: "Settings", icon: Settings, path: "/management/settings" },
 ];
