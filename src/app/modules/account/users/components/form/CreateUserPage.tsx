@@ -14,6 +14,7 @@ import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDr
 import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
 import { useUsersStore, type UserDrawerMode } from "../../core/store";
 import type { FireUser } from "../../core/model";
+import { useRolesStore } from "../../../roles/core/store";
 
 type UserFormValues = {
     firstName: string;
@@ -28,14 +29,6 @@ type UserFormField = Exclude<keyof UserFormValues, "avatarUrl">;
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-const userRoles = [
-    "Administrator",
-    "Operator",
-    "Border Officer",
-    "Visa Officer",
-    "Viewer",
-];
-
 const splitName = (displayName: string) => {
     const [firstName = "", ...lastNameParts] = displayName.trim().split(/\s+/);
     return { firstName, lastName: lastNameParts.join(" ") };
@@ -44,6 +37,8 @@ const splitName = (displayName: string) => {
 const CreateUserPage: React.FC = () => {
     const drawer = useUsersStore((state) => state.drawer);
     const rows = useUsersStore((state) => state.rows);
+    const roles = useRolesStore((state) => state.rows);
+    const userRoles = useMemo(() => roles.map((role) => role.name), [roles]);
     const addUser = useUsersStore((state) => state.addUser);
     const updateUser = useUsersStore((state) => state.updateUser);
     const closeDrawer = useUsersStore((state) => state.closeDrawer);
@@ -60,10 +55,10 @@ const CreateUserPage: React.FC = () => {
             ...splitName(drawer.user?.displayName ?? ""),
             username: drawer.user?.username ?? "",
             email: drawer.user?.email ?? "",
-            role: drawer.user?.role ?? "Operator",
+            role: drawer.user?.role ?? userRoles[0] ?? "",
             avatarUrl: drawer.user?.avatarUrl ?? "",
         }),
-        [drawer.user],
+        [drawer.user, userRoles],
     );
 
     useEffect(() => {
@@ -108,7 +103,7 @@ const CreateUserPage: React.FC = () => {
                     .oneOf(userRoles, "Select a valid role")
                     .required("Role is required"),
             }),
-        [drawer.user?.id, rows],
+        [drawer.user?.id, rows, userRoles],
     );
 
     const formik = useFormik<UserFormValues>({

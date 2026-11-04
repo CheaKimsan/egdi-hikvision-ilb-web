@@ -1,15 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" type="image/png" href="%PUBLIC_URL%/GDI.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
       content="Web site created using create-react-app"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Moul&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .startup-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        background: #fff;
+      }
+
+      .startup-loader__mark {
+        position: relative;
+        display: grid;
+        width: 100px;
+        height: 100px;
+        place-items: center;
+      }
+
+      .startup-loader__logo {
+        z-index: 1;
+        width: 92px;
+        height: 92px;
+        object-fit: contain;
+      }
+
+      .startup-loader__spinner {
+        position: absolute;
+        inset: 0;
+        box-sizing: border-box;
+        border: 3px solid transparent;
+        border-top-color: #75101d;
+        border-bottom-color: #c9a227;
+        border-radius: 50%;
+        animation: startup-loader-rotation 1s linear infinite;
+      }
+
+      .startup-loader__title {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: 0;
+        padding: 12px 16px;
+        background: linear-gradient(to right, #75101d 20%, #c9a227 80%);
+        background-clip: text;
+        color: transparent;
+        font-family: "Moul", serif;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 1.6;
+        text-align: center;
+        -webkit-background-clip: text;
+      }
+
+      @keyframes startup-loader-rotation {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .startup-loader__spinner {
+          animation-duration: 3s;
+        }
+      }
+    </style>
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -24,11 +97,29 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>edgi-ilb</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div
+        class="startup-loader"
+        role="status"
+        aria-label="Loading application"
+      >
+        <div class="startup-loader__mark">
+          <img
+            class="startup-loader__logo"
+            src="%PUBLIC_URL%/GDI.png"
+            alt="GDI logo"
+          />
+          <span class="startup-loader__spinner" aria-hidden="true"></span>
+        </div>
+        <p class="startup-loader__title" lang="km">
+          អគ្គនាយកដ្ឋានអន្តោប្រវេសន៍
+        </p>
+      </div>
+    </div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

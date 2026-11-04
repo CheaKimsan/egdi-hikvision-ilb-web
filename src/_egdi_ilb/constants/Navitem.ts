@@ -27,13 +27,13 @@ export const mainItems: NavigationItem[] = [
 ];
 
 export const deviceConfigurationItems: NavigationItem[] = [
-    { label: "Device Management", icon: Server, path: "/management/device-management", countKey: "devices" },
+    { label: "Device Management", icon: Server, path: "/management/device-management" },
     { label: "Network Settings", icon: Network, path: "/management/network-settings" },
     { label: "Channel Settings", icon: PanelsTopLeft, path: "/management/channel-settings" },
 ];
 
 export const systemItems: NavigationItem[] = [
-    { label: "User Management", icon: Users, path: "/management/user", countKey: "users" },
+    { label: "User Management", icon: Users, path: "/management/user" },
     { label: "Role Management", icon: UserShield, path: "/management/role" },
     { label: "Settings", icon: Settings, path: "/management/settings" },
 ];

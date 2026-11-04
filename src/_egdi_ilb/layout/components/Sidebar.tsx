@@ -3,8 +3,7 @@ import { Avatar } from "@fluentui/react-components";
 import { ChevronLeftRegular, ChevronRightRegular } from "@fluentui/react-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../app/modules/auth/AuthContext";
-import { dummyDevices } from "../../../app/modules/device-management/data/devices";
-import { dummyUsers } from "../../data/dummy";
+import { dummyDevices, dummyUsers } from "../../data/dummy";
 import {
     deviceConfigurationItems,
     mainItems,

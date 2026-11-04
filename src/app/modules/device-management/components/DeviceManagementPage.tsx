@@ -4,8 +4,9 @@ import { AddRegular, SearchRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../_egdi_ilb/helpers/shared/table/MainTable";
 import type { ManagedDevice } from "../core/model";
-import { dummyDevices } from "../data/devices";
 import { Columns } from "./table/Columns";
+import { dummyDevices } from "../../../../_egdi_ilb/data/dummy";
+import SearchField from "../../../../_egdi_ilb/helpers/shared/search/SearchField";
 
 const DeviceManagementPage: React.FC = () => {
     const [search, setSearch] = useState("");
@@ -81,16 +82,7 @@ const DeviceManagementPage: React.FC = () => {
             </header>
 
             <div className="device-management-toolbar">
-                <Input
-                    aria-label="Search devices"
-                    contentBefore={<SearchRegular />}
-                    placeholder="Search devices"
-                    value={search}
-                    onChange={(_event, data) => setSearch(data.value)}
-                />
-                <span className="device-management-count">
-                    {filteredDevices.length} {filteredDevices.length === 1 ? "device" : "devices"}
-                </span>
+                <SearchField value={search} onChange={setSearch} placeholder="Search devices..." />
             </div>
 
             <div className="device-management-table">

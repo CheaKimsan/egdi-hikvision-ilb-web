@@ -7,6 +7,7 @@ import { useUsersStore } from "../core/store";
 import type { FireUser } from "../core/model";
 import CreateUserPage from "./form/CreateUserPage";
 import { Columns } from "./table/Columns";
+import SearchField from "../../../../../_egdi_ilb/helpers/shared/search/SearchField";
 
 const UserPage: React.FC = () => {
     const search = useUsersStore((state) => state.search);
@@ -67,13 +68,16 @@ const UserPage: React.FC = () => {
             </header>
 
             <div className="user-management-toolbar">
-                <Input
+                {/* <Input
                     aria-label="Search users"
                     contentBefore={<SearchRegular />}
                     placeholder="Search users"
                     value={search}
                     onChange={(_event, data) => setSearch(data.value)}
-                />
+                /> */}
+
+                <SearchField value={search} onChange={setSearch} placeholder="Search users..." />
+
             </div>
 
             <div className="user-management-table">

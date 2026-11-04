@@ -9,6 +9,7 @@ import { useAuth } from "../modules/auth/AuthContext";
 import AppLayout from "../../_egdi_ilb/layout/AppLayout";
 import LoginPage from "../modules/auth/components/LoginPage";
 import UserPage from "../modules/account/users/components/UserPage";
+import RolePage from "../modules/account/roles/components/RolePage";
 import DeviceManagementPage from "../modules/device-management/components/DeviceManagementPage";
 
 const ProtectedRoute = () => {
@@ -25,6 +26,7 @@ const AppRoute = () => (
                 <Route path="/management" element={<AppLayout />}>
                     <Route index element={null} />
                     <Route path="user" element={<UserPage />} />
+                    <Route path="role" element={<RolePage />} />
                     <Route path="device-management" element={<DeviceManagementPage />} />
                     <Route path="*" element={null} />
                 </Route>

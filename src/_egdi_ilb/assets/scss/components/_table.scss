@@ -59,6 +59,89 @@
   text-align: left;
 }
 
+.role-management-page {
+  .role-permission-count {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #f8ecee;
+    color: #75101d;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+.role-form-dialog {
+  width: min(860px, calc(100vw - 32px));
+  max-width: 860px;
+}
+
+.role-form-fields {
+  display: grid;
+  gap: 16px;
+}
+
+.role-permissions {
+  overflow: auto;
+  max-height: min(45vh, 420px);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.role-permissions-heading,
+.role-permission-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) repeat(4, 68px);
+  align-items: center;
+  gap: 8px;
+  min-width: 520px;
+  padding: 10px 12px;
+}
+
+.role-permissions-heading {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+
+  h3 {
+    margin: 0 0 3px;
+    color: #1e293b;
+    font-size: 14px;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
+
+.role-permission-row {
+  min-height: 44px;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  > :not(:first-child) {
+    justify-self: center;
+  }
+}
+
+.role-form-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
 .user-management-header {
   display: flex;
   align-items: center;
@@ -97,7 +180,7 @@
   margin-bottom: 16px;
 
   .fui-Input {
-    width: 280px;
+    width: 300px;
     max-width: 100%;
     padding-left: 12px;
     border: 1px solid transparent !important;
