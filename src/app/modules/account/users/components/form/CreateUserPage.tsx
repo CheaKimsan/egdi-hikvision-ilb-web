@@ -304,7 +304,7 @@ const CreateUserPage: React.FC = () => {
                     <Field
                         label="First name"
                         required
-                        className="user-form-name-field"
+                        className="user-form-paired-field"
                         {...fieldProps("firstName", true)}
                     >
                         <Input
@@ -324,7 +324,7 @@ const CreateUserPage: React.FC = () => {
                     <Field
                         label="Last name"
                         required
-                        className="user-form-name-field"
+                        className="user-form-paired-field"
                         {...fieldProps("lastName", true)}
                     >
                         <Input
@@ -340,7 +340,12 @@ const CreateUserPage: React.FC = () => {
                         />
                     </Field>
 
-                    <Field label="Username" required {...fieldProps("username")}>
+                    <Field
+                        label="Username"
+                        required
+                        className="user-form-paired-field"
+                        {...fieldProps("username", true)}
+                    >
                         <Input
                             name="username"
                             autoComplete="username"
@@ -354,7 +359,12 @@ const CreateUserPage: React.FC = () => {
                         />
                     </Field>
 
-                    <Field label="Role" required {...fieldProps("role")}>
+                    <Field
+                        label="Role"
+                        required
+                        className="user-form-paired-field"
+                        {...fieldProps("role", true)}
+                    >
                         <Dropdown
                             aria-label="Role"
                             appearance="outline"
