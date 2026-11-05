@@ -6,11 +6,11 @@ import {
     TableHeaderCell,
     TableBody,
     TableCell,
-    Spinner,
 } from "@fluentui/react-components";
 import PaginationBar, { PaginationBarProps } from "../pagination/PaginationBar";
 import { useEffect, useState } from "react";
 import NoData from "../no-data/NoData";
+import Loader from "../loader/Loader";
 import {
     PAGE_SIZE_OPTIONS,
     usePreferencesStore,
@@ -58,11 +58,22 @@ export default function MainTable<T>({
     pagination,
     loading = false,
 }: MainTableProps<T>) {
+    const [showLoading, setShowLoading] = useState(true);
     const paginationEnabled = !!pagination;
 
     const preferredPageSize = usePreferencesStore((s) => s.defaultPageSize);
     const setDefaultPageSize = usePreferencesStore((s) => s.setDefaultPageSize);
     const [page, setPageInternal] = useState(0);
+
+    useEffect(() => {
+        if (loading) {
+            setShowLoading(true);
+            return;
+        }
+
+        const timeoutId = setTimeout(() => setShowLoading(false), 3000);
+        return () => clearTimeout(timeoutId);
+    }, [loading]);
 
     const setPage = typeof pagination === "object" && pagination.onPageChange
         ? pagination.onPageChange
@@ -149,11 +160,11 @@ export default function MainTable<T>({
                 </TableHeader>
 
                 <TableBody>
-                    {loading ? (
+                    {showLoading ? (
                         <TableRow>
                             <TableCell colSpan={columns.length}>
                                 <div style={{ display: "flex", justifyContent: "center", padding: "24px 0" }}>
-                                    <Spinner size="medium" label="Loading..." />
+                                    <Loader />
                                 </div>
                             </TableCell>
                         </TableRow>

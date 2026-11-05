@@ -1,11 +1,11 @@
 import {
     Camera,
-    FileText,
+    CarTaxiFront,
+    FileImage,
     LayoutDashboard,
-    Network,
+    ListVideo,
     Server,
     Settings,
-    Shield,
     Users,
     UserShield,
     type LucideIcon,
@@ -23,16 +23,19 @@ export const mainItems: NavigationItem[] = [
 ];
 
 export const deviceConfigurationItems: NavigationItem[] = [
-    { label: "Device Management", icon: Server, path: "/management/device-management" },
-    { label: "Camera Management", icon: Camera, path: "/management/camera-management" },
-    { label: "File Management", icon: FileText, path: "/management/file-management" },
-
-    // { label: "Network Settings", icon: Network, path: "/management/network-settings" },
-    // { label: "Channel Settings", icon: PanelsTopLeft, path: "/management/channel-settings" },
+    { label: "Vehicle", icon: CarTaxiFront, path: "/management/vehicle" },
+    { label: "Device", icon: Server, path: "/management/device" },
+    { label: "Camera", icon: Camera, path: "/management/camera" },
 ];
 
+export const FileManagementItems: NavigationItem[] = [
+    { label: "Video & Audio", icon: ListVideo, path: "/management/media" },
+    { label: "Image", icon: FileImage, path: "/management/images" },
+];
+
+
 export const systemItems: NavigationItem[] = [
-    { label: "User Management", icon: Users, path: "/management/user" },
-    { label: "Role Management", icon: UserShield, path: "/management/role" },
+    { label: "User", icon: Users, path: "/management/user" },
+    { label: "Role", icon: UserShield, path: "/management/role" },
     { label: "Settings", icon: Settings, path: "/management/settings" },
 ];
