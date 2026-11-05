@@ -148,7 +148,7 @@ const RolePage: React.FC = () => {
                 />
             </header>
 
-            <div className="user-management-toolbar">
+            <div className="search-toolbar ">
                 <SearchField value={search} onChange={setSearch} placeholder="Search roles..." />
             </div>
 

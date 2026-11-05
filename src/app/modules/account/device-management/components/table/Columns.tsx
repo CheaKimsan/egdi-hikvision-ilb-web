@@ -5,25 +5,41 @@ import ActionCell from "./ActionCell";
 type Handlers = {
     onEdit: (row: ManagedDevice) => void;
     onDelete: (id: string) => Promise<void> | void;
-    onToggleStatus: (id: string, status: ManagedDevice["status"]) => void;
+    onToggleActivation: (id: string, activated: boolean) => void;
 };
 
 export function Columns({
     onEdit,
     onDelete,
-    onToggleStatus,
+    onToggleActivation,
 }: Handlers): Column<ManagedDevice>[] {
     return [
-        { key: "deviceNumber", title: "Device No.", dataIndex: "deviceNumber", width: 120 },
+        { key: "id", title: "Device No.", dataIndex: "id", width: 120 },
         { key: "name", title: "Device name", dataIndex: "name" },
+        { key: "type", title: "Type", dataIndex: "type" },
         { key: "model", title: "Model", dataIndex: "model" },
-        { key: "serialNumber", title: "Serial No.", dataIndex: "serialNumber" },
-        { key: "IP", title: "IP Address", dataIndex: "ipAddress" },
+        { key: "serialNo", title: "Serial No.", dataIndex: "serialNo" },
+        { key: "siteName", title: "Site", dataIndex: "siteName" },
+        { key: "ip", title: "IP Address", dataIndex: "ip" },
         {
-            key: "status",
-            title: "Status",
+            key: "activation",
+            title: "Activation",
+            render: (row) => {
+                const status = row.activated ? "active" : "inactive";
+                return (
+                    <span className={`status-badge ${status}`}>
+                        {row.activated ? "Activated" : "Not activated"}
+                    </span>
+                );
+            },
+        },
+        {
+            key: "online",
+            title: "Connection",
             render: (row) => (
-                <span className={`status-badge ${row.status}`}>{row.status}</span>
+                <span className={`status-badge ${row.online ? "active" : "inactive"}`}>
+                    {row.online ? "Online" : "Offline"}
+                </span>
             ),
         },
         {
@@ -36,7 +52,7 @@ export function Columns({
                     row={row}
                     onEdit={onEdit}
                     onDelete={onDelete}
-                    onToggleStatus={onToggleStatus}
+                    onToggleActivation={onToggleActivation}
                 />
             ),
         },

@@ -26,20 +26,20 @@ type Props = {
     row: ManagedDevice;
     onEdit: (row: ManagedDevice) => void;
     onDelete: (id: string) => Promise<void> | void;
-    onToggleStatus: (id: string, status: ManagedDevice["status"]) => void;
+    onToggleActivation: (id: string, activated: boolean) => void;
 };
 
 export default memo(function ActionCell({
     row,
     onEdit,
     onDelete,
-    onToggleStatus,
+    onToggleActivation,
 }: Props) {
     const [openDelete, setOpenDelete] = useState(false);
     const [openStatusConfirmation, setOpenStatusConfirmation] = useState(false);
     const [loading, setLoading] = useState(false);
-    const nextStatus = row.status === "active" ? "inactive" : "active";
-    const statusAction = row.status === "active" ? "Deactivate" : "Activate";
+    const nextActivated = !row.activated;
+    const activationAction = row.activated ? "Deactivate" : "Activate";
 
     async function handleConfirmDelete() {
         setLoading(true);
@@ -73,14 +73,12 @@ export default memo(function ActionCell({
                                 Edit
                             </MenuItem>
                             <MenuItem
-                                icon={
-                                    row.status === "active"
-                                        ? <DismissRegular fontSize={16} />
-                                        : <CheckmarkRegular fontSize={16} />
-                                }
+                                icon={row.activated
+                                    ? <DismissRegular fontSize={16} />
+                                    : <CheckmarkRegular fontSize={16} />}
                                 onClick={() => setOpenStatusConfirmation(true)}
                             >
-                                {statusAction}
+                                {activationAction}
                             </MenuItem>
                             <MenuItem
                                 icon={<DeleteRegular fontSize={16} />}
@@ -131,9 +129,9 @@ export default memo(function ActionCell({
             >
                 <DialogSurface>
                     <DialogBody>
-                        <DialogTitle>{statusAction} device</DialogTitle>
+                        <DialogTitle>{activationAction} device</DialogTitle>
                         <DialogContent>
-                            Are you sure you want to {statusAction.toLowerCase()} <b>{row.name}</b>?
+                            Are you sure you want to {activationAction.toLowerCase()} <b>{row.name}</b>?
                         </DialogContent>
                         <DialogActions>
                             <Button
@@ -145,11 +143,11 @@ export default memo(function ActionCell({
                             <Button
                                 appearance="primary"
                                 onClick={() => {
-                                    onToggleStatus(row.id, nextStatus);
+                                    onToggleActivation(row.id, nextActivated);
                                     setOpenStatusConfirmation(false);
                                 }}
                             >
-                                {statusAction}
+                                {activationAction}
                             </Button>
                         </DialogActions>
                     </DialogBody>

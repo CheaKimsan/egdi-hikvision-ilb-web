@@ -66,7 +66,7 @@ const UserPage: React.FC = () => {
                 />
             </header>
 
-            <div className="user-management-toolbar">
+            <div className="search-toolbar ">
                 <SearchField value={search} onChange={setSearch} placeholder="Search users..." />
             </div>
 

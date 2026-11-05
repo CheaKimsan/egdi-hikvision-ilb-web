@@ -6,6 +6,7 @@ import { useAuth } from "../../../app/modules/auth/AuthContext";
 import { dummyDevices, dummyUsers } from "../../data/dummy";
 import {
     deviceConfigurationItems,
+    FileManagementItems,
     mainItems,
     systemItems,
     type NavigationItem,
@@ -81,6 +82,12 @@ const Sidebar: React.FC = () => {
                     <h2 className="app-sidebar-heading">Device Configuration</h2>
                     {renderItems(deviceConfigurationItems)}
                 </div>
+
+                <div className="app-sidebar-group">
+                    <h2 className="app-sidebar-heading">File Management</h2>
+                    {renderItems(FileManagementItems)}
+                </div>
+
                 <div className="app-sidebar-group">
                     <h2 className="app-sidebar-heading">System Administrator</h2>
                     {renderItems(systemItems)}

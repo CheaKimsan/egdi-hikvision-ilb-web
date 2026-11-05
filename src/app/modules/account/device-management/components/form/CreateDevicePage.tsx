@@ -10,27 +10,24 @@ import ConfirmEditDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/
 import type { ManagedDevice } from "../../core/model";
 
 const deviceTypes: ManagedDevice["type"][] = [
-    "Camera",
-    "NVR",
-    "Access Control",
-    "Terminal Server",
+    "mvr",
+    "camera",
+    "lightbar",
 ];
 
 type DeviceFormValues = {
     name: string;
     type: ManagedDevice["type"];
     model: string;
-    serialNumber: string;
-    firmwareVersion: string;
-    encodingVersion: string;
-    webVersion: string;
-    pluginVersion: string;
-    channelCount: string;
-    hddCount: string;
-    alarmInputCount: string;
-    alarmOutputCount: string;
-    ipAddress: string;
-    location: string;
+    serialNo: string;
+    siteId: string;
+    siteName: string;
+    firmware: string;
+    ip: string;
+    httpPort: string;
+    sdkPort: string;
+    username: string;
+    hasPassword: boolean;
 };
 
 type CreateDevicePageProps = {
@@ -43,38 +40,36 @@ type CreateDevicePageProps = {
 
 const emptyValues: DeviceFormValues = {
     name: "",
-    type: "Camera",
+    type: "camera",
     model: "",
-    serialNumber: "",
-    firmwareVersion: "",
-    encodingVersion: "",
-    webVersion: "",
-    pluginVersion: "",
-    channelCount: "0",
-    hddCount: "0",
-    alarmInputCount: "0",
-    alarmOutputCount: "0",
-    ipAddress: "",
-    location: "",
+    serialNo: "",
+    siteId: "",
+    siteName: "",
+    firmware: "",
+    ip: "",
+    httpPort: "80",
+    sdkPort: "8000",
+    username: "Administrator",
+    hasPassword: false,
 };
 
-const toFormValues = (device?: ManagedDevice | null): DeviceFormValues =>
+const toFormValues = (
+    device: ManagedDevice | null | undefined,
+): DeviceFormValues =>
     device
         ? {
             name: device.name,
             type: device.type,
             model: device.model,
-            serialNumber: device.serialNumber,
-            firmwareVersion: device.firmwareVersion,
-            encodingVersion: device.encodingVersion,
-            webVersion: device.webVersion,
-            pluginVersion: device.pluginVersion,
-            channelCount: String(device.channelCount),
-            hddCount: String(device.hddCount),
-            alarmInputCount: String(device.alarmInputCount),
-            alarmOutputCount: String(device.alarmOutputCount),
-            ipAddress: device.ipAddress ?? "",
-            location: device.location ?? "",
+            serialNo: device.serialNo ?? "",
+            siteId: device.siteId,
+            siteName: device.siteName,
+            firmware: device.firmware ?? "",
+            ip: device.ip ?? "",
+            httpPort: String(device.httpPort),
+            sdkPort: String(device.sdkPort),
+            username: device.username,
+            hasPassword: device.hasPassword,
         }
         : emptyValues;
 
@@ -89,7 +84,6 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
     const [pendingDevice, setPendingDevice] = useState<ManagedDevice | null>(null);
     const [confirmCreateOpen, setConfirmCreateOpen] = useState(false);
     const [confirmEditOpen, setConfirmEditOpen] = useState(false);
-
     const initialValues = useMemo(() => toFormValues(device), [device]);
 
     const validationSchema = useMemo(
@@ -106,43 +100,33 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
                     .trim()
                     .max(100, "Model must be 100 characters or fewer")
                     .required("Model is required"),
-                serialNumber: Yup.string()
+                serialNo: Yup.string()
                     .trim()
                     .max(100, "Serial number must be 100 characters or fewer")
-                    .required("Serial number is required")
                     .test("unique-serial-number", "This serial number is already in use", (value) =>
                         !devices.some(
                             (item) =>
                                 item.id !== device?.id &&
-                                item.serialNumber.toLowerCase() === value?.trim().toLowerCase(),
+                                item.serialNo?.toLowerCase() === value?.trim().toLowerCase(),
                         ),
                     ),
-                firmwareVersion: Yup.string().max(100, "Version must be 100 characters or fewer"),
-                encodingVersion: Yup.string().max(100, "Version must be 100 characters or fewer"),
-                webVersion: Yup.string().max(100, "Version must be 100 characters or fewer"),
-                pluginVersion: Yup.string().max(100, "Version must be 100 characters or fewer"),
-                channelCount: Yup.number()
-                    .typeError("Enter a valid channel count")
+                siteId: Yup.string().trim().required("Site ID is required"),
+                siteName: Yup.string().trim().required("Site name is required"),
+                firmware: Yup.string().max(100, "Firmware must be 100 characters or fewer"),
+                httpPort: Yup.number()
+                    .typeError("Enter a valid HTTP port")
                     .integer("Use a whole number")
-                    .min(0, "Count cannot be negative")
-                    .required("Channel count is required"),
-                hddCount: Yup.number()
-                    .typeError("Enter a valid HDD count")
+                    .min(1, "Port must be between 1 and 65535")
+                    .max(65535, "Port must be between 1 and 65535")
+                    .required("HTTP port is required"),
+                sdkPort: Yup.number()
+                    .typeError("Enter a valid SDK port")
                     .integer("Use a whole number")
-                    .min(0, "Count cannot be negative")
-                    .required("HDD count is required"),
-                alarmInputCount: Yup.number()
-                    .typeError("Enter a valid alarm input count")
-                    .integer("Use a whole number")
-                    .min(0, "Count cannot be negative")
-                    .required("Alarm input count is required"),
-                alarmOutputCount: Yup.number()
-                    .typeError("Enter a valid alarm output count")
-                    .integer("Use a whole number")
-                    .min(0, "Count cannot be negative")
-                    .required("Alarm output count is required"),
-                ipAddress: Yup.string().max(100, "IP address must be 100 characters or fewer"),
-                location: Yup.string().max(150, "Location must be 150 characters or fewer"),
+                    .min(1, "Port must be between 1 and 65535")
+                    .max(65535, "Port must be between 1 and 65535")
+                    .required("SDK port is required"),
+                ip: Yup.string().max(100, "IP address must be 100 characters or fewer"),
+                username: Yup.string().max(100, "Username must be 100 characters or fewer"),
             }),
         [device?.id, devices],
     );
@@ -152,28 +136,23 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
         enableReinitialize: true,
         validationSchema,
         onSubmit: (values, { setSubmitting }) => {
-            const now = new Date().toISOString();
-            const deviceNumber = device?.deviceNumber ??
-                Math.max(0, ...devices.map((item) => item.deviceNumber)) + 1;
             const savedDevice: ManagedDevice = {
-                id: device?.id ?? `DEV-${String(deviceNumber).padStart(4, "0")}`,
-                deviceNumber,
+                id: device?.id ?? `device-${Date.now()}`,
                 name: values.name.trim(),
                 type: values.type,
                 model: values.model.trim(),
-                serialNumber: values.serialNumber.trim(),
-                firmwareVersion: values.firmwareVersion.trim(),
-                encodingVersion: values.encodingVersion.trim(),
-                webVersion: values.webVersion.trim(),
-                pluginVersion: values.pluginVersion.trim(),
-                channelCount: Number(values.channelCount),
-                hddCount: Number(values.hddCount),
-                alarmInputCount: Number(values.alarmInputCount),
-                alarmOutputCount: Number(values.alarmOutputCount),
-                ipAddress: values.ipAddress.trim() || undefined,
-                location: values.location.trim() || undefined,
-                status: device?.status ?? "active",
-                updatedAt: now,
+                serialNo: values.serialNo.trim() || undefined,
+                siteId: values.siteId.trim(),
+                siteName: values.siteName.trim(),
+                firmware: values.firmware.trim() || undefined,
+                ip: values.ip.trim() || undefined,
+                httpPort: Number(values.httpPort),
+                sdkPort: Number(values.sdkPort),
+                username: values.username.trim(),
+                hasPassword: values.hasPassword,
+                activated: device?.activated ?? false,
+                online: device?.online ?? false,
+                lastSeen: device?.lastSeen,
             };
 
             setPendingDevice(savedDevice);
@@ -205,9 +184,9 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
     });
 
     const textField = (
-        name: Exclude<keyof DeviceFormValues, "type">,
+        name: Exclude<keyof DeviceFormValues, "type" | "hasPassword">,
         label: string,
-        options: { required?: boolean; numeric?: boolean } = {},
+        options: { required?: boolean; numeric?: boolean; min?: number; max?: number } = {},
     ) => (
         <Field
             label={label}
@@ -216,7 +195,8 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
         >
             <Input
                 type={options.numeric ? "number" : "text"}
-                min={options.numeric ? 0 : undefined}
+                min={options.min ?? (options.numeric ? 0 : undefined)}
+                max={options.max}
                 step={options.numeric ? 1 : undefined}
                 appearance="outline"
                 size="large"
@@ -280,18 +260,18 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
                                 onBlur={() => formik.setFieldTouched("type", true)}
                             >
                                 {deviceTypes.map((type) => (
-                                    <Option key={type} value={type}>{type}</Option>
+                                    <Option key={type} value={type}>
+                                        {type.toUpperCase()}
+                                    </Option>
                                 ))}
                             </Dropdown>
                         </Field>
-                        {textField("serialNumber", "Serial number", { required: true })}
-                        {textField("firmwareVersion", "Firmware version")}
-                        {textField("channelCount", "Channel count", { required: true, numeric: true })}
-                        {textField("hddCount", "HDD count", { required: true, numeric: true })}
-                        {textField("alarmInputCount", "Alarm input count", { required: true, numeric: true })}
-                        {textField("alarmOutputCount", "Alarm output count", { required: true, numeric: true })}
-                        {textField("ipAddress", "IP address")}
-                        {textField("location", "Location")}
+                        {textField("serialNo", "Serial number")}
+                        {textField("siteId", "Site ID", { required: true })}
+                        {textField("siteName", "Site name", { required: true })}
+                        {textField("ip", "IP address")}
+                        {textField("httpPort", "HTTP port", { required: true, numeric: true, min: 1, max: 65535 })}
+                        {textField("sdkPort", "SDK port", { required: true, numeric: true, min: 1, max: 65535 })}
                     </div>
                 </form>
             </OpenDrawer>

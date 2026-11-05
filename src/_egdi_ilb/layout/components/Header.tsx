@@ -12,7 +12,6 @@ import {
     Bell,
     User,
     Camera,
-    CheckCircle2,
     ShieldCheck,
     Sun,
     Moon,
