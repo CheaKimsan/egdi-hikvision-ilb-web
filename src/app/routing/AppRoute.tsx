@@ -12,6 +12,8 @@ import UserPage from "../modules/account/users/components/UserPage";
 import RolePage from "../modules/account/roles/components/RolePage";
 import DeviceManagementPage from "../modules/account/device-management/components/DeviceManagementPage";
 import VehiclePage from "../modules/account/vehicle/components/VehiclePage";
+import DeviceInstallationPage from "../modules/account/device-installation/components/DeviceInstallationPage";
+import ControlCenter from "../../_egdi_ilb/layout/ControlCenter";
 
 const ProtectedRoute = () => {
     const { user } = useAuth();
@@ -24,17 +26,18 @@ const AppRoute = () => (
         <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route element={<ProtectedRoute />}>
+                <Route path="/control-center" element={<ControlCenter />} />
                 <Route path="/management" element={<AppLayout />}>
                     <Route index element={null} />
                     <Route path="user" element={<UserPage />} />
                     <Route path="role" element={<RolePage />} />
                     <Route path="vehicle" element={<VehiclePage />} />
                     <Route path="device" element={<DeviceManagementPage />} />
+                    <Route path="device-installation" element={<DeviceInstallationPage />} />
                     <Route path="*" element={null} />
                 </Route>
             </Route>
-            <Route path="/" element={<Navigate to="/management" replace />} />
-            <Route path="*" element={<Navigate to="/management" replace />} />
+            <Route path="/" element={<Navigate to="/control-center" replace />} />
         </Routes>
     </BrowserRouter>
 );

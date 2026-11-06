@@ -18,7 +18,7 @@ import {
     Leaf,
     LogOut
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/GDI.png";
 import NoAvatar from "../../assets/images/no_avatar.jpeg";
 import { AppConfig } from "../../../config/ilb.config";
@@ -46,7 +46,11 @@ const Header: React.FC = () => {
         <header className="app-header" role="banner">
             <div className="app-header-inner">
                 {/* Brand */}
-                <div className="app-header-brand" aria-label="General Department of Immigration">
+                <Link
+                    to="/"
+                    className="app-header-brand"
+                    aria-label="General Department of Immigration"
+                >
                     <img
                         src={Logo}
                         alt="General Department of Immigration logo"
@@ -56,13 +60,18 @@ const Header: React.FC = () => {
                         <span className="app-header-brand-kh" lang="km">{AppConfig.orgKm}</span>
                         <span className="app-header-brand-en">{AppConfig.orgEn}</span>
                     </div>
-                </div>
+                </Link>
 
                 {/* Actions */}
                 <div className="app-header-actions">
                     <Tooltip content="Apps" relationship="label">
-                        <button type="button" className="app-header-icon-button" aria-label="Apps">
-                            <LayoutGrid strokeWidth={2} />
+                        <button
+                            type="button"
+                            className="app-header-icon-button"
+                            aria-label="Apps"
+                            onClick={() => navigate("/management")}
+                        >
+                            <LayoutGrid strokeWidth={2} name="Apps" />
                         </button>
                     </Tooltip>
 

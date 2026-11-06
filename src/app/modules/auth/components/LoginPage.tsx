@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Button, Field, Input } from "@fluentui/react-components";
+import { Button, Field, Input, Spinner } from "@fluentui/react-components";
 import { Eye20Regular, EyeOff20Regular } from "@fluentui/react-icons";
 import { useLocation, useNavigate, type Location } from "react-router-dom";
 import { formatDate, formatTime } from "../../../../_egdi_ilb/helpers/shared/formation/fmtDateTime";
@@ -30,12 +30,13 @@ const LoginPage: React.FC = () => {
             password: "",
         },
         validationSchema,
-        onSubmit: (values, { setStatus }) => {
+        onSubmit: async (values, { setStatus }) => {
+            await new Promise((resolve) => window.setTimeout(resolve, 500));
             const authenticated = login(values.username, values.password);
             if (authenticated) {
                 const destination = from
                     ? `${from.pathname}${from.search}${from.hash}`
-                    : "/management";
+                    : "/control-center";
                 navigate(destination, { replace: true });
                 return;
             }
@@ -92,6 +93,7 @@ const LoginPage: React.FC = () => {
                                 placeholder="" // Hide native placeholder
                                 appearance="outline"
                                 size="large"
+                                disabled={formik.isSubmitting}
                                 value={formik.values.username}
                                 onChange={(_, data) => {
                                     formik.setStatus(undefined);
@@ -126,11 +128,13 @@ const LoginPage: React.FC = () => {
                                 placeholder="" // Hide native placeholder
                                 appearance="outline"
                                 size="large"
+                                disabled={formik.isSubmitting}
                                 contentAfter={
                                     <Button
                                         type="button"
                                         appearance="subtle"
                                         size="small"
+                                        disabled={formik.isSubmitting}
                                         icon={showPassword ? <EyeOff20Regular /> : <Eye20Regular />}
                                         aria-label={showPassword ? "Hide password" : "Show password"}
                                         aria-pressed={showPassword}
@@ -163,8 +167,10 @@ const LoginPage: React.FC = () => {
                         type="submit"
                         appearance="primary"
                         lang="km"
+                        disabled={formik.isSubmitting || !formik.isValid}
+                        icon={formik.isSubmitting ? <Spinner size="tiny" /> : undefined}
                     >
-                        {AppConfig.submit}
+                        {formik.isSubmitting ? "កំពុងចូលប្រព័ន្ធ..." : AppConfig.submit}
                     </Button>
                 </form>
 

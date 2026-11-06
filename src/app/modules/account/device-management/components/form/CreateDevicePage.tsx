@@ -267,11 +267,11 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
                             </Dropdown>
                         </Field>
                         {textField("serialNo", "Serial number")}
-                        {textField("siteId", "Site ID", { required: true })}
-                        {textField("siteName", "Site name", { required: true })}
-                        {textField("ip", "IP address")}
-                        {textField("httpPort", "HTTP port", { required: true, numeric: true, min: 1, max: 65535 })}
-                        {textField("sdkPort", "SDK port", { required: true, numeric: true, min: 1, max: 65535 })}
+                        {/* {textField("siteId", "Site ID", { required: true })} */}
+                        {/* {textField("siteName", "Site name", { required: true })} */}
+                        {/* {textField("ip", "IP address")} */}
+                        {/* {textField("httpPort", "HTTP port", { required: true, numeric: true, min: 1, max: 65535 })} */}
+                        {/* {textField("sdkPort", "SDK port", { required: true, numeric: true, min: 1, max: 65535 })} */}
                     </div>
                 </form>
             </OpenDrawer>

@@ -19,8 +19,8 @@ export function Columns({
         { key: "type", title: "Type", dataIndex: "type" },
         { key: "model", title: "Model", dataIndex: "model" },
         { key: "serialNo", title: "Serial No.", dataIndex: "serialNo" },
-        { key: "siteName", title: "Site", dataIndex: "siteName" },
-        { key: "ip", title: "IP Address", dataIndex: "ip" },
+        { key: "Firmware", title: "Firmware", dataIndex: "firmware" },
+        // { key: "ip", title: "IP Address", dataIndex: "ip" },
         {
             key: "activation",
             title: "Activation",
@@ -33,15 +33,15 @@ export function Columns({
                 );
             },
         },
-        {
-            key: "online",
-            title: "Connection",
-            render: (row) => (
-                <span className={`status-badge ${row.online ? "active" : "inactive"}`}>
-                    {row.online ? "Online" : "Offline"}
-                </span>
-            ),
-        },
+        // {
+        //     key: "online",
+        //     title: "Connection",
+        //     render: (row) => (
+        //         <span className={`status-badge ${row.online ? "active" : "inactive"}`}>
+        //             {row.online ? "Online" : "Offline"}
+        //         </span>
+        //     ),
+        // },
         {
             key: "actions",
             title: "Actions",

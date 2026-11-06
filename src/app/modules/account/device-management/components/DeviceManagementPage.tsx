@@ -88,7 +88,7 @@ const DeviceManagementPage: React.FC = () => {
                 </div>
                 <CustomBtn
                     type="add"
-                    label="Create device"
+                    label="Add device"
                     icon={<AddRegular />}
                     className="device-management-create-button"
                     size="medium"

@@ -4,8 +4,10 @@ import {
     FileImage,
     LayoutDashboard,
     ListVideo,
+    MonitorPc,
     Server,
     Settings,
+    Tv,
     Users,
     UserShield,
     type LucideIcon,
@@ -25,7 +27,8 @@ export const mainItems: NavigationItem[] = [
 export const deviceConfigurationItems: NavigationItem[] = [
     { label: "Vehicle", icon: CarTaxiFront, path: "/management/vehicle" },
     { label: "Device", icon: Server, path: "/management/device" },
-    { label: "Camera", icon: Camera, path: "/management/camera" },
+    { label: "Device Installation", icon: MonitorPc, path: "/management/device-installation" },
+    // { label: "Channel", icon: Tv, path: "/management/channel" },
 ];
 
 export const FileManagementItems: NavigationItem[] = [
