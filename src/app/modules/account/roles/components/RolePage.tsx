@@ -12,7 +12,6 @@ import {
     Input,
     Textarea,
 } from "@fluentui/react-components";
-import { AddRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
 import { useUsersStore } from "../../users/core/store";
@@ -25,6 +24,7 @@ import { permissionActions, permissionModules } from "../core/model";
 import { useRolesStore } from "../core/store";
 import { Columns } from "./table/Columns";
 import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
+import { UserShieldIcon } from "lucide-react";
 
 type RoleDraft = {
     name: string;
@@ -141,7 +141,7 @@ const RolePage: React.FC = () => {
                 <CustomBtn
                     type="add"
                     label="Create role"
-                    icon={<AddRegular />}
+                    icon={<UserShieldIcon size={18} />}
                     className="user-management-create-button"
                     size="medium"
                     onClick={openCreate}

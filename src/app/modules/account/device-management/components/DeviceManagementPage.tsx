@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from "react";
-import { AddRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
 import type { ManagedDevice } from "../core/model";
@@ -7,6 +6,7 @@ import { Columns } from "./table/Columns";
 import { dummyDevices } from "../../../../../lib/data/dummy";
 import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
 import CreateDevicePage from "./form/CreateDevicePage";
+import { ServerPlus } from "lucide-react";
 
 const DeviceManagementPage: React.FC = () => {
     const [search, setSearch] = useState("");
@@ -89,7 +89,7 @@ const DeviceManagementPage: React.FC = () => {
                 <CustomBtn
                     type="add"
                     label="Add device"
-                    icon={<AddRegular />}
+                    icon={<ServerPlus size={18} />}
                     className="device-management-create-button"
                     size="medium"
                     onClick={handleCreate}

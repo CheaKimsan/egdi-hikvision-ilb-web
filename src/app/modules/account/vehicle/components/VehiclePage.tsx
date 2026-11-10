@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { AddRegular } from "@fluentui/react-icons";
+import { AddCircleRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
 import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
@@ -68,7 +68,7 @@ const VehiclePage: React.FC = () => {
                 <CustomBtn
                     type="add"
                     label="Add vehicle"
-                    icon={<AddRegular />}
+                    icon={<AddCircleRegular fontSize={18} fontWeight={14} />}
                     className="vehicle-management-create-button"
                     size="medium"
                     onClick={openCreate}

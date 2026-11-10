@@ -39,6 +39,33 @@ $font-size-lg: 18px;
   background: #05080c;
 }
 
+.control-center-header-toggle {
+  position: absolute;
+  z-index: 51;
+  top: 8px;
+  right: 16px;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 50%;
+  background: rgba(22, 32, 43, 0.82);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+
+  &:hover {
+    background: rgba(22, 32, 43, 0.96);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
 .control-center-feed-count {
   position: absolute;
   z-index: 2;
@@ -68,6 +95,36 @@ $font-size-lg: 18px;
   box-shadow: 0 0 10px rgba(74, 222, 128, 0.65);
 }
 
+.control-center-status-dot--live {
+  animation: control-center-status-pulse 1.8s ease-out infinite;
+}
+
+.control-center-status-dot--offline {
+  background: #64748b;
+  box-shadow: none;
+}
+
+@keyframes control-center-status-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.65);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(74, 222, 128, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control-center-status-dot--live {
+    animation: none;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.65);
+  }
+}
+
 .control-center-main-camera {
   position: absolute;
   inset: 0;
@@ -75,6 +132,38 @@ $font-size-lg: 18px;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.control-center-video-off {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(203, 213, 223, 0.72);
+  pointer-events: none;
+
+  svg {
+    width: 48px;
+    height: 48px;
+    stroke-width: 1.5;
+  }
+
+  &--main {
+    position: absolute;
+    inset: 0;
+    background: #05080c;
+  }
+
+  &--sub {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background: #111820;
+
+    svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
 }
 
 .control-center-main-label {
@@ -108,23 +197,36 @@ $font-size-lg: 18px;
 
 .control-center-sub-camera {
   position: absolute;
-  width: clamp(150px, 18vw, 250px);
+  display: block;
+  width: clamp(220px, 25vw, 350px);
   aspect-ratio: 16 / 9;
+  padding: 0;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.75);
   border-radius: 9px;
   background: #111820;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
   pointer-events: auto;
   transition: transform 160ms ease, border-color 160ms ease;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     z-index: 3;
     transform: scale(1.04);
     border-color: #fff;
   }
 
-  video {
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  video,
+  .control-center-sub-camera-video {
     display: block;
     width: 100%;
     height: 100%;
@@ -196,6 +298,59 @@ $font-size-lg: 18px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
+
+.control-center-sub-camera-status {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.control-center-sub-camera-timestamp {
+  padding: 8px 9px;
+  border-radius: 4px;
+  background: transparent;
+  color: #d3dde6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.control-center-switch-hint {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(117, 16, 29, 0.96), rgba(71, 13, 23, 0.94));
+  color: #fff;
+  opacity: 0.96;
+  pointer-events: auto;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
+}
+
+.control-center-sub-camera:hover .control-center-switch-hint,
+.control-center-sub-camera:focus-visible .control-center-switch-hint {
+  transform: translateY(-1px);
+  opacity: 1;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 @media (max-width: 700px) {

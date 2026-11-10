@@ -16,7 +16,8 @@ import {
     Sun,
     Moon,
     Leaf,
-    LogOut
+    LogOut,
+    X,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/GDI.png";
@@ -24,7 +25,11 @@ import NoAvatar from "../../assets/images/no_avatar.jpeg";
 import { AppConfig } from "../../../config/ilb.config";
 import { useAuth } from "../../../app/modules/auth/AuthContext";
 
-const Header: React.FC = () => {
+type HeaderProps = {
+    onClose?: () => void;
+};
+
+const Header: React.FC<HeaderProps> = ({ onClose }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const displayName = user?.displayName ?? user?.username ?? "User";
@@ -64,6 +69,20 @@ const Header: React.FC = () => {
 
                 {/* Actions */}
                 <div className="app-header-actions">
+                    {onClose && (
+                        <Tooltip content="Close header" relationship="label">
+                            <button
+                                type="button"
+                                className="app-header-icon-button"
+                                aria-label="Close header"
+                                onClick={onClose}
+                            >
+                                <X strokeWidth={2} />
+                            </button>
+                        </Tooltip>
+                    )}
+
+
                     <Tooltip content="Management" relationship="label">
                         <button
                             type="button"
@@ -87,6 +106,8 @@ const Header: React.FC = () => {
                             <span className="app-header-notification-dot"></span>
                         </button>
                     </Tooltip>
+
+
 
                     {/* User Profile Popover */}
                     <Popover positioning="below-end" trapFocus>
