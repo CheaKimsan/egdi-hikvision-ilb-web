@@ -3,10 +3,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Field, Input } from "@fluentui/react-components";
 import { NetworkCheckRegular } from "@fluentui/react-icons";
-import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
-import ConfirmCreateDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmEditDialog";
+import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
+import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/alert/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/alert/ConfirmEditDialog";
 import type { NetworkConfiguration } from "../../core/model";
 
 type NetworkFormValues = {

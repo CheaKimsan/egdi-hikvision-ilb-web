@@ -1,4 +1,4 @@
-import { Column } from "../../../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import { Column } from "../../../../../../lib/helpers/shared/table/MainTable";
 import { AuthUser } from "../../../../auth/AuthContext";
 import ActionCell from "./ActionCell";
 

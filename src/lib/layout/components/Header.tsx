@@ -64,14 +64,14 @@ const Header: React.FC = () => {
 
                 {/* Actions */}
                 <div className="app-header-actions">
-                    <Tooltip content="Apps" relationship="label">
+                    <Tooltip content="Management" relationship="label">
                         <button
                             type="button"
                             className="app-header-icon-button"
-                            aria-label="Apps"
+                            aria-label="Management"
                             onClick={() => navigate("/management")}
                         >
-                            <LayoutGrid strokeWidth={2} name="Apps" />
+                            <LayoutGrid strokeWidth={2} name="Management" />
                         </button>
                     </Tooltip>
 

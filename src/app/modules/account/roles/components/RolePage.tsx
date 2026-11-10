@@ -13,8 +13,8 @@ import {
     Textarea,
 } from "@fluentui/react-components";
 import { AddRegular } from "@fluentui/react-icons";
-import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import MainTable from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
+import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
 import { useUsersStore } from "../../users/core/store";
 import type {
     PermissionAction,
@@ -24,7 +24,7 @@ import type {
 import { permissionActions, permissionModules } from "../core/model";
 import { useRolesStore } from "../core/store";
 import { Columns } from "./table/Columns";
-import SearchField from "../../../../../_egdi_ilb/helpers/shared/search/SearchField";
+import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
 
 type RoleDraft = {
     name: string;

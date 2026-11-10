@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 import { AddRegular } from "@fluentui/react-icons";
-import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import MainTable from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
+import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
 import type { ManagedDevice } from "../core/model";
 import { Columns } from "./table/Columns";
-import { dummyDevices } from "../../../../../_egdi_ilb/data/dummy";
-import SearchField from "../../../../../_egdi_ilb/helpers/shared/search/SearchField";
+import { dummyDevices } from "../../../../../lib/data/dummy";
+import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
 import CreateDevicePage from "./form/CreateDevicePage";
 
 const DeviceManagementPage: React.FC = () => {

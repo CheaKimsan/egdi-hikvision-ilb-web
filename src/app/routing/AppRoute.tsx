@@ -6,14 +6,14 @@ import {
     Routes,
 } from "react-router-dom";
 import { useAuth } from "../modules/auth/AuthContext";
-import AppLayout from "../../_egdi_ilb/layout/AppLayout";
+import AppLayout from "../../lib/layout/AppLayout";
 import LoginPage from "../modules/auth/components/LoginPage";
 import UserPage from "../modules/account/users/components/UserPage";
 import RolePage from "../modules/account/roles/components/RolePage";
 import DeviceManagementPage from "../modules/account/device-management/components/DeviceManagementPage";
 import VehiclePage from "../modules/account/vehicle/components/VehiclePage";
 import DeviceInstallationPage from "../modules/account/device-installation/components/DeviceInstallationPage";
-import ControlCenter from "../../_egdi_ilb/layout/ControlCenter";
+import ControlCenter from "../../lib/layout/ControlCenter";
 
 const ProtectedRoute = () => {
     const { user } = useAuth();

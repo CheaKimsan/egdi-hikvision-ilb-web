@@ -1,5 +1,5 @@
 import { Lottie } from "lottie-react";
-import noResultAnimation from "../../../../_egdi_ilb/assets/images/no_result_found.json";
+import noResultAnimation from "../../../assets/images/no_result_found.json";
 
 type NoDataProps = {
     title?: string;

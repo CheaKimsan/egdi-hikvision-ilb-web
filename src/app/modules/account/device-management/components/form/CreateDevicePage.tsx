@@ -3,10 +3,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Dropdown, Field, Input, Option } from "@fluentui/react-components";
 import { ServerRegular } from "@fluentui/react-icons";
-import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
-import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import ConfirmCreateDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmEditDialog";
+import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
+import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/alert/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/alert/ConfirmEditDialog";
 import type { ManagedDevice } from "../../core/model";
 
 const deviceTypes: ManagedDevice["type"][] = [
@@ -267,6 +267,7 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
                             </Dropdown>
                         </Field>
                         {textField("serialNo", "Serial number")}
+                        {textField("firmware", "Firmware")}
                         {/* {textField("siteId", "Site ID", { required: true })} */}
                         {/* {textField("siteName", "Site name", { required: true })} */}
                         {/* {textField("ip", "IP address")} */}

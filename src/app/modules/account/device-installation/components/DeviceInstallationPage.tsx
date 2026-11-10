@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { AddRegular } from "@fluentui/react-icons";
-import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import MainTable from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
-import SearchField from "../../../../../_egdi_ilb/helpers/shared/search/SearchField";
-import { dummyDevices } from "../../../../../_egdi_ilb/data/dummy";
+import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
+import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
+import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
+import { dummyDevices } from "../../../../../lib/data/dummy";
 import type { Installation } from "../core/model";
 import { useInstallationStore } from "../core/store";
 import { useVehicleStore } from "../../vehicle/core/store";

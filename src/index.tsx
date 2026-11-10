@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '@fontsource-variable/inter';
 import './index.css';
-import './_egdi_ilb/assets/scss/app.scss';
+import './lib/assets/scss/app.scss';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

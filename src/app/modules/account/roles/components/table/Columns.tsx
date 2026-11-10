@@ -1,4 +1,4 @@
-import type { Column } from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import type { Column } from "../../../../../lib/helpers/shared/table/MainTable";
 import type { FireUser } from "../../../users/core/model";
 import type { Role } from "../../core/model";
 import ActionCell from "./ActionCell";

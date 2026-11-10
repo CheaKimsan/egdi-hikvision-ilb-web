@@ -10,8 +10,8 @@
 
 # production
 /build
-/src/_egdi_ilb/assets/video/dummy_video.mp4
-/src/_egdi_ilb/assets/video/dummy_video2.mp4
+/src/lib/assets/video/dummy_video.mp4
+/src/lib/assets/video/dummy_video2.mp4
 
 # misc
 .DS_Store

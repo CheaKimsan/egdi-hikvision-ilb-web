@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { AddRegular } from "@fluentui/react-icons";
-import CustomBtn from "../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import MainTable from "../../../../../_egdi_ilb/helpers/shared/table/MainTable";
-import SearchField from "../../../../../_egdi_ilb/helpers/shared/search/SearchField";
+import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
+import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
+import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
 import type { NetworkConfiguration } from "../core/model";
 import { useNetworkStore } from "../core/store";
 import NetworkFormDialog from "./form/NetworkFormDialog";
