@@ -4,24 +4,8 @@ import { Tooltip } from "@fluentui/react-components";
 import Header from "./components/Header";
 import { useInstallationStore } from "../../app/modules/account/device-installation/core/store";
 import { useVehicleStore } from "../../app/modules/account/vehicle/core/store";
-import demoVideo from "../assets/video/dummy_video.mp4";
-import demoVideo2 from "../assets/video/dummy_video2.mp4";
+import { CameraFeed, cameraFeeds } from "../constants/CameraFeeds";
 
-type CameraFeed = {
-    id: string;
-    label: string;
-    location: string;
-    src?: string;
-};
-
-const cameraFeeds: CameraFeed[] = [
-    { id: "CAM-01", label: "Main Entrance", location: "North Gate", src: demoVideo },
-    { id: "CAM-02", label: "Vehicle Inspection", location: "Inspection Lane", src: demoVideo2 },
-    { id: "CAM-03", label: "Arrival Lane", location: "Inbound" },
-    { id: "CAM-04", label: "Departure Lane", location: "Outbound" },
-    { id: "CAM-05", label: "Vehicle Parking", location: "Parking Area" },
-    { id: "CAM-06", label: "Perimeter", location: "East Boundary" },
-];
 
 type CameraVideoProps = {
     camera: CameraFeed;
@@ -89,15 +73,14 @@ const ControlCenter: React.FC = () => {
     const installedVehicleNames = Array.from(installedVehicleCodes, (vehicleCode) =>
         vehicles.find((vehicle) => vehicle.vehicleCode === vehicleCode)?.name ?? vehicleCode,
     );
+    const vehicleLocation = Array.from(
+        new Set(
+            Array.from(installedVehicleCodes, (vehicleCode) =>
+                vehicles.find((vehicle) => vehicle.vehicleCode === vehicleCode)?.province,
+            ).filter((province): province is string => Boolean(province)),
+        ),
+    ).join(", ") || "N/A";
 
-
-    const overlayPositions = [
-        "top-left",
-        "top-right",
-        "bottom-left",
-        "bottom-right",
-        "top-center",
-    ] as const;
 
     useEffect(() => {
         const timer = window.setInterval(() => setTimestamp(new Date()), 1000);
@@ -171,30 +154,30 @@ const ControlCenter: React.FC = () => {
                     </div>
                     <span className="control-center-feed-summary-divider" aria-hidden="true" />
                     <div className="control-center-feed-summary-metric">
-                        <strong>{String(cameraFeeds.length).padStart(2, "0")}</strong>
-                        <span>CAMERAS</span>
+                        <span>Location</span>
+                        <strong>{vehicleLocation}</strong>
                     </div>
                     <div className="control-center-feed-summary-metric control-center-feed-summary-vehicles">
                         {/* <strong title={installedVehicleNames.join(", ")}>
                             {installedVehicleNames.join(", ") || "None"}
                         </strong> */}
-                        <strong>{String(installedVehicleNames.length).padStart(2, "0")}</strong>
+                        <strong>{installedVehicleNames.length}</strong>
                         <span>VEHICLES</span>
                     </div>
                     <div className="control-center-feed-summary-metric control-center-feed-summary-metric--online">
-                        <strong>{String(activeStreamCount).padStart(2, "0")}</strong>
+                        <strong>{activeStreamCount}</strong>
                         <span>ONLINE</span>
                     </div>
                     <div className="control-center-feed-summary-metric control-center-feed-summary-metric--offline">
-                        <strong>{String(offlineStreamCount).padStart(2, "0")}</strong>
+                        <strong>{offlineStreamCount}</strong>
                         <span>OFFLINE</span>
                     </div>
                 </div>
                 <section className="control-center-sub-cameras" aria-label="Other camera feeds">
-                    {subCameras.map((camera, index) => (
+                    {subCameras.map((camera) => (
                         <button
                             type="button"
-                            className={`control-center-sub-camera control-center-sub-camera--${overlayPositions[index]}`}
+                            className="control-center-sub-camera"
                             key={camera.id}
                             aria-label={`Switch main view to ${camera.label}`}
                             aria-pressed="false"

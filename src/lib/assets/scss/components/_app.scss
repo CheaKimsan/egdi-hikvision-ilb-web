@@ -69,8 +69,8 @@ $font-size-lg: 18px;
 .control-center-feed-summary {
   position: absolute;
   z-index: 2;
+  top: 18px;
   left: 50%;
-  bottom: 18px;
   display: inline-flex;
   align-items: center;
   gap: 14px;
@@ -116,17 +116,6 @@ $font-size-lg: 18px;
   color: #f1f5f9;
   font-size: 14px;
   font-variant-numeric: tabular-nums;
-}
-
-.control-center-feed-summary-vehicles {
-  max-width: 220px;
-
-  strong {
-    overflow: hidden;
-    max-width: 100%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 }
 
 .control-center-feed-summary-metric--online strong {
@@ -189,7 +178,7 @@ $font-size-lg: 18px;
 .control-center-main-camera-brackets {
   position: absolute;
   z-index: 3;
-  inset: 25%;
+  inset: 20%;
   pointer-events: none;
 }
 
@@ -306,7 +295,7 @@ $font-size-lg: 18px;
 .control-center-main-label {
   position: absolute;
   z-index: 1;
-  bottom: 18px;
+  top: 18px;
   left: 18px;
   display: inline-flex;
   align-items: center;
@@ -328,14 +317,26 @@ $font-size-lg: 18px;
 .control-center-sub-cameras {
   position: absolute;
   z-index: 2;
-  inset: 0;
-  pointer-events: none;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  display: flex;
+  justify-content: safe center;
+  align-items: flex-end;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 3px 3px 6px;
+  pointer-events: auto;
+  scrollbar-color: rgba(255, 255, 255, 0.4) rgba(0, 0, 0, 0.2);
+  scrollbar-width: thin;
 }
 
 .control-center-sub-camera {
-  position: absolute;
+  position: relative;
   display: block;
-  width: clamp(220px, 25vw, 350px);
+  width: clamp(150px, 18vw, 250px);
+  flex: 0 0 clamp(150px, 18vw, 250px);
   aspect-ratio: 16 / 9;
   padding: 0;
   overflow: hidden;
@@ -345,7 +346,7 @@ $font-size-lg: 18px;
   color: inherit;
   font: inherit;
   text-align: left;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  // box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   pointer-events: auto;
   transition: transform 160ms ease, border-color 160ms ease;
@@ -378,35 +379,6 @@ $font-size-lg: 18px;
     pointer-events: none;
   }
 
-  &--top-left {
-    top: 18px;
-    left: 18px;
-  }
-
-  &--top-center {
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-
-    &:hover {
-      transform: translateX(-50%) scale(1.04);
-    }
-  }
-
-  &--top-right {
-    top: 18px;
-    right: 18px;
-  }
-
-  &--bottom-left {
-    bottom: 18px;
-    left: 18px;
-  }
-
-  &--bottom-right {
-    right: 18px;
-    bottom: 18px;
-  }
 }
 
 .control-center-sub-camera-label {
@@ -440,8 +412,8 @@ $font-size-lg: 18px;
 .control-center-sub-camera-status {
   position: absolute;
   z-index: 2;
-  top: 10px;
-  left: 10px;
+  top: 5px;
+  left: 5px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -463,9 +435,9 @@ $font-size-lg: 18px;
 
 .control-center-switch-hint {
   position: absolute;
-  z-index: 1;
+  z-index: 1; 
   top: 10px;
-  right: 10px;
+  right: 10px;  
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -474,7 +446,7 @@ $font-size-lg: 18px;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(117, 16, 29, 0.96), rgba(71, 13, 23, 0.94));
+  background: rgba(15, 20, 28, 0.08);
   color: #fff;
   opacity: 0.96;
   pointer-events: auto;
@@ -494,7 +466,6 @@ $font-size-lg: 18px;
   .control-center-main-label {
     top: 12px;
     right: 12px;
-    bottom: auto;
     left: 12px;
     width: fit-content;
     max-width: calc(100% - 24px);
@@ -505,12 +476,13 @@ $font-size-lg: 18px;
   }
 
   .control-center-feed-summary {
-    right: 12px;
-    bottom: 12px;
-    left: auto;
+    top: auto;
+    right: auto;
+    left: 50%;
+    bottom: 110px;
     gap: 9px;
     padding: 8px 10px;
-    transform: none;
+    transform: translateX(-50%);
   }
 
   .control-center-feed-summary-caption {
@@ -522,21 +494,20 @@ $font-size-lg: 18px;
   }
 
   .control-center-sub-cameras {
-    inset: auto 12px 58px;
-    display: flex;
-    gap: 8px;
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    align-items: flex-end;
+    gap: 7px;
     overflow-x: auto;
-    padding: 3px 2px 8px;
-    scrollbar-color: rgba(255, 255, 255, 0.45) rgba(0, 0, 0, 0.25);
-    scrollbar-width: thin;
+    overflow-y: hidden;
+    padding: 3px 2px 6px;
   }
 
   .control-center-sub-camera {
-    position: relative;
-    inset: auto;
-    width: clamp(130px, 38vw, 190px);
-    flex: 0 0 clamp(130px, 38vw, 190px);
-    align-self: flex-end;
+    width: clamp(110px, 32vw, 170px);
+    flex-basis: clamp(110px, 32vw, 170px);
   }
 }
 
