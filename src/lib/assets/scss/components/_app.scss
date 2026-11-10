@@ -66,24 +66,75 @@ $font-size-lg: 18px;
   }
 }
 
-.control-center-feed-count {
+.control-center-feed-summary {
   position: absolute;
   z-index: 2;
-  right: 50%;
+  left: 50%;
   bottom: 18px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 999px;
-  background: rgba(22, 32, 43, 0.82);
-  color: #cbd5df;
-  font-size: 12px;
-  font-weight: 600;
+  gap: 14px;
+  padding: 10px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 10px;
+  background: rgba(12, 19, 27, 0.88);
+  color: #d7e0e8;
+  font-size: 10px;
   backdrop-filter: blur(12px);
-  transform: translateX(50%);
+  transform: translateX(-50%);
   white-space: nowrap;
+}
+
+.control-center-feed-summary-model,
+.control-center-feed-summary-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-center-feed-summary-model strong {
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.control-center-feed-summary-caption,
+.control-center-feed-summary-metric span {
+  color: #8b9aaa;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.control-center-feed-summary-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(148, 163, 184, 0.25);
+}
+
+.control-center-feed-summary-metric strong {
+  color: #f1f5f9;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.control-center-feed-summary-vehicles {
+  max-width: 220px;
+
+  strong {
+    overflow: hidden;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.control-center-feed-summary-metric--online strong {
+  color: #4ade80;
+}
+
+.control-center-feed-summary-metric--offline strong {
+  color: #94a3b8;
 }
 
 .control-center-status-dot {
@@ -127,6 +178,7 @@ $font-size-lg: 18px;
 
 .control-center-main-camera {
   position: absolute;
+  z-index: 0;
   inset: 0;
   display: block;
   width: 100%;
@@ -134,10 +186,82 @@ $font-size-lg: 18px;
   object-fit: cover;
 }
 
+.control-center-main-camera-brackets {
+  position: absolute;
+  z-index: 3;
+  inset: 25%;
+  pointer-events: none;
+}
+
+.control-center-main-camera-bracket {
+  position: absolute;
+  width: clamp(18px, 2.5vw, 26px);
+  height: clamp(18px, 2.5vw, 26px);
+  border-color: #00e5b3;
+  border-style: solid;
+  filter: drop-shadow(0 0 3px rgba(0, 229, 179, 0.65));
+
+  &--top-left {
+    top: 0;
+    left: 0;
+    border-width: 2px 0 0 2px;
+  }
+
+  &--top-right {
+    top: 0;
+    right: 0;
+    border-width: 2px 2px 0 0;
+  }
+
+  &--bottom-left {
+    bottom: 0;
+    left: 0;
+    border-width: 0 0 2px 2px;
+  }
+
+  &--bottom-right {
+    right: 0;
+    bottom: 0;
+    border-width: 0 2px 2px 0;
+  }
+}
+
+.control-center-main-camera-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+
+  &::before,
+  &::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: rgba(209, 250, 229, 0.8);
+    box-shadow: 0 0 4px rgba(0, 229, 179, 0.45);
+    content: "";
+    transform: translate(-50%, -50%);
+  }
+
+  &::before {
+    width: 1px;
+    height: 24px;
+  }
+
+  &::after {
+    width: 24px;
+    height: 1px;
+  }
+}
+
 .control-center-video-off {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 10px;
   color: rgba(203, 213, 223, 0.72);
   pointer-events: none;
 
@@ -145,6 +269,15 @@ $font-size-lg: 18px;
     width: 48px;
     height: 48px;
     stroke-width: 1.5;
+  }
+
+  span {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
   }
 
   &--main {
@@ -162,6 +295,10 @@ $font-size-lg: 18px;
     svg {
       width: 32px;
       height: 32px;
+    }
+
+    span {
+      font-size: 8px;
     }
   }
 }
@@ -367,12 +504,21 @@ $font-size-lg: 18px;
     white-space: nowrap;
   }
 
-  .control-center-feed-count {
-    top: auto;
+  .control-center-feed-summary {
     right: 12px;
     bottom: 12px;
+    left: auto;
+    gap: 9px;
+    padding: 8px 10px;
     transform: none;
-    font-size: 10px;
+  }
+
+  .control-center-feed-summary-caption {
+    display: none;
+  }
+
+  .control-center-feed-summary-metric span {
+    font-size: 8px;
   }
 
   .control-center-sub-cameras {

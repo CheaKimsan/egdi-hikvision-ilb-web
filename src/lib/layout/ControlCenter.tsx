@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { ChevronDown, Maximize2, VideoOff } from "lucide-react";
 import { Tooltip } from "@fluentui/react-components";
 import Header from "./components/Header";
+import { useInstallationStore } from "../../app/modules/account/device-installation/core/store";
+import { useVehicleStore } from "../../app/modules/account/vehicle/core/store";
 import demoVideo from "../assets/video/dummy_video.mp4";
 import demoVideo2 from "../assets/video/dummy_video2.mp4";
 
@@ -42,6 +44,7 @@ const CameraVideo: React.FC<CameraVideoProps> = ({
                 aria-label={`No video stream for ${camera.label}`}
             >
                 <VideoOff aria-hidden="true" />
+                <span>No Signal</span>
             </div>
         );
     }
@@ -66,6 +69,8 @@ const CameraVideo: React.FC<CameraVideoProps> = ({
 };
 
 const ControlCenter: React.FC = () => {
+    const installations = useInstallationStore((state) => state.rows);
+    const vehicles = useVehicleStore((state) => state.rows);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [mainCameraId, setMainCameraId] = useState(cameraFeeds[0].id);
     const [timestamp, setTimestamp] = useState(() => new Date());
@@ -73,6 +78,19 @@ const ControlCenter: React.FC = () => {
     const [isMainCameraLive, setIsMainCameraLive] = useState(false);
     const mainCamera = cameraFeeds.find((camera) => camera.id === mainCameraId) ?? cameraFeeds[0];
     const subCameras = cameraFeeds.filter((camera) => camera.id !== mainCamera.id);
+    const activeStreamCount = (isMainCameraLive ? 1 : 0)
+        + subCameras.filter((camera) => liveSubCameras[camera.id]).length;
+    const offlineStreamCount = cameraFeeds.length - activeStreamCount;
+    const installedVehicleCodes = new Set(
+        installations
+            .filter((installation) => !installation.removedAt)
+            .map((installation) => installation.vehicleCode),
+    );
+    const installedVehicleNames = Array.from(installedVehicleCodes, (vehicleCode) =>
+        vehicles.find((vehicle) => vehicle.vehicleCode === vehicleCode)?.name ?? vehicleCode,
+    );
+
+
     const overlayPositions = [
         "top-left",
         "top-right",
@@ -121,6 +139,13 @@ const ControlCenter: React.FC = () => {
                     variant="main"
                     onStreamStatusChange={setIsMainCameraLive}
                 />
+                <div className="control-center-main-camera-brackets" aria-hidden="true">
+                    <span className="control-center-main-camera-bracket control-center-main-camera-bracket--top-left" />
+                    <span className="control-center-main-camera-bracket control-center-main-camera-bracket--top-right" />
+                    <span className="control-center-main-camera-bracket control-center-main-camera-bracket--bottom-left" />
+                    <span className="control-center-main-camera-bracket control-center-main-camera-bracket--bottom-right" />
+                    <span className="control-center-main-camera-crosshair" />
+                </div>
                 <div className="control-center-main-label">
                     <span
                         className={`control-center-status-dot ${isMainCameraLive ? "control-center-status-dot--live" : "control-center-status-dot--offline"}`}
@@ -131,10 +156,40 @@ const ControlCenter: React.FC = () => {
                     <strong>{mainCamera.label}</strong>
                     <span>{mainCamera.location}</span>
                 </div>
-                <span className="control-center-feed-count">
-                    <span className="control-center-status-dot" />
-                    {cameraFeeds.length} demo feeds
-                </span>
+                <div
+                    className="control-center-feed-summary"
+                    role="status"
+                    aria-label={`${cameraFeeds.length} cameras, installed vehicles: ${installedVehicleNames.join(", ") || "none"}, ${activeStreamCount} streams active, ${offlineStreamCount} offline`}
+                >
+                    <div className="control-center-feed-summary-model">
+                        <span
+                            className={`control-center-status-dot ${activeStreamCount > 0 ? "control-center-status-dot--live" : "control-center-status-dot--offline"}`}
+                            aria-hidden="true"
+                        />
+                        <strong>TVJ860-GIR</strong>
+                        <span className="control-center-feed-summary-caption">CAMERA SYSTEM</span>
+                    </div>
+                    <span className="control-center-feed-summary-divider" aria-hidden="true" />
+                    <div className="control-center-feed-summary-metric">
+                        <strong>{String(cameraFeeds.length).padStart(2, "0")}</strong>
+                        <span>CAMERAS</span>
+                    </div>
+                    <div className="control-center-feed-summary-metric control-center-feed-summary-vehicles">
+                        {/* <strong title={installedVehicleNames.join(", ")}>
+                            {installedVehicleNames.join(", ") || "None"}
+                        </strong> */}
+                        <strong>{String(installedVehicleNames.length).padStart(2, "0")}</strong>
+                        <span>VEHICLES</span>
+                    </div>
+                    <div className="control-center-feed-summary-metric control-center-feed-summary-metric--online">
+                        <strong>{String(activeStreamCount).padStart(2, "0")}</strong>
+                        <span>ONLINE</span>
+                    </div>
+                    <div className="control-center-feed-summary-metric control-center-feed-summary-metric--offline">
+                        <strong>{String(offlineStreamCount).padStart(2, "0")}</strong>
+                        <span>OFFLINE</span>
+                    </div>
+                </div>
                 <section className="control-center-sub-cameras" aria-label="Other camera feeds">
                     {subCameras.map((camera, index) => (
                         <button
