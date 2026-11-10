@@ -7,7 +7,7 @@ import {
     useState,
     type ReactNode,
 } from "react";
-import { dummyUsers } from "../../../_egdi_ilb/data/dummy";
+import { dummyUsers } from "../../../lib/data/dummy";
 import { DummyUser } from "./core/model";
 
 export type AuthUser = Omit<DummyUser, "password">;

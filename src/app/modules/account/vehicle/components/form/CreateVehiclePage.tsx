@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Dropdown, Field, Input, Option } from "@fluentui/react-components";
-import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
-import ConfirmCreateDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmEditDialog";
-import { CAMBODIA_PROVINCES } from "../../../../../../_egdi_ilb/data/CambodiaProvinces";
+import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
+import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/alert/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/alert/ConfirmEditDialog";
+import { CAMBODIA_PROVINCES } from "../../../../../../lib/data/CambodiaProvinces";
 import type { Vehicle } from "../../core/model";
 import { CarTaxiFront } from "lucide-react";
 

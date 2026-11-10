@@ -1,4 +1,4 @@
-import type { Column as TableColumn } from "../../../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import type { Column as TableColumn } from "../../../../../../lib/helpers/shared/table/MainTable";
 import type { ManagedDevice } from "../../../device-management/core/model";
 import type { Vehicle } from "../../../vehicle/core/model";
 import type { Installation } from "../../core/model";

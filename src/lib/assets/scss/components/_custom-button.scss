@@ -56,6 +56,12 @@
     padding: 0 16px;
   }
 
+  &.custom-btn--large {
+    min-height: 44px;
+    padding: 0 20px;
+    font-size: 15px;
+  }
+
   .custom-btn__content {
     display: inline-flex;
     align-items: center;

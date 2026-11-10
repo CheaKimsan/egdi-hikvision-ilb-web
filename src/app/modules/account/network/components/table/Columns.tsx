@@ -1,4 +1,4 @@
-import type { Column } from "../../../../../../_egdi_ilb/helpers/shared/table/MainTable";
+import type { Column } from "../../../../../../lib/helpers/shared/table/MainTable";
 import type { NetworkConfiguration } from "../../core/model";
 import ActionCell from "./ActionCell";
 

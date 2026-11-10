@@ -9,11 +9,11 @@ import {
     Option,
 } from "@fluentui/react-components";
 import { CameraRegular, DeleteRegular, PersonAddRegular } from "@fluentui/react-icons";
-import NoAvatar from "../../../../../../_egdi_ilb/assets/images/no_avatar.jpeg";
-import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
-import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import ConfirmCreateDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmEditDialog";
+import NoAvatar from "../../../../../../lib/assets/images/no_avatar.jpeg";
+import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
+import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/alert/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/alert/ConfirmEditDialog";
 import { useUsersStore, type UserDrawerMode } from "../../core/store";
 import type { FireUser } from "../../core/model";
 import { useRolesStore } from "../../../roles/core/store";

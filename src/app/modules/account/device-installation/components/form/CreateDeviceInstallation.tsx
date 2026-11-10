@@ -11,13 +11,13 @@ import {
 import { MonitorPc } from "lucide-react";
 import type { ManagedDevice } from "../../../device-management/core/model";
 import type { Vehicle } from "../../../vehicle/core/model";
-import CustomBtn from "../../../../../../_egdi_ilb/helpers/shared/button/CustomBtn";
-import ConfirmCreateDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../_egdi_ilb/helpers/shared/alert/ConfirmEditDialog";
-import OpenDrawer from "../../../../../../_egdi_ilb/helpers/shared/drawer/OpenDrawer";
+import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/alert/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/alert/ConfirmEditDialog";
+import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
 import type { Installation } from "../../core/model";
 import { useAuth } from "../../../../auth/AuthContext";
-import { dummyUsers } from "../../../../../../_egdi_ilb/data/dummy";
+import { dummyUsers } from "../../../../../../lib/data/dummy";
 
 type InstallationFormValues = {
     deviceId: string;

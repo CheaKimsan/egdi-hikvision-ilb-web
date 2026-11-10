@@ -1,5 +1,4 @@
 import {
-    Camera,
     CarTaxiFront,
     FileImage,
     LayoutDashboard,
@@ -7,7 +6,6 @@ import {
     MonitorPc,
     Server,
     Settings,
-    Tv,
     Users,
     UserShield,
     type LucideIcon,
