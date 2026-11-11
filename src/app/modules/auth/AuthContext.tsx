@@ -7,6 +7,7 @@ import {
     useState,
     type ReactNode,
 } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { dummyUsers } from "../../../lib/data/dummy";
 import { DummyUser } from "./core/model";
 
@@ -38,6 +39,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+    const queryClient = useQueryClient();
     const [user, setUser] = useState<AuthUser | null>(readStoredUser);
 
     const login = useCallback((username: string, password: string): boolean => {
@@ -63,22 +65,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const logout = useCallback(() => {
         setUser(null);
+        queryClient.clear();
         try {
             localStorage.removeItem(STORAGE_KEY);
         } catch {
             /* ignore */
         }
-    }, []);
+    }, [queryClient]);
 
     useEffect(() => {
         const onStorage = (event: StorageEvent) => {
             if (event.key === STORAGE_KEY) {
-                setUser(readStoredUser());
+                const storedUser = readStoredUser();
+                setUser(storedUser);
+                // Logged out in another tab: clear cached data here too
+                if (!storedUser) queryClient.clear();
             }
         };
         window.addEventListener("storage", onStorage);
         return () => window.removeEventListener("storage", onStorage);
-    }, []);
+    }, [queryClient]);
 
     const value = useMemo(
         () => ({ user, isLoading: false, login, logout }),
