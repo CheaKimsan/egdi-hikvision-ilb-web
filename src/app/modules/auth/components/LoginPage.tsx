@@ -3,8 +3,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button, Field, Input, Spinner } from "@fluentui/react-components";
 import { Eye20Regular, EyeOff20Regular } from "@fluentui/react-icons";
-import { useLocation, useNavigate, type Location } from "react-router-dom";
-import { formatDate, formatTime } from "../../../../lib/helpers/shared/formation/fmtDateTime";
+import { Link, useLocation, useNavigate, type Location } from "react-router-dom";
+import { formatDate, formatTime } from "../../../../lib/helpers/services/formation/fmtDateTime";
 import Logo from "../../../../lib/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import { useAuth } from "../AuthContext";
@@ -15,6 +15,15 @@ const validationSchema = Yup.object({
     username: Yup.string().required("សូមបញ្ចូលលេខសម្គាល់"),
     password: Yup.string().required("សូមបញ្ចូលពាក្យសម្ងាត់"),
 });
+
+const GoogleIcon: React.FC = () => (
+    <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z" />
+        <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z" />
+        <path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z" />
+        <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z" />
+    </svg>
+);
 
 const LoginPage: React.FC = () => {
     const [now, setNow] = useState(() => new Date());
@@ -58,7 +67,7 @@ const LoginPage: React.FC = () => {
             <ParticleBackground />
 
             <section className="login-card" aria-labelledby="login-title">
-                <div className="login-logo">
+                <div className="login-logo my-4">
                     <img src={Logo} alt="General Department of Immigration" />
                 </div>
 
@@ -155,6 +164,11 @@ const LoginPage: React.FC = () => {
                             )}
                         </div>
                     </Field>
+                    <div className="login-forgot flex justify-end">
+                        <Link to="/forgot-password" lang="km">
+                            ភ្លេចពាក្យសម្ងាត់?
+                        </Link>
+                    </div>
 
                     {formik.status && (
                         <p className="login-field-error" role="alert">
@@ -172,6 +186,30 @@ const LoginPage: React.FC = () => {
                     >
                         {formik.isSubmitting ? "កំពុងចូលប្រព័ន្ធ..." : AppConfig.submit}
                     </Button>
+
+                    <div className="login-divider" aria-hidden="true">
+                        <span lang="km">ឬ</span>
+                    </div>
+
+                    <Button
+                        className="login-google"
+                        type="button"
+                        appearance="outline"
+                        size="large"
+                        lang="km"
+                        disabled={formik.isSubmitting}
+                        icon={<GoogleIcon />}
+                        onClick={() => {
+                            // TODO: hook up Google login later
+                            console.log("Google login clicked");
+                        }}
+                    >
+                        ចូលជាមួយ Google
+                    </Button>
+
+                    <div className="flex justify-center">
+                        <Link to="/register" lang="km">មិនទាន់មានគណនី? ចុះឈ្មោះ</Link>
+                    </div>
                 </form>
 
                 <footer className="login-footer">

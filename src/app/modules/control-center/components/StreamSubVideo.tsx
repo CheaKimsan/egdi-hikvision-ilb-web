@@ -55,28 +55,38 @@ const StreamSubVideo: React.FC<StreamSubVideoProps> = ({
                             variant="sub"
                             onStreamStatusChange={(live) => onStreamStatusChange(camera.id, live)}
                         />
-                        <div className="control-center-sub-camera-status">
-                            <time
-                                className="control-center-sub-camera-timestamp"
-                                dateTime={timestamp.toISOString()}
-                            >
-                                {timestampLabel}
-                            </time>
-                        </div>
+
+                        {isLive && (
+                            <div className="control-center-sub-camera-status">
+                                <time
+                                    className="control-center-sub-camera-timestamp"
+                                    dateTime={timestamp.toISOString()}
+                                >
+                                    {timestampLabel}
+                                </time>
+                            </div>
+                        )}
+
                         <Tooltip content="Switch to main view" relationship="label">
                             <span className="control-center-switch-hint">
                                 <Maximize2 size={13} strokeWidth={2.25} aria-hidden="true" />
                             </span>
                         </Tooltip>
-                        <div className="control-center-sub-camera-label">
-                            <span
-                                className={`control-center-status-dot ${isLive ? "control-center-status-dot--live" : "control-center-status-dot--offline"}`}
-                                role="img"
-                                aria-label={isLive ? "Stream active" : "No active stream"}
-                            />
-                            <span>{camera.id}</span>
-                            <strong>{camera.label}</strong>
-                        </div>
+
+                        {
+                            isLive && (
+                                <div className="control-center-sub-camera-label">
+                                    <span
+                                        className={`control-center-status-dot ${isLive ? "control-center-status-dot--live" : "control-center-status-dot--offline"}`}
+                                        role="img"
+                                        aria-label={isLive ? "Stream active" : "No active stream"}
+                                    />
+                                    <span>{camera.id}</span>
+                                    <strong>{camera.label}</strong>
+                                </div>
+                            )
+                        }
+
                     </button>
                 );
             })}

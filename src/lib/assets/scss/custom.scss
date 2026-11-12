@@ -73,7 +73,7 @@ $bp-short: 760px;
   flex-direction: column;
   min-height: 734px;
   padding: 40px 42px 38px;
-  width: min(450px, 100%);
+  width: min(480px, 100%);
 
   // Added for Particle Background
   position: relative;
@@ -93,8 +93,6 @@ $bp-short: 760px;
 .login-logo {
   align-self: center;
   height: 120px;
-  margin-bottom: 48px;
-
   img {
     display: block;
     height: 100%;
@@ -346,7 +344,7 @@ $bp-short: 760px;
   font-size: 13px;
   line-height: 1.6;
   margin-top: auto;
-  padding-top: 32px;
+  padding-top: 18px;
   text-align: center;
 
   p {
@@ -359,6 +357,33 @@ $bp-short: 760px;
     font: 700 13px $font-sans;
     margin-top: 4px;
   }
+}
+
+.login-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+.login-divider::before,
+.login-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+.login-google {
+    width: 100%;
+    gap: 10px;
+    background: #fff;
+    color: #111;
+    border: 1px solid #e5e7eb;
+    font-weight: 500;
+}
+.login-google:hover {
+    background: #f9fafb;
 }
 
 // ---------- Utility ----------
