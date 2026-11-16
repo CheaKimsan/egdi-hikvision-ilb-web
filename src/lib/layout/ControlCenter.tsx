@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import Header from "./components/Header";
 import { useInstallationStore } from "../../app/modules/account/device-installation/core/store";
@@ -9,6 +9,8 @@ import StreamSubVideo from "../../app/modules/control-center/components/StreamSu
 import StreamFeedSummary from "../../app/modules/control-center/components/StreamFeedSummary";
 import StreamGpsOverlay from "../../app/modules/control-center/components/GpsOverlay";
 import { useGpsStatus } from "../../app/modules/control-center/core/useGpsStatus";
+import { useVideoControls } from "../../app/modules/control-center/core/useVideoControl";
+import StreamControls from "../../app/modules/control-center/components/StreamControl";
 
 const ControlCenter: React.FC = () => {
     const installations = useInstallationStore((state) => state.rows);
@@ -20,6 +22,10 @@ const ControlCenter: React.FC = () => {
     const { data: gps } = useGpsStatus("TVJ860-GIR");
     const mainCamera = cameraFeeds.find((camera) => camera.id === mainCameraId) ?? cameraFeeds[0];
     const subCameras = cameraFeeds.filter((camera) => camera.id !== mainCamera.id);
+
+    const monitorRef = useRef<HTMLElement>(null);
+    const controls = useVideoControls(monitorRef, mainCamera.id);
+
     const activeStreamCount = (isMainCameraLive ? 1 : 0)
         + subCameras.filter((camera) => liveSubCameras[camera.id]).length;
     const offlineStreamCount = cameraFeeds.length - activeStreamCount;
@@ -54,7 +60,11 @@ const ControlCenter: React.FC = () => {
                     <ChevronDown size={20} aria-hidden="true" />
                 </button>
             )}
-            <main className="control-center-monitor" aria-label="Camera monitoring">
+            <main
+                ref={monitorRef}
+                className="control-center-monitor"
+                aria-label="Camera monitoring"
+            >
                 <StreamVideoLive
                     key={mainCamera.id}
                     camera={mainCamera}
@@ -88,6 +98,8 @@ const ControlCenter: React.FC = () => {
                 />
 
                 <StreamGpsOverlay gps={gps} speedLimitKph={100} />
+
+                <StreamControls controls={controls} isLive={isMainCameraLive} />
 
                 <StreamSubVideo
                     cameras={subCameras}

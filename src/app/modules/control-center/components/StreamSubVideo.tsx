@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Maximize2 } from "lucide-react";
+import { Expand } from "lucide-react";
 import { Tooltip } from "@fluentui/react-components";
 import { CameraFeed } from "../../../../lib/constants/CameraFeeds";
 import StreamVideoLive from "./StreamVideoLive";
@@ -69,7 +69,7 @@ const StreamSubVideo: React.FC<StreamSubVideoProps> = ({
 
                         <Tooltip content="Switch to main view" relationship="label">
                             <span className="control-center-switch-hint">
-                                <Maximize2 size={13} strokeWidth={2.25} aria-hidden="true" />
+                                <Expand size={13} strokeWidth={2.25} aria-hidden="true" />
                             </span>
                         </Tooltip>
 
