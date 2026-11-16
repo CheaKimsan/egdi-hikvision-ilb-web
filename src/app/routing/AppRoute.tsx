@@ -14,6 +14,8 @@ import DeviceManagementPage from "../modules/account/device-management/component
 import VehiclePage from "../modules/account/vehicle/components/VehiclePage";
 import DeviceInstallationPage from "../modules/account/device-installation/components/DeviceInstallationPage";
 import ControlCenter from "../../lib/layout/ControlCenter";
+import ForgotPasswordPage from "../modules/auth/components/ForgotPasswordPage";
+import RegisterPage from "../modules/auth/components/RegisterPage";
 
 const ProtectedRoute = () => {
     const { user } = useAuth();
@@ -25,6 +27,8 @@ const AppRoute = () => (
     <BrowserRouter>
         <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route element={<ProtectedRoute />}>
                 <Route path="/control-center" element={<ControlCenter />} />
                 <Route path="/management" element={<AppLayout />}>

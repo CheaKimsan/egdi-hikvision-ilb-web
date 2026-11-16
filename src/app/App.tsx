@@ -1,4 +1,3 @@
-import React from "react";
 import AppRoute from "./routing/AppRoute";
 import { AuthProvider } from "./modules/auth/AuthContext";
 
