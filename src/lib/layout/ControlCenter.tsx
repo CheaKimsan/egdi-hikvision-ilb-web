@@ -11,17 +11,21 @@ import StreamGpsOverlay from "../../app/modules/control-center/components/GpsOve
 import { useGpsStatus } from "../../app/modules/control-center/core/useGpsStatus";
 import { useVideoControls } from "../../app/modules/control-center/core/useVideoControl";
 import StreamControls from "../../app/modules/control-center/components/StreamControl";
+import { useHeaderStore } from "../store/useHeaderStore";
 
 const ControlCenter: React.FC = () => {
     const installations = useInstallationStore((state) => state.rows);
     const vehicles = useVehicleStore((state) => state.rows);
-    const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [mainCameraId, setMainCameraId] = useState(cameraFeeds[0].id);
     const [liveSubCameras, setLiveSubCameras] = useState<Record<string, boolean>>({});
     const [isMainCameraLive, setIsMainCameraLive] = useState(false);
     const { data: gps } = useGpsStatus("TVJ860-GIR");
     const mainCamera = cameraFeeds.find((camera) => camera.id === mainCameraId) ?? cameraFeeds[0];
     const subCameras = cameraFeeds.filter((camera) => camera.id !== mainCamera.id);
+
+    const isHeaderVisible = useHeaderStore((state) => state.isVisible);
+    const openHeader = useHeaderStore((state) => state.open);
+    const closeHeader = useHeaderStore((state) => state.close);
 
     const monitorRef = useRef<HTMLElement>(null);
     const controls = useVideoControls(monitorRef, mainCamera.id);
@@ -48,18 +52,20 @@ const ControlCenter: React.FC = () => {
 
     return (
         <div className="control-center-shell">
+
             {isHeaderVisible ? (
-                <Header onClose={() => setIsHeaderVisible(false)} />
+                <Header onClose={closeHeader} />
             ) : (
                 <button
                     type="button"
                     className="control-center-header-toggle"
                     aria-label="Show header"
-                    onClick={() => setIsHeaderVisible(true)}
+                    onClick={openHeader}
                 >
                     <ChevronDown size={20} aria-hidden="true" />
                 </button>
             )}
+
             <main
                 ref={monitorRef}
                 className="control-center-monitor"

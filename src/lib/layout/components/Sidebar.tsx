@@ -1,6 +1,5 @@
 import React from "react";
 import { Avatar } from "@fluentui/react-components";
-import { ChevronLeftRegular, ChevronRightRegular } from "@fluentui/react-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../app/modules/auth/AuthContext";
 import { dummyDevices, dummyUsers } from "../../data/dummy";
@@ -12,6 +11,7 @@ import {
     type NavigationItem,
 } from "../../constants/Navitem";
 import { useSidebarStore } from "../../store/useSidebarStore";
+import { CircleArrowLeft, CircleArrowRight } from "lucide-react";
 
 const Sidebar: React.FC = () => {
     const { user } = useAuth();
@@ -70,9 +70,9 @@ const Sidebar: React.FC = () => {
                             onClick={toggleCollapsed}
                         >
                             {isCollapsed ? (
-                                <ChevronRightRegular aria-hidden="true" />
+                                <CircleArrowRight aria-hidden="true" />
                             ) : (
-                                <ChevronLeftRegular aria-hidden="true" />
+                                <CircleArrowLeft aria-hidden="true" />
                             )}
                         </button>
                     </div>

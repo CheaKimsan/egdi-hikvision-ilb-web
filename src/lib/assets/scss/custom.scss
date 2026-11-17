@@ -456,3 +456,73 @@ $bp-short: 760px;
     }
   }
 }
+/* Add to custom.scss. Needs .control-center-monitor to have position: relative. */
+
+/* Red frame around the whole video while recording */
+.stream-rec-frame {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    border: 3px solid rgba(239, 68, 68, 0.9);
+    box-shadow: inset 0 0 40px rgba(239, 68, 68, 0.35);
+    animation: stream-rec-frame 1.6s ease-in-out infinite;
+}
+
+/* "REC 00:12" badge, top right (left of the header chevron) */
+.stream-rec-badge {
+    position: absolute;
+    top: 14px;
+    right: 64px;
+    z-index: 6;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 12px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.25),
+        0 4px 16px rgba(220, 38, 38, 0.55);
+}
+
+.stream-rec-badge-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    animation: stream-rec-blink 1s steps(2, start) infinite;
+}
+
+/* Record button turns solid red and pulses while recording */
+.stream-controls-btn--danger.stream-controls-btn--active {
+    background: #dc2626;
+    border-color: #fecaca;
+    color: #fff;
+    animation: stream-rec-btn 1.2s ease-in-out infinite;
+}
+
+@keyframes stream-rec-blink {
+    to { visibility: hidden; }
+}
+@keyframes stream-rec-frame {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+}
+@keyframes stream-rec-btn {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stream-rec-frame,
+    .stream-rec-badge-dot,
+    .stream-controls-btn--danger.stream-controls-btn--active {
+        animation: none;
+    }
+}

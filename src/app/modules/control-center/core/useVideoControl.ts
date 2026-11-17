@@ -97,12 +97,12 @@ export function useVideoControls(containerRef: RefObject<HTMLElement | null>, ca
         if (!stream || typeof MediaRecorder === "undefined") return;
 
         chunksRef.current = [];
-        const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
         recorder.ondataavailable = (e) => {
             if (e.data.size > 0) chunksRef.current.push(e.data);
         };
         recorder.onstop = () => {
-            download(new Blob(chunksRef.current, { type: "video/webm" }), `${cameraId}-${stamp()}.webm`);
+            download(new Blob(chunksRef.current, { type: "video/mp4" }), `${cameraId}-${stamp()}.mp4`);
         };
         recorder.start(1000);
         recorderRef.current = recorder;
