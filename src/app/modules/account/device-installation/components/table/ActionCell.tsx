@@ -12,7 +12,7 @@ import {
     EditRegular,
     MoreVertical20Regular,
 } from "@fluentui/react-icons";
-import ConfirmDeleteDialog from "../../../../../../lib/helpers/shared/alert/ConfirmDeleteDialog";
+import ConfirmDeleteDialog from "../../../../../../lib/helpers/shared/message/ConfirmDeleteDialog";
 import type { Installation } from "../../core/model";
 
 type Props = {

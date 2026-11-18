@@ -6,25 +6,38 @@ import { Link } from "react-router-dom";
 import Logo from "../../../../lib/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import ParticleBackground from "../../../../lib/helpers/shared/animation/ParticalBackground";
+import { sendResetEmail } from "../core/auth.service";
 
 const validationSchema = Yup.object({
-    username: Yup.string().required("សូមបញ្ចូលលេខសម្គាល់"),
+    email: Yup.string()
+        .email("អ៊ីមែលមិនត្រឹមត្រូវ")
+        .required("សូមបញ្ចូលអុីម៉ែល"),
 });
 
 const ForgotPasswordPage: React.FC = () => {
     const [sent, setSent] = useState(false);
 
     const formik = useFormik({
-        initialValues: { username: "" },
+        initialValues: { email: "" },
         validationSchema,
         onSubmit: async (values, { setStatus }) => {
             try {
-                // TODO: replace with your real API call
-                // await api.post("/auth/forgot-password", { username: values.username });
-                await new Promise((resolve) => window.setTimeout(resolve, 800));
+                await sendResetEmail(values.email);
                 setSent(true);
-            } catch {
-                setStatus("មានបញ្ហា សូមព្យាយាមម្តងទៀត");
+            } catch (error) {
+                const code = (error as { code?: string }).code;
+                if (code === "auth/user-not-found") {
+                    setSent(true);
+                    return;
+                }
+
+                if (code === "auth/invalid-email") {
+                    setStatus("អ៊ីមែលមិនត្រឹមត្រូវ");
+                } else if (code === "auth/too-many-requests") {
+                    setStatus("ព្យាយាមច្រើនពេក សូមរង់ចាំបន្តិចរួចព្យាយាមម្តងទៀត");
+                } else {
+                    setStatus("មានបញ្ហា សូមព្យាយាមម្តងទៀត");
+                }
             }
         },
     });
@@ -39,7 +52,7 @@ const ForgotPasswordPage: React.FC = () => {
                 </div>
 
                 <header className="login-heading">
-                    <h1 id="forgot-title" lang="km">ភ្លេចពាក្យសម្ងាត់</h1>
+                    <h1 id="forgot-title" lang="km">{AppConfig.orgKm}</h1>
                     <p>{AppConfig.orgEn}</p>
                 </header>
 
@@ -52,31 +65,33 @@ const ForgotPasswordPage: React.FC = () => {
                         <Field
                             className="input-group"
                             validationState={
-                                formik.touched.username && formik.errors.username ? "error" : "none"
+                                formik.touched.email && formik.errors.email ? "error" : "none"
                             }
                             validationMessage={
-                                formik.touched.username ? formik.errors.username : undefined
+                                formik.touched.email ? formik.errors.email : undefined
                             }
                         >
                             <div className="custom-input-wrapper">
                                 <Input
-                                    name="username"
+                                    id="forgot-email"
+                                    name="email"
+                                    type="email"
                                     className="login-input"
-                                    autoComplete="username"
+                                    autoComplete="email"
                                     placeholder=""
                                     appearance="outline"
                                     size="large"
                                     disabled={formik.isSubmitting}
-                                    value={formik.values.username}
+                                    value={formik.values.email}
                                     onChange={(_, data) => {
                                         formik.setStatus(undefined);
-                                        formik.setFieldValue("username", data.value);
+                                        formik.setFieldValue("email", data.value);
                                     }}
-                                    onBlur={() => formik.setFieldTouched("username", true)}
+                                    onBlur={() => formik.setFieldTouched("email", true)}
                                 />
-                                {!formik.values.username && (
+                                {!formik.values.email && (
                                     <span className="custom-placeholder">
-                                        {AppConfig.username} <span className="required">*</span>
+                                        {AppConfig.email} <span className="required">*</span>
                                     </span>
                                 )}
                             </div>
@@ -99,7 +114,7 @@ const ForgotPasswordPage: React.FC = () => {
                     </form>
                 )}
 
-                <div className="login-forgot login-forgot--back">
+                <div className="login-forgot text-center py-2">
                     <Link to="/login" lang="km">← ត្រឡប់ទៅចូលប្រព័ន្ធវិញ</Link>
                 </div>
             </section>

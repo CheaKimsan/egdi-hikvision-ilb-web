@@ -13,7 +13,9 @@ const ProtectedRoute = () => {
         return <Navigate to="/login" replace state={{ from: location }} />;
     }
 
-    return <Outlet />;
+    return <>
+        <Outlet />;
+    </>
 };
 
 export default ProtectedRoute;

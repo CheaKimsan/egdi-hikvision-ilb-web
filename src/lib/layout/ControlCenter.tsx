@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
+import { CheckmarkCircle24Filled } from "@fluentui/react-icons";
 import Header from "./components/Header";
 import { useInstallationStore } from "../../app/modules/account/device-installation/core/store";
 import { useVehicleStore } from "../../app/modules/account/vehicle/core/store";
@@ -12,13 +14,18 @@ import { useGpsStatus } from "../../app/modules/control-center/core/useGpsStatus
 import { useVideoControls } from "../../app/modules/control-center/core/useVideoControl";
 import StreamControls from "../../app/modules/control-center/components/StreamControl";
 import { useHeaderStore } from "../store/useHeaderStore";
+import { AlertToast } from "../helpers/shared/toaster/Toaster";
 
 const ControlCenter: React.FC = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const installations = useInstallationStore((state) => state.rows);
     const vehicles = useVehicleStore((state) => state.rows);
     const [mainCameraId, setMainCameraId] = useState(cameraFeeds[0].id);
     const [liveSubCameras, setLiveSubCameras] = useState<Record<string, boolean>>({});
     const [isMainCameraLive, setIsMainCameraLive] = useState(false);
+    const [showLoginToast, setShowLoginToast] = useState(false);
     const { data: gps } = useGpsStatus("TVJ860-GIR");
     const mainCamera = cameraFeeds.find((camera) => camera.id === mainCameraId) ?? cameraFeeds[0];
     const subCameras = cameraFeeds.filter((camera) => camera.id !== mainCamera.id);
@@ -50,8 +57,24 @@ const ControlCenter: React.FC = () => {
         setIsMainCameraLive(false);
     }, [mainCameraId]);
 
+    // Show the toast once right after a real login, then clear the router
+    // state so a page refresh doesn't show it again.
+    useEffect(() => {
+        const state = location.state as { LoggedIn?: boolean } | null;
+        if (state?.LoggedIn) {
+            setShowLoginToast(true);
+            navigate(location.pathname, { replace: true, state: null });
+        }
+    }, [location.state, location.pathname, navigate]);
+
     return (
         <div className="control-center-shell">
+            <AlertToast
+                message="ចូលប្រព័ន្ធបានជោគជ័យ!"
+                intent="success"
+                icon={<CheckmarkCircle24Filled style={{ color: "#107c10" }} />}
+                open={showLoginToast}
+            />
 
             {isHeaderVisible ? (
                 <Header onClose={closeHeader} />
@@ -97,7 +120,6 @@ const ControlCenter: React.FC = () => {
 
                 <StreamFeedSummary
                     cameraCount={cameraFeeds.length}
-                    // vehicleNames={installedVehicleNames}
                     location={vehicleLocation}
                     activeCount={activeStreamCount}
                     offlineCount={offlineStreamCount}

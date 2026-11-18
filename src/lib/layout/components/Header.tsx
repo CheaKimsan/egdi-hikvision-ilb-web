@@ -32,8 +32,7 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ onClose }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const displayName = user?.displayName ?? user?.username ?? "User";
-
+    const displayName = (user?.displayName ?? "User").toUpperCase();
     // Local state for the toggles in the menu
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [language, setLanguage] = useState<"en" | "km">("en");
