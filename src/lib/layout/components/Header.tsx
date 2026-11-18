@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = ({ onClose }) => {
 
     const userEmail = user?.email;
 
-    const userAvatarUrl = user?.avatarUrl;
+    const userAvatar = user?.avatar;
 
     return (
         <header className="app-header" role="banner">
@@ -122,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({ onClose }) => {
                                         name={displayName}
                                         color="colorful"
                                         size={32}
-                                        image={userAvatarUrl ? { src: userAvatarUrl } : { src: NoAvatar }}
+                                        image={userAvatar ? { src: userAvatar } : { src: NoAvatar }}
                                     />
                                 ) : (
                                     <User strokeWidth={2} />
@@ -137,10 +137,10 @@ const Header: React.FC<HeaderProps> = ({ onClose }) => {
 
                                 <div className="profile-menu-avatar-wrapper">
                                     <Avatar
-                                        name={user?.displayName || user?.username || "User"}
+                                        name={user?.displayName || "User"}
                                         color="colorful"
                                         size={72}
-                                        image={{ src: userAvatarUrl || NoAvatar }}
+                                        image={{ src: userAvatar || NoAvatar }}
                                     />
                                     <button className="profile-menu-camera-btn" aria-label="Change avatar" title="Change avatar">
                                         <Camera size={14} />
@@ -148,8 +148,10 @@ const Header: React.FC<HeaderProps> = ({ onClose }) => {
                                 </div>
 
                                 <h2 className="profile-menu-greeting">
-                                    Hi {displayName}! <ShieldCheck size={18} className="verified-icon" />
+                                    Hi {displayName}!
+                                    {user?.role === "admin" && <ShieldCheck size={18} className="verified-icon" />}
                                 </h2>
+
                                 {user?.role && <span className="profile-menu-role">{user.role}</span>}
 
                                 <button className="profile-menu-action-btn">

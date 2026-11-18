@@ -41,7 +41,7 @@ const RegisterPage: React.FC = () => {
         if (!registered) return;
         const timer = window.setTimeout(
             () => navigate("/login", { replace: true }),
-            3000
+            2500
         );
         return () => window.clearTimeout(timer);
     }, [registered, navigate]);
