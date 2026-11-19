@@ -1,7 +1,7 @@
 export const AppConfig = {
     orgKm: "អគ្គនាយកដ្ឋានអន្តោប្រវេសន៍",
     orgEn: "GENERAL DEPARTMENT OF IMMIGRATION",
-    username: "លេខសម្គាល់",
+    email: "អុីម៉ែល",
     password: "ពាក្យសម្ងាត់",
     submit: "ចូលប្រព័ន្ធ",
     copyright: "រក្សាសិទ្ធិគ្រប់យ៉ាងដោយ",

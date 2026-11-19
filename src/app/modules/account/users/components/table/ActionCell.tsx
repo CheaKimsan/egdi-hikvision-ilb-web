@@ -11,7 +11,7 @@ import {
     CheckmarkRegular,
 } from "@fluentui/react-icons";
 import type { AuthUser } from "../../../../auth/AuthContext";
-import ConfirmDeleteDialog from "../../../../../../lib/helpers/shared/alert/ConfirmDeleteDialog";
+import ConfirmDeleteDialog from "../../../../../../lib/helpers/shared/message/ConfirmDeleteDialog";
 
 type Props = {
     row: AuthUser;

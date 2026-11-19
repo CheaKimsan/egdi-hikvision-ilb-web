@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button, Field, Input, Spinner } from "@fluentui/react-components";
@@ -9,50 +9,53 @@ import Logo from "../../../../lib/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import { useAuth } from "../AuthContext";
 import ParticleBackground from "../../../../lib/helpers/shared/animation/ParticalBackground";
-
+import { GoogleIcon } from "../../../../lib/assets/icons/svg/google-icon";
 
 const validationSchema = Yup.object({
-    username: Yup.string().required("សូមបញ្ចូលលេខសម្គាល់"),
+    email: Yup.string()
+        .email("អ៊ីមែលមិនត្រឹមត្រូវ")
+        .required("សូមបញ្ចូលអុីម៉ែល"),
     password: Yup.string().required("សូមបញ្ចូលពាក្យសម្ងាត់"),
 });
-
-const GoogleIcon: React.FC = () => (
-    <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
-        <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z" />
-        <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z" />
-        <path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z" />
-        <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z" />
-    </svg>
-);
 
 const LoginPage: React.FC = () => {
     const [now, setNow] = useState(() => new Date());
     const [showPassword, setShowPassword] = useState(false);
-    const { login } = useAuth();
+    const { login, user, isLoading } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const from = (location.state as { from?: Location } | null)?.from;
 
+    // True only when the user submitted the form (a real login)
+    const submittedRef = useRef(false);
+
+    const destination = from
+        ? `${from.pathname}${from.search}${from.hash}`
+        : "/control-center";
+
+    useEffect(() => {
+        if (!isLoading && user) {
+            navigate(destination, {
+                replace: true,
+                state: { justLoggedIn: submittedRef.current },
+            });
+        }
+    }, [isLoading, user, destination, navigate]);
+
     const formik = useFormik({
         initialValues: {
-            username: "",
+            email: "",
             password: "",
         },
         validationSchema,
         onSubmit: async (values, { setStatus }) => {
-            await new Promise((resolve) => window.setTimeout(resolve, 500));
-            const authenticated = login(values.username, values.password);
-            if (authenticated) {
-                const destination = from
-                    ? `${from.pathname}${from.search}${from.hash}`
-                    : "/control-center";
-                navigate(destination, { replace: true });
-                return;
+            // Set BEFORE login(), because the redirect effect can run as soon as user is set
+            submittedRef.current = true;
+            const ok = await login(values.email, values.password);
+            if (!ok) {
+                submittedRef.current = false;
+                setStatus("អុីម៉ែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ");
             }
-
-            setStatus(
-                "លេខសម្គាល់ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ"
-            );
         },
     });
 
@@ -87,32 +90,33 @@ const LoginPage: React.FC = () => {
                     <Field
                         className="input-group"
                         validationState={
-                            formik.touched.username && formik.errors.username ? "error" : "none"
+                            formik.touched.email && formik.errors.email ? "error" : "none"
                         }
                         validationMessage={
-                            formik.touched.username ? formik.errors.username : undefined
+                            formik.touched.email ? formik.errors.email : undefined
                         }
                     >
                         <div className="custom-input-wrapper">
                             <Input
                                 id="login-username"
-                                name="username"
+                                name="email"
+                                type="email"
                                 className="login-input"
-                                autoComplete="username"
+                                autoComplete="email"
                                 placeholder="" // Hide native placeholder
                                 appearance="outline"
                                 size="large"
                                 disabled={formik.isSubmitting}
-                                value={formik.values.username}
+                                value={formik.values.email}
                                 onChange={(_, data) => {
                                     formik.setStatus(undefined);
-                                    formik.setFieldValue("username", data.value);
+                                    formik.setFieldValue("email", data.value);
                                 }}
-                                onBlur={() => formik.setFieldTouched("username", true)}
+                                onBlur={() => formik.setFieldTouched("email", true)}
                             />
-                            {!formik.values.username && (
+                            {!formik.values.email && (
                                 <span className="custom-placeholder">
-                                    {AppConfig.username} <span className="required">*</span>
+                                    {AppConfig.email} <span className="required">*</span>
                                 </span>
                             )}
                         </div>
@@ -200,7 +204,6 @@ const LoginPage: React.FC = () => {
                         disabled={formik.isSubmitting}
                         icon={<GoogleIcon />}
                         onClick={() => {
-                            // TODO: hook up Google login later
                             console.log("Google login clicked");
                         }}
                     >

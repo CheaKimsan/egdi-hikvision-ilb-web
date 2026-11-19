@@ -1087,3 +1087,235 @@ $font-size-lg: 18px;
         box-shadow: 0 0 0 4px rgba(255, 23, 68, 0.35);
     }
 }
+
+// ------- stream-controller --------------------
+// .stream-stage {
+//     position: relative;
+//     overflow: hidden; /* clips the zoomed video */
+//     width: 100%;
+//     height: 100%;
+// }
+
+// .stream-controls {
+//     position: absolute;
+//     left: 50%;
+//     bottom: 16px;
+//     transform: translate(-50%, 8px);
+//     display: flex;
+//     align-items: center;
+//     gap: 4px;
+//     padding: 6px 10px;
+//     border-radius: 12px;
+//     background: rgba(15, 23, 42, 0.72);
+//     backdrop-filter: blur(8px);
+//     opacity: 0;
+//     transition: opacity 0.2s ease, transform 0.2s ease;
+//     z-index: 5;
+// }
+
+// .stream-stage:hover .stream-controls,
+// .stream-stage:focus-within .stream-controls {
+//     opacity: 1;
+//     transform: translate(-50%, 0);
+// }
+
+// .stream-controls-btn {
+//     display: grid;
+//     place-items: center;
+//     width: 32px;
+//     height: 32px;
+//     border: 0;
+//     border-radius: 8px;
+//     background: transparent;
+//     color: #fff;
+//     cursor: pointer;
+//     transition: background 0.15s ease;
+// }
+// .stream-controls-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.18); }
+// .stream-controls-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+// .stream-controls-btn--active { background: rgba(255, 255, 255, 0.22); }
+// .stream-controls-btn--active svg { color: #f87171; }
+
+// .stream-controls-sep {
+//     width: 1px;
+//     height: 20px;
+//     margin: 0 4px;
+//     background: rgba(255, 255, 255, 0.25);
+// }
+
+// .stream-controls-zoom {
+//     min-width: 40px;
+//     text-align: center;
+//     color: #fff;
+//     font-size: 12px;
+//     font-variant-numeric: tabular-nums;
+// }
+
+// .stream-rec-indicator {
+//     position: absolute;
+//     top: 12px;
+//     right: 12px;
+//     display: flex;
+//     align-items: center;
+//     gap: 6px;
+//     padding: 4px 10px;
+//     border-radius: 999px;
+//     background: rgba(15, 23, 42, 0.72);
+//     color: #fff;
+//     font-size: 12px;
+//     font-weight: 700;
+//     letter-spacing: 0.05em;
+//     z-index: 5;
+// }
+// .stream-rec-dot {
+//     width: 8px;
+//     height: 8px;
+//     border-radius: 50%;
+//     background: #ef4444;
+//     animation: live-pulse 1.2s ease-in-out infinite;
+// }
+// .control-center-monitor:hover .stream-controls,
+// .control-center-monitor:focus-within .stream-controls {
+//     opacity: 1;
+//     transform: translate(-50%, 0);
+// }
+
+// @media (hover: none) {
+//     .stream-controls { opacity: 1; transform: translate(-50%, 0); }
+// }
+
+/* Replace the old .stream-controls / .stream-rec-indicator / .stream-stage rules with this.
+   Colors below are guesses based on your speed card. Copy the real background,
+   border color and radius from your GPS overlay rule if they differ. */
+
+.stream-controls {
+    --panel-bg: rgba(8, 14, 20, 0.35);
+    --panel-text: #e2e8f0;
+    --panel-muted: #94a3b8;
+    --panel-accent: #22c55e;
+
+    position: absolute;
+    right: 16px;
+    bottom: 18px;
+    z-index: 5;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 96px;
+    padding: 10px;
+
+    background: var(--panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    backdrop-filter: blur(8px);
+    color: var(--panel-text);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.stream-controls-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 14px;
+}
+
+.stream-controls-title {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--panel-muted);
+}
+
+.stream-controls-rec {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #f87171;
+}
+
+.stream-rec-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ef4444;
+    animation: live-pulse 1.2s ease-in-out infinite;
+}
+
+/* Zoom readout styled like the big "95 km/h" number */
+.stream-controls-zoom {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 3px;
+    line-height: 1;
+}
+.stream-controls-zoom-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--panel-accent);
+    font-variant-numeric: tabular-nums;
+}
+.stream-controls-zoom-unit {
+    font-size: 10px;
+    color: var(--panel-muted);
+}
+
+.stream-controls-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.stream-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+.stream-controls-btn {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--panel-text);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.stream-controls-btn:hover:not(:disabled) {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: var(--panel-accent);
+    color: var(--panel-accent);
+}
+.stream-controls-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+.stream-controls-btn--active {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: var(--panel-accent);
+    color: var(--panel-accent);
+}
+.stream-controls-btn--danger.stream-controls-btn--active {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #f87171;
+}
+
+/* Last button (fullscreen) spans the full width */
+.stream-controls > .stream-controls-btn {
+    height: 30px;
+}
+
+@media (max-height: 560px) {
+    .stream-controls { top: 70px; transform: none; }
+}
+
+.stream-controls-btn--wide {
+    grid-column: 1 / -1;
+}

@@ -5,8 +5,8 @@ import { Field, Input } from "@fluentui/react-components";
 import { NetworkCheckRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
 import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
-import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/alert/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../lib/helpers/shared/alert/ConfirmEditDialog";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/message/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/message/ConfirmEditDialog";
 import type { NetworkConfiguration } from "../../core/model";
 
 type NetworkFormValues = {
@@ -170,62 +170,62 @@ const NetworkFormDialog: React.FC<Props> = ({
                     onSubmit={formik.handleSubmit}
                 >
                     <div className="device-form-fields">
-                    <Field label="IP address" required {...fieldProps("ipAddress")}>
-                        <Input
-                            autoFocus
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.ipAddress}
-                            placeholder="192.168.1.100"
-                            onChange={(_, data) =>
-                                formik.setFieldValue("ipAddress", data.value)
-                            }
-                            onBlur={() => formik.setFieldTouched("ipAddress", true)}
-                        />
-                    </Field>
-                    <Field label="HTTP port" required {...fieldProps("httpPort")}>
-                        <Input
-                            type="number"
-                            min={1}
-                            max={65535}
-                            step={1}
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.httpPort}
-                            placeholder="80"
-                            onChange={(_, data) =>
-                                formik.setFieldValue("httpPort", data.value)
-                            }
-                            onBlur={() => formik.setFieldTouched("httpPort", true)}
-                        />
-                    </Field>
-                    <Field label="Username" {...fieldProps("username")}>
-                        <Input
-                            autoComplete="username"
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.username}
-                            placeholder="Administrator"
-                            onChange={(_, data) =>
-                                formik.setFieldValue("username", data.value)
-                            }
-                            onBlur={() => formik.setFieldTouched("username", true)}
-                        />
-                    </Field>
-                    <Field label="Password" {...fieldProps("password")}>
-                        <Input
-                            type="password"
-                            autoComplete={isEditing ? "current-password" : "new-password"}
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.password}
-                            placeholder="Enter password"
-                            onChange={(_, data) =>
-                                formik.setFieldValue("password", data.value)
-                            }
-                            onBlur={() => formik.setFieldTouched("password", true)}
-                        />
-                    </Field>
+                        <Field label="IP address" required {...fieldProps("ipAddress")}>
+                            <Input
+                                autoFocus
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.ipAddress}
+                                placeholder="192.168.1.100"
+                                onChange={(_, data) =>
+                                    formik.setFieldValue("ipAddress", data.value)
+                                }
+                                onBlur={() => formik.setFieldTouched("ipAddress", true)}
+                            />
+                        </Field>
+                        <Field label="HTTP port" required {...fieldProps("httpPort")}>
+                            <Input
+                                type="number"
+                                min={1}
+                                max={65535}
+                                step={1}
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.httpPort}
+                                placeholder="80"
+                                onChange={(_, data) =>
+                                    formik.setFieldValue("httpPort", data.value)
+                                }
+                                onBlur={() => formik.setFieldTouched("httpPort", true)}
+                            />
+                        </Field>
+                        <Field label="Username" {...fieldProps("username")}>
+                            <Input
+                                autoComplete="username"
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.username}
+                                placeholder="Administrator"
+                                onChange={(_, data) =>
+                                    formik.setFieldValue("username", data.value)
+                                }
+                                onBlur={() => formik.setFieldTouched("username", true)}
+                            />
+                        </Field>
+                        <Field label="Password" {...fieldProps("password")}>
+                            <Input
+                                type="password"
+                                autoComplete={isEditing ? "current-password" : "new-password"}
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.password}
+                                placeholder="Enter password"
+                                onChange={(_, data) =>
+                                    formik.setFieldValue("password", data.value)
+                                }
+                                onBlur={() => formik.setFieldTouched("password", true)}
+                            />
+                        </Field>
                     </div>
                 </form>
             </OpenDrawer>

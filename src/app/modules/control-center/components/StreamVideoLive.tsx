@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VideoOff } from "lucide-react";
 import { CameraFeed } from "../../../../lib/constants/CameraFeeds";
 
@@ -14,6 +14,10 @@ const StreamVideoLive: React.FC<StreamVideoLiveProps> = ({
     onStreamStatusChange,
 }) => {
     const [hasError, setHasError] = useState(false);
+
+    useEffect(() => {
+        setHasError(false);
+    }, [camera.src]);
 
     if (!camera.src || hasError) {
         return (
@@ -32,6 +36,7 @@ const StreamVideoLive: React.FC<StreamVideoLiveProps> = ({
         <video
             className={variant === "main" ? "control-center-main-camera" : "control-center-sub-camera-video"}
             src={camera.src}
+            crossOrigin="anonymous"
             autoPlay
             muted
             loop
@@ -39,6 +44,7 @@ const StreamVideoLive: React.FC<StreamVideoLiveProps> = ({
             preload={variant === "sub" ? "metadata" : undefined}
             aria-label={`${camera.label} video feed`}
             onLoadedData={() => onStreamStatusChange?.(true)}
+            onEmptied={() => onStreamStatusChange?.(false)}
             onError={() => {
                 setHasError(true);
                 onStreamStatusChange?.(false);

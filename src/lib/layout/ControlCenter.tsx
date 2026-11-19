@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
+import { CheckmarkCircle24Filled } from "@fluentui/react-icons";
 import Header from "./components/Header";
 import { useInstallationStore } from "../../app/modules/account/device-installation/core/store";
 import { useVehicleStore } from "../../app/modules/account/vehicle/core/store";
@@ -9,17 +11,32 @@ import StreamSubVideo from "../../app/modules/control-center/components/StreamSu
 import StreamFeedSummary from "../../app/modules/control-center/components/StreamFeedSummary";
 import StreamGpsOverlay from "../../app/modules/control-center/components/GpsOverlay";
 import { useGpsStatus } from "../../app/modules/control-center/core/useGpsStatus";
+import { useVideoControls } from "../../app/modules/control-center/core/useVideoControl";
+import StreamControls from "../../app/modules/control-center/components/StreamControl";
+import { useHeaderStore } from "../store/useHeaderStore";
+import { AlertToast } from "../helpers/shared/toaster/Toaster";
 
 const ControlCenter: React.FC = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const installations = useInstallationStore((state) => state.rows);
     const vehicles = useVehicleStore((state) => state.rows);
-    const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [mainCameraId, setMainCameraId] = useState(cameraFeeds[0].id);
     const [liveSubCameras, setLiveSubCameras] = useState<Record<string, boolean>>({});
     const [isMainCameraLive, setIsMainCameraLive] = useState(false);
+    const [showLoginToast, setShowLoginToast] = useState(false);
     const { data: gps } = useGpsStatus("TVJ860-GIR");
     const mainCamera = cameraFeeds.find((camera) => camera.id === mainCameraId) ?? cameraFeeds[0];
     const subCameras = cameraFeeds.filter((camera) => camera.id !== mainCamera.id);
+
+    const isHeaderVisible = useHeaderStore((state) => state.isVisible);
+    const openHeader = useHeaderStore((state) => state.open);
+    const closeHeader = useHeaderStore((state) => state.close);
+
+    const monitorRef = useRef<HTMLElement>(null);
+    const controls = useVideoControls(monitorRef, mainCamera.id);
+
     const activeStreamCount = (isMainCameraLive ? 1 : 0)
         + subCameras.filter((camera) => liveSubCameras[camera.id]).length;
     const offlineStreamCount = cameraFeeds.length - activeStreamCount;
@@ -40,21 +57,43 @@ const ControlCenter: React.FC = () => {
         setIsMainCameraLive(false);
     }, [mainCameraId]);
 
+    // Show the toast once right after a real login, then clear the router
+    // state so a page refresh doesn't show it again.
+    useEffect(() => {
+        const state = location.state as { LoggedIn?: boolean } | null;
+        if (state?.LoggedIn) {
+            setShowLoginToast(true);
+            navigate(location.pathname, { replace: true, state: null });
+        }
+    }, [location.state, location.pathname, navigate]);
+
     return (
         <div className="control-center-shell">
+            <AlertToast
+                message="ចូលប្រព័ន្ធបានជោគជ័យ!"
+                intent="success"
+                icon={<CheckmarkCircle24Filled style={{ color: "#107c10" }} />}
+                open={showLoginToast}
+            />
+
             {isHeaderVisible ? (
-                <Header onClose={() => setIsHeaderVisible(false)} />
+                <Header onClose={closeHeader} />
             ) : (
                 <button
                     type="button"
                     className="control-center-header-toggle"
                     aria-label="Show header"
-                    onClick={() => setIsHeaderVisible(true)}
+                    onClick={openHeader}
                 >
                     <ChevronDown size={20} aria-hidden="true" />
                 </button>
             )}
-            <main className="control-center-monitor" aria-label="Camera monitoring">
+
+            <main
+                ref={monitorRef}
+                className="control-center-monitor"
+                aria-label="Camera monitoring"
+            >
                 <StreamVideoLive
                     key={mainCamera.id}
                     camera={mainCamera}
@@ -81,13 +120,14 @@ const ControlCenter: React.FC = () => {
 
                 <StreamFeedSummary
                     cameraCount={cameraFeeds.length}
-                    // vehicleNames={installedVehicleNames}
                     location={vehicleLocation}
                     activeCount={activeStreamCount}
                     offlineCount={offlineStreamCount}
                 />
 
                 <StreamGpsOverlay gps={gps} speedLimitKph={100} />
+
+                <StreamControls controls={controls} isLive={isMainCameraLive} />
 
                 <StreamSubVideo
                     cameras={subCameras}

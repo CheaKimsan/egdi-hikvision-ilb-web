@@ -12,8 +12,8 @@ import { CameraRegular, DeleteRegular, PersonAddRegular } from "@fluentui/react-
 import NoAvatar from "../../../../../../lib/assets/images/no_avatar.jpeg";
 import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
 import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
-import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/alert/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../lib/helpers/shared/alert/ConfirmEditDialog";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/message/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/message/ConfirmEditDialog";
 import { useUsersStore, type UserDrawerMode } from "../../core/store";
 import type { FireUser } from "../../core/model";
 import { useRolesStore } from "../../../roles/core/store";
@@ -222,250 +222,250 @@ const CreateUserPage: React.FC = () => {
 
     return (
         <>
-        <OpenDrawer
-            open={drawer.open}
-            title={title}
-            titleIcon={mode === "create" ? <PersonAddRegular /> : undefined}
-            width={480}
-            className="user-form-drawer"
-            onClose={closeDrawer}
-            footer={
-                <>
-                    {!isView && (
-                        <CustomBtn
-                            type="cancel"
-                            label="Cancel"
-                            onClick={closeDrawer}
-                            size="medium"
-                        />
-                    )}
-                    {isView ? (
-                        <CustomBtn
-                            type="close"
-                            label="Done"
-                            onClick={closeDrawer}
-                            size="medium"
-                        />
-                    ) : (
-                        <CustomBtn
-                            type="submit"
-                            label={mode === "edit" ? "Save changes" : "Create user"}
-                            form="user-form"
-                            disabled={!formik.dirty || !formik.isValid}
-                            loading={formik.isSubmitting}
-                            size="medium"
-                        />
-                    )}
-                </>
-            }
-        >
-            <form
-                id="user-form"
-                className="user-form"
-                noValidate
-                onSubmit={formik.handleSubmit}
-            >
-                <div className="user-form-fields">
-                    <Field
-                        label="Profile photo"
-                        className="user-form-photo-field"
-                        validationState={avatarError ? "error" : "none"}
-                        validationMessage={avatarError || undefined}
-                    >
-                        <div className={`user-form-photo-uploader${formik.values.avatarUrl ? " has-photo" : ""}`}>
-                            <input
-                                ref={avatarInputRef}
-                                className="user-form-photo-input"
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                aria-label="Upload profile photo"
-                                onChange={handleAvatarChange}
+            <OpenDrawer
+                open={drawer.open}
+                title={title}
+                titleIcon={mode === "create" ? <PersonAddRegular /> : undefined}
+                width={480}
+                className="user-form-drawer"
+                onClose={closeDrawer}
+                footer={
+                    <>
+                        {!isView && (
+                            <CustomBtn
+                                type="cancel"
+                                label="Cancel"
+                                onClick={closeDrawer}
+                                size="medium"
                             />
-                            <Button
-                                type="button"
-                                appearance="subtle"
-                                className="user-form-photo-upload"
-                                onClick={() => avatarInputRef.current?.click()}
-                                disabled={isView}
-                                aria-label={formik.values.avatarUrl ? "Change profile photo" : "Add a profile photo"}
-                            >
-                                {formik.values.avatarUrl ? (
-                                    <img
-                                        className="user-form-photo-image"
-                                        src={formik.values.avatarUrl}
-                                        alt=""
-                                    />
-                                ) : (
-                                    <img
-                                        className="user-form-photo-image user-form-photo-fallback"
-                                        src={NoAvatar}
-                                        alt=""
+                        )}
+                        {isView ? (
+                            <CustomBtn
+                                type="close"
+                                label="Done"
+                                onClick={closeDrawer}
+                                size="medium"
+                            />
+                        ) : (
+                            <CustomBtn
+                                type="submit"
+                                label={mode === "edit" ? "Save changes" : "Create user"}
+                                form="user-form"
+                                disabled={!formik.dirty || !formik.isValid}
+                                loading={formik.isSubmitting}
+                                size="medium"
+                            />
+                        )}
+                    </>
+                }
+            >
+                <form
+                    id="user-form"
+                    className="user-form"
+                    noValidate
+                    onSubmit={formik.handleSubmit}
+                >
+                    <div className="user-form-fields">
+                        <Field
+                            label="Profile photo"
+                            className="user-form-photo-field"
+                            validationState={avatarError ? "error" : "none"}
+                            validationMessage={avatarError || undefined}
+                        >
+                            <div className={`user-form-photo-uploader${formik.values.avatarUrl ? " has-photo" : ""}`}>
+                                <input
+                                    ref={avatarInputRef}
+                                    className="user-form-photo-input"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    aria-label="Upload profile photo"
+                                    onChange={handleAvatarChange}
+                                />
+                                <Button
+                                    type="button"
+                                    appearance="subtle"
+                                    className="user-form-photo-upload"
+                                    onClick={() => avatarInputRef.current?.click()}
+                                    disabled={isView}
+                                    aria-label={formik.values.avatarUrl ? "Change profile photo" : "Add a profile photo"}
+                                >
+                                    {formik.values.avatarUrl ? (
+                                        <img
+                                            className="user-form-photo-image"
+                                            src={formik.values.avatarUrl}
+                                            alt=""
+                                        />
+                                    ) : (
+                                        <img
+                                            className="user-form-photo-image user-form-photo-fallback"
+                                            src={NoAvatar}
+                                            alt=""
+                                        />
+                                    )}
+                                </Button>
+                                {!isView && (
+                                    <Button
+                                        type="button"
+                                        appearance="subtle"
+                                        size="small"
+                                        icon={<CameraRegular />}
+                                        aria-label={formik.values.avatarUrl ? "Change profile photo" : "Upload profile photo"}
+                                        title={formik.values.avatarUrl ? "Change photo" : "Upload photo"}
+                                        className="user-form-photo-camera-button"
+                                        onClick={() => avatarInputRef.current?.click()}
                                     />
                                 )}
-                            </Button>
-                            {!isView && (
-                                <Button
-                                    type="button"
-                                    appearance="subtle"
-                                    size="small"
-                                    icon={<CameraRegular />}
-                                    aria-label={formik.values.avatarUrl ? "Change profile photo" : "Upload profile photo"}
-                                    title={formik.values.avatarUrl ? "Change photo" : "Upload photo"}
-                                    className="user-form-photo-camera-button"
-                                    onClick={() => avatarInputRef.current?.click()}
-                                />
+                                {formik.values.avatarUrl && !isView && (
+                                    <Button
+                                        type="button"
+                                        appearance="subtle"
+                                        size="small"
+                                        icon={<DeleteRegular />}
+                                        aria-label="Remove profile photo"
+                                        title="Remove photo"
+                                        className="user-form-photo-remove"
+                                        onClick={() => {
+                                            formik.setFieldValue("avatarUrl", "");
+                                            setAvatarError("");
+                                        }}
+                                    />
+                                )}
+                            </div>
+                            {!avatarError && (
+                                <span className="user-form-photo-help">
+                                    JPG, PNG, or WebP. Maximum file size: 2 MB.
+                                </span>
                             )}
-                            {formik.values.avatarUrl && !isView && (
-                                <Button
-                                    type="button"
-                                    appearance="subtle"
-                                    size="small"
-                                    icon={<DeleteRegular />}
-                                    aria-label="Remove profile photo"
-                                    title="Remove photo"
-                                    className="user-form-photo-remove"
-                                    onClick={() => {
-                                        formik.setFieldValue("avatarUrl", "");
-                                        setAvatarError("");
-                                    }}
-                                />
-                            )}
-                        </div>
-                        {!avatarError && (
-                            <span className="user-form-photo-help">
-                                JPG, PNG, or WebP. Maximum file size: 2 MB.
-                            </span>
-                        )}
-                    </Field>
+                        </Field>
 
-                    <Field
-                        label="First name"
-                        required
-                        className="user-form-paired-field"
-                        {...fieldProps("firstName", true)}
-                    >
-                        <Input
-                            autoFocus
-                            name="firstName"
-                            autoComplete="given-name"
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.firstName}
-                            onChange={(_, data) => formik.setFieldValue("firstName", data.value)}
-                            onBlur={() => formik.setFieldTouched("firstName", true)}
-                            disabled={isView}
-                            placeholder="First name"
-                        />
-                    </Field>
-
-                    <Field
-                        label="Last name"
-                        required
-                        className="user-form-paired-field"
-                        {...fieldProps("lastName", true)}
-                    >
-                        <Input
-                            name="lastName"
-                            autoComplete="family-name"
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.lastName}
-                            onChange={(_, data) => formik.setFieldValue("lastName", data.value)}
-                            onBlur={() => formik.setFieldTouched("lastName", true)}
-                            disabled={isView}
-                            placeholder="Last name"
-                        />
-                    </Field>
-
-                    <Field
-                        label="Username"
-                        required
-                        className="user-form-paired-field"
-                        {...fieldProps("username", true)}
-                    >
-                        <Input
-                            name="username"
-                            autoComplete="username"
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.username}
-                            onChange={(_, data) => formik.setFieldValue("username", data.value)}
-                            onBlur={() => formik.setFieldTouched("username", true)}
-                            disabled={isView}
-                            placeholder="e.g. sokha.chan"
-                        />
-                    </Field>
-
-                    <Field
-                        label="Role"
-                        required
-                        className="user-form-paired-field"
-                        {...fieldProps("role", true)}
-                    >
-                        <Dropdown
-                            aria-label="Role"
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.role}
-                            selectedOptions={formik.values.role ? [formik.values.role] : []}
-                            onOptionSelect={(_, data) => {
-                                formik.setFieldValue("role", data.optionValue ?? "");
-                                formik.setFieldTouched("role", true);
-                            }}
-                            onBlur={() => formik.setFieldTouched("role", true)}
-                            disabled={isView}
+                        <Field
+                            label="First name"
+                            required
+                            className="user-form-paired-field"
+                            {...fieldProps("firstName", true)}
                         >
-                            {userRoles.map((role) => (
-                                <Option key={role} value={role}>
-                                    {role}
-                                </Option>
-                            ))}
-                        </Dropdown>
-                    </Field>
+                            <Input
+                                autoFocus
+                                name="firstName"
+                                autoComplete="given-name"
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.firstName}
+                                onChange={(_, data) => formik.setFieldValue("firstName", data.value)}
+                                onBlur={() => formik.setFieldTouched("firstName", true)}
+                                disabled={isView}
+                                placeholder="First name"
+                            />
+                        </Field>
 
-                    <Field
-                        label="Email address"
-                        required
-                        className="user-form-email-field"
-                        {...fieldProps("email")}
-                    >
-                        <Input
-                            type="email"
-                            name="email"
-                            autoComplete="email"
-                            appearance="outline"
-                            size="large"
-                            value={formik.values.email}
-                            onChange={(_, data) => formik.setFieldValue("email", data.value)}
-                            onBlur={() => formik.setFieldTouched("email", true)}
-                            disabled={isView}
-                            placeholder="name@immigration.gov.com"
-                        />
-                    </Field>
-                </div>
+                        <Field
+                            label="Last name"
+                            required
+                            className="user-form-paired-field"
+                            {...fieldProps("lastName", true)}
+                        >
+                            <Input
+                                name="lastName"
+                                autoComplete="family-name"
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.lastName}
+                                onChange={(_, data) => formik.setFieldValue("lastName", data.value)}
+                                onBlur={() => formik.setFieldTouched("lastName", true)}
+                                disabled={isView}
+                                placeholder="Last name"
+                            />
+                        </Field>
 
-                {mode === "create" && (
-                    <div className="user-form-note">
-                        <span className="user-form-note-indicator" />
-                        <span>New accounts are created with active status.</span>
+                        <Field
+                            label="Username"
+                            required
+                            className="user-form-paired-field"
+                            {...fieldProps("username", true)}
+                        >
+                            <Input
+                                name="username"
+                                autoComplete="username"
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.username}
+                                onChange={(_, data) => formik.setFieldValue("username", data.value)}
+                                onBlur={() => formik.setFieldTouched("username", true)}
+                                disabled={isView}
+                                placeholder="e.g. sokha.chan"
+                            />
+                        </Field>
+
+                        <Field
+                            label="Role"
+                            required
+                            className="user-form-paired-field"
+                            {...fieldProps("role", true)}
+                        >
+                            <Dropdown
+                                aria-label="Role"
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.role}
+                                selectedOptions={formik.values.role ? [formik.values.role] : []}
+                                onOptionSelect={(_, data) => {
+                                    formik.setFieldValue("role", data.optionValue ?? "");
+                                    formik.setFieldTouched("role", true);
+                                }}
+                                onBlur={() => formik.setFieldTouched("role", true)}
+                                disabled={isView}
+                            >
+                                {userRoles.map((role) => (
+                                    <Option key={role} value={role}>
+                                        {role}
+                                    </Option>
+                                ))}
+                            </Dropdown>
+                        </Field>
+
+                        <Field
+                            label="Email address"
+                            required
+                            className="user-form-email-field"
+                            {...fieldProps("email")}
+                        >
+                            <Input
+                                type="email"
+                                name="email"
+                                autoComplete="email"
+                                appearance="outline"
+                                size="large"
+                                value={formik.values.email}
+                                onChange={(_, data) => formik.setFieldValue("email", data.value)}
+                                onBlur={() => formik.setFieldTouched("email", true)}
+                                disabled={isView}
+                                placeholder="name@immigration.gov.com"
+                            />
+                        </Field>
                     </div>
-                )}
-            </form>
-        </OpenDrawer>
-        <ConfirmCreateDialog
-            open={confirmCreateOpen}
-            title="user"
-            name={pendingCreateUser?.displayName}
-            onConfirm={confirmCreate}
-            onCancel={cancelCreateConfirmation}
-        />
-        <ConfirmEditDialog
-            open={confirmEditOpen}
-            title="user"
-            name={pendingEditUser?.displayName}
-            onConfirm={confirmEdit}
-            onCancel={cancelEditConfirmation}
-        />
+
+                    {mode === "create" && (
+                        <div className="user-form-note">
+                            <span className="user-form-note-indicator" />
+                            <span>New accounts are created with active status.</span>
+                        </div>
+                    )}
+                </form>
+            </OpenDrawer>
+            <ConfirmCreateDialog
+                open={confirmCreateOpen}
+                title="user"
+                name={pendingCreateUser?.displayName}
+                onConfirm={confirmCreate}
+                onCancel={cancelCreateConfirmation}
+            />
+            <ConfirmEditDialog
+                open={confirmEditOpen}
+                title="user"
+                name={pendingEditUser?.displayName}
+                onConfirm={confirmEdit}
+                onCancel={cancelEditConfirmation}
+            />
         </>
     );
 };

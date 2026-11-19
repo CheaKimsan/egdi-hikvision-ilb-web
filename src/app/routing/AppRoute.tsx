@@ -16,17 +16,27 @@ import DeviceInstallationPage from "../modules/account/device-installation/compo
 import ControlCenter from "../../lib/layout/ControlCenter";
 import ForgotPasswordPage from "../modules/auth/components/ForgotPasswordPage";
 import RegisterPage from "../modules/auth/components/RegisterPage";
+import ResetPasswordPage from "../modules/auth/components/ResetPassword";
 
 const ProtectedRoute = () => {
     const { user } = useAuth();
+
+    console.log(user);
+
 
     return user ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 const AppRoute = () => (
-    <BrowserRouter>
+    <BrowserRouter
+        future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+        }}
+    >
         <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route element={<ProtectedRoute />}>
