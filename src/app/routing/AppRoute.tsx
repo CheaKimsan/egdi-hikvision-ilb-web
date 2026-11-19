@@ -21,9 +21,6 @@ import ResetPasswordPage from "../modules/auth/components/ResetPassword";
 const ProtectedRoute = () => {
     const { user } = useAuth();
 
-    console.log(user);
-
-
     return user ? <Outlet /> : <Navigate to="/login" replace />;
 };
 

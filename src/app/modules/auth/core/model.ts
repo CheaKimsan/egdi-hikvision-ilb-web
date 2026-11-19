@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface IFireStatus {
     key: number;
     name: string;
@@ -29,6 +31,9 @@ export interface IUser {
     displayName?: string;
     avatar?: any;
     role: string;
+    session?: {
+        loginAt?: Timestamp | null;
+    };
     status?: IFireStatus;
     createdAt: any;
     createdBy?: any;

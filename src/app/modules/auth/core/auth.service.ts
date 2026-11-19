@@ -21,23 +21,14 @@ import {
 
 import { auth, db } from "../../../../config/firebase.config";
 import type { IUser, SessionInfo } from "./model";
-import { statusOptions } from "../../../../lib/constants/Status";
+import { STATUS_ACTIVE } from "../../../../lib/constants/Status";
 
 type AuthUser = Omit<IUser, "password">;
 type FireUser = User;
 
 const DEFAULT_ROLE = "viewer";
 const AUTH_STORAGE_KEY = "authUser";
-
-const STATUS_ACTIVE = statusOptions[0];
-const STATUS_INACTIVE = statusOptions[1];
-
-
 let registering = false;
-
-/* -------------------------------------------------------------------------- */
-/* Local session storage                                                      */
-/* -------------------------------------------------------------------------- */
 
 const restoreSession = (): AuthUser | null => {
     try {

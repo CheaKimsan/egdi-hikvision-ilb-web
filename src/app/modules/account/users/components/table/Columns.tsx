@@ -1,38 +1,39 @@
+
+import { formatDate, formatDateTime, formatRelativeTime } from "../../../../../../lib/helpers/services/formation/fmtDateTime";
 import { Column } from "../../../../../../lib/helpers/shared/table/MainTable";
-import { AuthUser } from "../../../../auth/AuthContext";
+import { FireUser } from "../../core/model";
 import ActionCell from "./ActionCell";
 
 type Handlers = {
-    onEdit: (row: AuthUser) => void;
+    onEdit: (row: FireUser) => void;
     onDelete: (id: string) => Promise<void> | void;
-    onToggleStatus: (id: string, status: AuthUser["status"]) => void;
+    onToggleStatus: (id: string, status: FireUser["status"]) => void;
 };
 
-export function Columns({ onEdit, onDelete, onToggleStatus }: Handlers): Column<AuthUser>[] {
+
+
+export function Columns({
+    onEdit,
+    onDelete,
+    onToggleStatus,
+}: Handlers): Column<FireUser>[] {
     return [
         {
-            key: "id",
-            title: "ID",
-            dataIndex: "id",
-            width: 100
+            key: "No",
+            title: "No",
+            width: 100,
+            render: (_row, index) => index + 1,
         },
         {
             key: "name",
             title: "Name",
-            dataIndex: "displayName"
-        },
-        {
-            key: "username",
-            title: "Username",
-            dataIndex: "username"
+            dataIndex: "displayName",
         },
         {
             key: "role",
             title: "Role",
             render: (row) => (
-                <span
-                    className={`role-badge ${row.role === "admin" ? "admin" : "user"}`}
-                >
+                <span className={`role-badge ${row.role === "admin" ? "admin" : "user"}`}>
                     {row.role}
                 </span>
             ),
@@ -41,41 +42,39 @@ export function Columns({ onEdit, onDelete, onToggleStatus }: Handlers): Column<
             key: "status",
             title: "Status",
             render: (row) => (
-                <span className={`status-badge ${row.status}`}>
-                    {row.status}
+                <span className={`status-badge ${row.status?.name}`}>
+                    {row.status?.name}
                 </span>
             ),
         },
+
         {
-            key: "lastLoginAt",
+            key: "session",
             title: "Last Login",
             render: (row) => {
-                if (!row.lastLoginAt) {
+                const loginAt = row.session?.loginAt;
+
+                if (!loginAt) {
                     return <span className="user-last-login-empty">Never</span>;
                 }
 
-                const date = new Date(row.lastLoginAt);
+                const date = loginAt.toDate();
+
                 if (Number.isNaN(date.getTime())) {
                     return <span className="user-last-login-empty">—</span>;
                 }
 
-                const ageInHours = Math.max(
-                    0,
-                    Math.floor((Date.now() - date.getTime()) / (60 * 60 * 1000)),
-                );
-                const ageInDays = Math.floor(ageInHours / 24);
-                const label = ageInHours < 1
-                    ? "Less than an hour ago"
-                    : ageInHours < 24
-                        ? `${ageInHours} ${ageInHours === 1 ? "hour" : "hours"} ago`
-                        : `${ageInDays} ${ageInDays === 1 ? "day" : "days"} ago`;
-
                 return (
                     <time dateTime={date.toISOString()} title={date.toLocaleString()}>
-                        {label}
+                        {formatRelativeTime(date)}
                     </time>
                 );
-            },
+            }
+        },
+        {
+            key: "createdAt",
+            title: "Created At",
+            render: (row) => formatDateTime(row.createdAt),
         },
         {
             key: "actions",

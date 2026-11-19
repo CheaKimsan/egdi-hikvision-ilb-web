@@ -1,4 +1,4 @@
-import type { DummyUser } from "../../../auth/core/model";
+import { IUser } from "../../../auth/core/model";
 
-export type FireUser = Omit<DummyUser, "password">;
+export type FireUser = Omit<IUser, "password">;
 

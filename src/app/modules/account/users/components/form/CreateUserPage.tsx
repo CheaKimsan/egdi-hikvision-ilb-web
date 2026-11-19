@@ -12,16 +12,15 @@ import { CameraRegular, DeleteRegular, PersonAddRegular } from "@fluentui/react-
 import NoAvatar from "../../../../../../lib/assets/images/no_avatar.jpeg";
 import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
 import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
-import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/message/ConfirmCreateDialog";
-import ConfirmEditDialog from "../../../../../../lib/helpers/shared/message/ConfirmEditDialog";
 import { useUsersStore, type UserDrawerMode } from "../../core/store";
 import type { FireUser } from "../../core/model";
 import { useRolesStore } from "../../../roles/core/store";
+import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/message/ConfirmCreateDialog";
+import ConfirmEditDialog from "../../../../../../lib/helpers/shared/message/ConfirmEditDialog";
 
 type UserFormValues = {
     firstName: string;
     lastName: string;
-    username: string;
     email: string;
     role: string;
     avatarUrl: string;
@@ -135,9 +134,8 @@ const CreateUserPage: React.FC = () => {
                 return;
             } else if (mode === "create") {
                 setPendingCreateUser({
-                    id: String(Date.now()),
+                    uid: String(Date.now()),
                     ...savedValues,
-                    status: "active",
                     createdAt: now,
                     updatedAt: now,
                 });
