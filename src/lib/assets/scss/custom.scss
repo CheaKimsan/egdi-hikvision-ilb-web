@@ -585,15 +585,22 @@ $bp-short: 760px;
 
     &.fui-Dropdown {
         border-bottom-color: $primary;
+        height: 38px;
 
-        // hover: use the same color on all four sides
         &:hover {
             border-color: $primary;
         }
 
-        // focus: visible indicator for keyboard users
         &:focus-within {
             border-color: $primary;
+        }
+
+        .fui-Dropdown__expandIcon {
+            transition: transform 0.2s ease;
+        }
+
+        &:has([aria-expanded="true"]) .fui-Dropdown__expandIcon {
+            transform: rotate(180deg);
         }
     }
 }

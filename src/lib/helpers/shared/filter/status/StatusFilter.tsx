@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Dropdown, Option } from "@fluentui/react-components";
 import { statusOptions } from "../../../../constants/Status";
+import { ChevronDownIcon } from "lucide-react";
 
 export const ALL_STATUS = "all";
 
@@ -33,11 +34,21 @@ const StatusFilter: React.FC<StatusFilterProps> = ({
         [allLabel],
     );
 
+    const [open, setOpen] = useState(false);
+
+
     return (
         <Dropdown
             aria-label="Filter by status"
             appearance="outline"
             className={className}
+            open={open}
+            onOpenChange={(_, data) => setOpen(data.open)}
+            expandIcon={
+                <ChevronDownIcon
+                    className={`status-filter-chevron${open ? " is-open" : ""}`}
+                />
+            }
             value={options.find((o) => o.value === value)?.name ?? ""}
             selectedOptions={[value]}
             onOptionSelect={(_, data) => onChange(data.optionValue ?? ALL_STATUS)}
