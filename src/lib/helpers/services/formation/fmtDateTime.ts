@@ -42,14 +42,19 @@ function formatDateTime(
 const pluralize = (value: number, unit: string) =>
     `${value} ${unit}${value === 1 ? "" : "s"} ago`;
 
-function formatRelativeTime(date: Date, now: number = Date.now()): string {
+function formatRelativeTime(value: DateInput, now: number = Date.now()): string {
+    const date = toDate(value);
+    if (!date) return "—";
+
     const minutes = Math.max(0, Math.floor((now - date.getTime()) / 60_000));
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
+    if (minutes < 1) return "just now";
     if (minutes < 60) return pluralize(minutes, "minute");
     if (hours < 24) return pluralize(hours, "hour");
-    return pluralize(days, "day");
+    if (days < 30) return pluralize(days, "day");
+    return formatDate(date);
 }
 
 const formatDate = (date: Date) =>
