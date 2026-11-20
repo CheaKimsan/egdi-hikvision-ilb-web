@@ -1,42 +1,42 @@
-
-import { formatDate, formatDateTime, formatRelativeTime } from "../../../../../../lib/helpers/services/formation/fmtDateTime";
+import { ShieldCheck, UserRound } from "lucide-react";
+import { formatDateTime, formatRelativeTime } from "../../../../../../lib/helpers/services/formation/fmtDateTime";
 import { Column } from "../../../../../../lib/helpers/shared/table/MainTable";
-import { FireUser } from "../../core/model";
+import { IUser } from "../../core/model";
 import ActionCell from "./ActionCell";
+import UserCell from "../../../../../../lib/helpers/shared/avatar/UserCell";
 
 type Handlers = {
-    onEdit: (row: FireUser) => void;
+    onEdit: (row: IUser) => void;
     onDelete: (id: string) => Promise<void> | void;
-    onToggleStatus: (id: string, status: FireUser["status"]) => void;
+    onToggleStatus: (id: string, status: IUser["status"]) => void;
 };
-
-
 
 export function Columns({
     onEdit,
     onDelete,
     onToggleStatus,
-}: Handlers): Column<FireUser>[] {
+}: Handlers): Column<IUser>[] {
     return [
         {
             key: "No",
             title: "No",
-            width: 100,
+            align: "center",
+            width: 60, // Slightly smaller width for just numbers
             render: (_row, index) => index + 1,
         },
         {
             key: "name",
-            title: "Name",
-            dataIndex: "displayName",
+            title: "User",
+            align: "center",
+            render: (row) => (
+                <UserCell name={row.displayName} avatar={row.avatar} role={row.role} />
+            ),
         },
         {
-            key: "role",
-            title: "Role",
-            render: (row) => (
-                <span className={`role-badge ${row.role === "admin" ? "admin" : "user"}`}>
-                    {row.role}
-                </span>
-            ),
+            key: "email",
+            title: "Email",
+            align: "left",
+            dataIndex: "email",
         },
         {
             key: "status",
@@ -47,7 +47,6 @@ export function Columns({
                 </span>
             ),
         },
-
         {
             key: "session",
             title: "Last Login",

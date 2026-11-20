@@ -169,7 +169,7 @@ const LoginPage: React.FC = () => {
                         </div>
                     </Field>
                     <div className="login-forgot flex justify-end">
-                        <Link to="/forgot-password" lang="km">
+                        <Link to="/forgot-password" className="hover:underline" lang="km">
                             ភ្លេចពាក្យសម្ងាត់?
                         </Link>
                     </div>
@@ -211,7 +211,7 @@ const LoginPage: React.FC = () => {
                     </Button>
 
                     <div className="flex justify-center">
-                        <Link to="/register" lang="km">មិនទាន់មានគណនី? ចុះឈ្មោះ</Link>
+                        <Link to="/register" lang="km" className="hover:underline">មិនទាន់មានគណនី? ចុះឈ្មោះ</Link>
                     </div>
                 </form>
 

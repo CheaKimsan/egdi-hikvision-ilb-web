@@ -9,7 +9,7 @@ const dummyUserSeeds: Omit<DummyUser, "createdAt" | "updatedAt">[] = [
         id: "0001",
         username: "admin",
         email: "0001@immigration.gov.kh",
-        password: "Admin@123",
+        password: "Admin@23",
         displayName: "Demo Administrator",
         avatarUrl: NoAvatar,
         role: "Administrator",

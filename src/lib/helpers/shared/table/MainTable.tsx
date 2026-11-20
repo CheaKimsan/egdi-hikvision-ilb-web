@@ -71,7 +71,8 @@ export default function MainTable<T>({
             return;
         }
 
-        const timeoutId = setTimeout(() => setShowLoading(false), 3000);
+        const timeoutId = setTimeout(() => setShowLoading(false), 300);
+
         return () => clearTimeout(timeoutId);
     }, [loading]);
 
@@ -160,61 +161,62 @@ export default function MainTable<T>({
                 </TableHeader>
 
                 <TableBody>
-                    {showLoading ? (
-                        <TableRow>
-                            <TableCell colSpan={columns.length}>
-                                <div style={{ display: "flex", justifyContent: "center", padding: "24px 0" }}>
-                                    <Loader />
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    ) : sliced.length ? (
-                        sliced.map((row, ri) => {
-                            const globalIndex = paginationEnabled
-                                ? cur * currentPageSize + ri
-                                : ri;
+                    {
+                        showLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={columns.length}>
+                                    <div style={{ display: "flex", justifyContent: "center", padding: "24px 0" }}>
+                                        <Loader />
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ) : sliced.length ? (
+                            sliced.map((row, ri) => {
+                                const globalIndex = paginationEnabled
+                                    ? cur * currentPageSize + ri
+                                    : ri;
 
-                            return (
-                                <TableRow
-                                    key={rowKey(row, globalIndex)}
-                                    onClick={(e) => {
-                                        if (!onRowClick) return;
-                                        const target = e.target as HTMLElement;
-                                        if (target.closest("[data-no-row-click='true']")) return;
-                                        onRowClick(row, globalIndex);
-                                    }}
-                                    style={onRowClick ? { cursor: "pointer" } : undefined}
-                                >
-                                    {columns.map((col, ci) => {
-                                        const content = col.render
-                                            ? col.render(row, globalIndex)
-                                            : col.dataIndex !== undefined
-                                                ? (row as any)[col.dataIndex]
-                                                : null;
+                                return (
+                                    <TableRow
+                                        key={rowKey(row, globalIndex)}
+                                        onClick={(e) => {
+                                            if (!onRowClick) return;
+                                            const target = e.target as HTMLElement;
+                                            if (target.closest("[data-no-row-click='true']")) return;
+                                            onRowClick(row, globalIndex);
+                                        }}
+                                        style={onRowClick ? { cursor: "pointer" } : undefined}
+                                    >
+                                        {columns.map((col, ci) => {
+                                            const content = col.render
+                                                ? col.render(row, globalIndex)
+                                                : col.dataIndex !== undefined
+                                                    ? (row as any)[col.dataIndex]
+                                                    : null;
 
-                                        return (
-                                            <TableCell
-                                                key={(col.key ?? String(ci)) + "-cell"}
-                                                className={col.className}
-                                                style={{
-                                                    ...(col.width ? { width: col.width } : null),
-                                                    ...(col.align ? { textAlign: col.align } : null),
-                                                }}
-                                            >
-                                                {content ?? "—"}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            );
-                        })
-                    ) : (
-                        <TableRow>
-                            <TableCell className="text-center" colSpan={columns.length}>
-                                <NoData title={emptyText ?? "No data found"} />
-                            </TableCell>
-                        </TableRow>
-                    )}
+                                            return (
+                                                <TableCell
+                                                    key={(col.key ?? String(ci)) + "-cell"}
+                                                    className={col.className}
+                                                    style={{
+                                                        ...(col.width ? { width: col.width } : null),
+                                                        ...(col.align ? { textAlign: col.align } : null),
+                                                    }}
+                                                >
+                                                    {content ?? "—"}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                );
+                            })
+                        ) : (
+                            <TableRow>
+                                <TableCell className="text-center" colSpan={columns.length}>
+                                    <NoData title={emptyText ?? "No data found"} />
+                                </TableCell>
+                            </TableRow>
+                        )}
                 </TableBody>
             </Table>
 

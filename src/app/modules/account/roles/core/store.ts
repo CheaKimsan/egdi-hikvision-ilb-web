@@ -32,7 +32,7 @@ const editActions: PermissionAction[] = ["view", "create", "edit"];
 const initialRoles: Role[] = [
     {
         id: "role-administrator",
-        name: "Administrator",
+        name: "Admin",
         description: "Full access to every module and management action.",
         permissions: makePermissions(allModules, allActions),
     },

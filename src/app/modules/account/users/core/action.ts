@@ -1,4 +1,3 @@
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -8,54 +7,50 @@ import {
     updateUserStatus,
 } from "./service";
 
-import { FireUser } from "./model";
-
-import { USERS_QUERY_KEY } from "./query";
+import { IUser } from "./model";
+import { usersKeys } from "./query";
 
 // Create user
-export const useCreateUserMutation = () => {
+const useCreateUserMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (user: FireUser) => createUser(user),
+        mutationFn: (user: IUser) => createUser(user),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: USERS_QUERY_KEY,
+                queryKey: usersKeys.all,
             });
         },
     });
 };
 
-// Update user
-export const useUpdateUserMutation = () => {
+const useUpdateUserMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (user: FireUser) => updateUser(user),
+        mutationFn: (user: IUser) => updateUser(user),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: USERS_QUERY_KEY,
+                queryKey: usersKeys.all,
             });
         },
     });
 };
 
-// Delete user
-export const useDeleteUserMutation = () => {
+const useDeleteUserMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (uid: string) => deleteUser(uid),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: USERS_QUERY_KEY,
+                queryKey: usersKeys.all,
             });
         },
     });
 };
 
-// Update user status
-export const useUpdateUserStatusMutation = () => {
+const useUpdateUserStatusMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -64,13 +59,20 @@ export const useUpdateUserStatusMutation = () => {
             status,
         }: {
             uid: string;
-            status: FireUser["status"];
+            status: IUser["status"];
         }) => updateUserStatus(uid, status),
 
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: USERS_QUERY_KEY,
+                queryKey: usersKeys.all,
             });
         },
     });
 };
+
+export {
+    useCreateUserMutation,
+    useDeleteUserMutation,
+    useUpdateUserMutation,
+    useUpdateUserStatusMutation
+}

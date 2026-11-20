@@ -206,6 +206,7 @@ const RegisterPage: React.FC = () => {
                 </div>
             </section>
         </main>
+
     );
 };
 

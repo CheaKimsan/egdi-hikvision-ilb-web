@@ -20,10 +20,11 @@ import {
 } from "firebase/firestore";
 
 import { auth, db } from "../../../../config/firebase.config";
-import type { IUser, SessionInfo } from "./model";
 import { STATUS_ACTIVE } from "../../../../lib/constants/Status";
+import { IUser, SessionInfo } from "../../account/users/core/model";
 
 type AuthUser = Omit<IUser, "password">;
+
 type FireUser = User;
 
 const DEFAULT_ROLE = "viewer";

@@ -1,28 +1,27 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { collection, getDocs } from "firebase/firestore";
 
-import { FireUser } from "./model";
 import { db } from "../../../../../config/firebase.config";
+import { COLLECTIONS } from "../../../../../config/firestore.constant";
+import { IUser } from "./model";
 
-const USERS_COLLECTION = "users";
+export const usersKeys = {
+    all: ["users"] as const,
+    detail: (uid: string) => ["users", uid] as const,
+};
 
-export const USERS_QUERY_KEY = ["users"];
-
-export const fetchUsers = async (): Promise<FireUser[]> => {
-    const snapshot = await getDocs(
-        collection(db, USERS_COLLECTION)
-    );
+export const fetchUsers = async (): Promise<IUser[]> => {
+    const snapshot = await getDocs(collection(db, COLLECTIONS.USERS));
 
     return snapshot.docs.map((document) => ({
         ...document.data(),
         uid: document.id,
-    })) as FireUser[];
+    })) as IUser[];
 };
 
 export const useUsersQuery = () => {
     return useQuery({
-        queryKey: USERS_QUERY_KEY,
+        queryKey: usersKeys.all,
         queryFn: fetchUsers,
         staleTime: 1000 * 60 * 5,
     });
