@@ -1,29 +1,49 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
 import { useUsersStore } from "../core/store";
-import type { FireUser } from "../core/model";
+import type { IUser } from "../core/model";
 import CreateUserPage from "./form/CreateUserPage";
 import { Columns } from "./table/Columns";
 import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
 import { UserRoundPlus } from "lucide-react";
+import { useUsersQuery } from "../core/query";
+import {
+    useDeleteUserMutation,
+    useUpdateUserStatusMutation,
+} from "../core/action";
+import StatusFilter, { ALL_STATUS, matchesStatus } from "../../../../../lib/helpers/shared/filter/status/StatusFilter";
 
 const UserPage: React.FC = () => {
     const search = useUsersStore((state) => state.search);
     const setSearch = useUsersStore((state) => state.setSearch);
-    const users = useUsersStore((state) => state.rows);
-    const deleteUser = useUsersStore((state) => state.deleteUser);
-    const setUserStatus = useUsersStore((state) => state.setUserStatus);
     const openCreate = useUsersStore((state) => state.openCreate);
     const openEdit = useUsersStore((state) => state.openEdit);
 
-    const handleEdit = useCallback((row: FireUser) => openEdit(row), [openEdit]);
+    const [statusFilter, setStatusFilter] = useState<string>(ALL_STATUS);
 
-    const handleDelete = useCallback((id: string) => deleteUser(id), [deleteUser]);
+    const { data: users = [], isLoading } = useUsersQuery();
+
+    const deleteMutation = useDeleteUserMutation();
+    const statusMutation = useUpdateUserStatusMutation();
+
+    const handleEdit = useCallback(
+        (row: IUser) => openEdit(row),
+        [openEdit],
+    );
+
+    const handleDelete = useCallback(
+        async (id: string) => {
+            await deleteMutation.mutateAsync(id);
+        },
+        [deleteMutation.mutateAsync],
+    );
 
     const handleToggleStatus = useCallback(
-        (id: string, status: FireUser["status"]) => setUserStatus(id, status),
-        [setUserStatus],
+        (id: string, status: IUser["status"]) => {
+            statusMutation.mutate({ uid: id, status });
+        },
+        [statusMutation.mutate],
     );
 
     const tableColumns = useMemo(
@@ -36,26 +56,28 @@ const UserPage: React.FC = () => {
         [handleEdit, handleDelete, handleToggleStatus],
     );
 
-    const filteredUsers = users.filter((user) =>
-        [
-            user.id,
-            user.displayName,
-            user.username,
-            user.email,
-            user.role,
-            user.status,
-            user.lastLoginAt ?? "",
-        ]
-            .some((value) => value.toLowerCase().includes(search.trim().toLowerCase())),
-    );
+    const filteredUsers = useMemo(() => {
+        const keyword = search.trim().toLowerCase();
+        return users.filter((user) => {
+            const matchesSearch = [user.displayName, user.email].some((value) =>
+                String(value ?? "").toLowerCase().includes(keyword),
+            );
+
+            return matchesSearch && matchesStatus(user.status, statusFilter);
+        });
+    }, [users, search, statusFilter]);
 
     return (
-        <section className="user-management-page" aria-labelledby="user-management-title">
+        <section
+            className="user-management-page"
+            aria-labelledby="user-management-title"
+        >
             <header className="user-management-header">
                 <div>
                     <h1 id="user-management-title">User Management</h1>
                     <p>View and manage user accounts and roles.</p>
                 </div>
+
                 <CustomBtn
                     type="add"
                     label="Create user"
@@ -66,19 +88,27 @@ const UserPage: React.FC = () => {
                 />
             </header>
 
-            <div className="search-toolbar ">
-                <SearchField value={search} onChange={setSearch} placeholder="Search users..." />
+            <div className="search-toolbar">
+                <SearchField
+                    value={search}
+                    onChange={setSearch}
+                    placeholder="Search users..."
+                />
+
+                <StatusFilter value={statusFilter} onChange={setStatusFilter} />
             </div>
 
             <div className="user-management-table">
                 <MainTable
                     rows={filteredUsers}
                     columns={tableColumns}
-                    rowKey={(user) => user.id}
-                    emptyText="No users found"
+                    rowKey={(user) => user.uid}
+                    emptyText="No Users Found"
                     pagination
+                    loading={isLoading}
                 />
             </div>
+
             <CreateUserPage />
         </section>
     );

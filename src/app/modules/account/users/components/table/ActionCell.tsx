@@ -10,8 +10,9 @@ import {
     DismissRegular,
     CheckmarkRegular,
 } from "@fluentui/react-icons";
-import type { AuthUser } from "../../../../auth/AuthContext";
 import ConfirmDeleteDialog from "../../../../../../lib/helpers/shared/message/ConfirmDeleteDialog";
+import { AuthUser } from "../../../../auth/core/auth.service";
+import { STATUS_ACTIVE, STATUS_INACTIVE } from "../../../../../../lib/constants/Status";
 
 type Props = {
     row: AuthUser;
@@ -24,13 +25,14 @@ export default memo(function ActionCell({ row, onEdit, onDelete, onToggleStatus 
     const [openDelete, setOpenDelete] = useState(false);
     const [openStatusConfirmation, setOpenStatusConfirmation] = useState(false);
     const [loading, setLoading] = useState(false);
-    const nextStatus = row.status === "active" ? "inactive" : "active";
-    const statusAction = row.status === "active" ? "Deactivate" : "Activate";
+    const isActive = row.status?.key === STATUS_ACTIVE.key;
+    const nextStatus = isActive ? STATUS_INACTIVE : STATUS_ACTIVE;
+    const statusAction = isActive ? "Deactivate" : "Activate";
 
     async function handleConfirmDelete() {
         setLoading(true);
         try {
-            await onDelete(row.id);
+            await onDelete(row.uid);
             setOpenDelete(false);
         } finally {
             setLoading(false);
@@ -60,7 +62,7 @@ export default memo(function ActionCell({ row, onEdit, onDelete, onToggleStatus 
                             </MenuItem>
                             <MenuItem
                                 icon={
-                                    row.status === "active"
+                                    isActive
                                         ? <DismissRegular fontSize={16} />
                                         : <CheckmarkRegular fontSize={16} />
                                 }
@@ -111,7 +113,7 @@ export default memo(function ActionCell({ row, onEdit, onDelete, onToggleStatus 
                             <Button
                                 appearance="primary"
                                 onClick={() => {
-                                    onToggleStatus(row.id, nextStatus);
+                                    onToggleStatus(row.uid, nextStatus);
                                     setOpenStatusConfirmation(false);
                                 }}
                             >

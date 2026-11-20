@@ -7,6 +7,8 @@ import Logo from "../../../../lib/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import ParticleBackground from "../../../../lib/helpers/shared/animation/ParticalBackground";
 import { sendResetEmail } from "../core/auth.service";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import { AlertToast } from "../../../../lib/helpers/shared/toaster/Toaster";
 
 const validationSchema = Yup.object({
     email: Yup.string()
@@ -15,7 +17,9 @@ const validationSchema = Yup.object({
 });
 
 const ForgotPasswordPage: React.FC = () => {
+
     const [sent, setSent] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
     const formik = useFormik({
         initialValues: { email: "" },
@@ -23,11 +27,15 @@ const ForgotPasswordPage: React.FC = () => {
         onSubmit: async (values, { setStatus }) => {
             try {
                 await sendResetEmail(values.email);
+
                 setSent(true);
+                setShowToast(true);
             } catch (error) {
                 const code = (error as { code?: string }).code;
+
                 if (code === "auth/user-not-found") {
                     setSent(true);
+                    setShowToast(true);
                     return;
                 }
 
@@ -45,6 +53,13 @@ const ForgotPasswordPage: React.FC = () => {
     return (
         <main className="login-page">
             <ParticleBackground />
+
+            <AlertToast
+                message="ការណែនាំកំណត់ពាក្យសម្ងាត់ឡើងវិញត្រូវបានផ្ញើដោយជោគជ័យ"
+                intent="success"
+                open={showToast}
+                icon={<CheckCircle size={18} />}
+            />
 
             <section className="login-card" aria-labelledby="forgot-title">
                 <div className="login-logo">
@@ -115,7 +130,18 @@ const ForgotPasswordPage: React.FC = () => {
                 )}
 
                 <div className="login-forgot text-center py-2">
-                    <Link to="/login" lang="km">← ត្រឡប់ទៅចូលប្រព័ន្ធវិញ</Link>
+                    <Link
+                        to="/login"
+                        lang="km"
+                        className="group inline-flex items-center gap-1.5 hover:underline"
+                    >
+                        <ArrowLeft
+                            size={16}
+                            aria-hidden="true"
+                            className="transition-transform duration-200 group-hover:-translate-x-1"
+                        />
+                        <span className="leading-relaxed">ត្រឡប់ទៅចូលប្រព័ន្ធវិញ</span>
+                    </Link>
                 </div>
             </section>
         </main>

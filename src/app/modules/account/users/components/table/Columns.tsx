@@ -1,81 +1,79 @@
+import { ShieldCheck, UserRound } from "lucide-react";
+import { formatDateTime, formatRelativeTime } from "../../../../../../lib/helpers/services/formation/fmtDateTime";
 import { Column } from "../../../../../../lib/helpers/shared/table/MainTable";
-import { AuthUser } from "../../../../auth/AuthContext";
+import { IUser } from "../../core/model";
 import ActionCell from "./ActionCell";
+import UserCell from "../../../../../../lib/helpers/shared/avatar/UserCell";
 
 type Handlers = {
-    onEdit: (row: AuthUser) => void;
+    onEdit: (row: IUser) => void;
     onDelete: (id: string) => Promise<void> | void;
-    onToggleStatus: (id: string, status: AuthUser["status"]) => void;
+    onToggleStatus: (id: string, status: IUser["status"]) => void;
 };
 
-export function Columns({ onEdit, onDelete, onToggleStatus }: Handlers): Column<AuthUser>[] {
+export function Columns({
+    onEdit,
+    onDelete,
+    onToggleStatus,
+}: Handlers): Column<IUser>[] {
     return [
         {
-            key: "id",
-            title: "ID",
-            dataIndex: "id",
-            width: 100
+            key: "No",
+            title: "No",
+            align: "center",
+            width: 60, // Slightly smaller width for just numbers
+            render: (_row, index) => index + 1,
         },
         {
             key: "name",
-            title: "Name",
-            dataIndex: "displayName"
-        },
-        {
-            key: "username",
-            title: "Username",
-            dataIndex: "username"
-        },
-        {
-            key: "role",
-            title: "Role",
+            title: "User",
+            align: "center",
             render: (row) => (
-                <span
-                    className={`role-badge ${row.role === "admin" ? "admin" : "user"}`}
-                >
-                    {row.role}
-                </span>
+                <UserCell name={row.displayName} avatar={row.avatar} role={row.role} />
             ),
+        },
+        {
+            key: "email",
+            title: "Email",
+            align: "left",
+            dataIndex: "email",
         },
         {
             key: "status",
             title: "Status",
             render: (row) => (
-                <span className={`status-badge ${row.status}`}>
-                    {row.status}
+                <span className={`status-badge ${row.status?.name}`}>
+                    {row.status?.name}
                 </span>
             ),
         },
         {
-            key: "lastLoginAt",
+            key: "session",
             title: "Last Login",
             render: (row) => {
-                if (!row.lastLoginAt) {
+                const loginAt = row.session?.loginAt;
+
+                if (!loginAt) {
                     return <span className="user-last-login-empty">Never</span>;
                 }
 
-                const date = new Date(row.lastLoginAt);
+                const date = loginAt.toDate();
+
                 if (Number.isNaN(date.getTime())) {
                     return <span className="user-last-login-empty">—</span>;
                 }
 
-                const ageInHours = Math.max(
-                    0,
-                    Math.floor((Date.now() - date.getTime()) / (60 * 60 * 1000)),
-                );
-                const ageInDays = Math.floor(ageInHours / 24);
-                const label = ageInHours < 1
-                    ? "Less than an hour ago"
-                    : ageInHours < 24
-                        ? `${ageInHours} ${ageInHours === 1 ? "hour" : "hours"} ago`
-                        : `${ageInDays} ${ageInDays === 1 ? "day" : "days"} ago`;
-
                 return (
                     <time dateTime={date.toISOString()} title={date.toLocaleString()}>
-                        {label}
+                        {formatRelativeTime(date)}
                     </time>
                 );
-            },
+            }
+        },
+        {
+            key: "createdAt",
+            title: "Created At",
+            render: (row) => formatDateTime(row.createdAt),
         },
         {
             key: "actions",

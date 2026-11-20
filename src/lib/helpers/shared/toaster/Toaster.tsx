@@ -1,7 +1,6 @@
 import * as React from "react";
 import type { JSXElement, ToastIntent } from "@fluentui/react-components";
 import { Toast, ToastTitle, Toaster, useId, useToastController, } from "@fluentui/react-components";
-import { icons } from "lucide-react";
 
 type AlertToastProps = {
     message: string;

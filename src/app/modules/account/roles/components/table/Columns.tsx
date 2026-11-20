@@ -1,10 +1,10 @@
-import type { Column } from "../../../../../lib/helpers/shared/table/MainTable";
-import type { FireUser } from "../../../users/core/model";
+import { Column } from "../../../../../../lib/helpers/shared/table/MainTable";
+import type { IUser } from "../../../users/core/model";
 import type { Role } from "../../core/model";
 import ActionCell from "./ActionCell";
 
 type Handlers = {
-    users: FireUser[];
+    users: IUser[];
     onEdit: (role: Role) => void;
     onDelete: (id: string) => void;
 };

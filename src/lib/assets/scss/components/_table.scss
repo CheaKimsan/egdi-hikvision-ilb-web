@@ -14,7 +14,7 @@
   [role='cell'],
   td {
     min-height: 64px;
-    padding: 13px 20px;
+    padding-block: 13px;
     font-size: 15px;
   }
 }
@@ -190,12 +190,12 @@
   font-weight: 600;
   text-transform: capitalize;
 
-  &.active {
+  &.Active {
     background: #ecfdf5;
     color: #047857;
   }
 
-  &.inactive {
+  &.Inactive {
     background: #fff1f2;
     color: #9f1239;
   }

@@ -12,25 +12,29 @@ import { CameraRegular, DeleteRegular, PersonAddRegular } from "@fluentui/react-
 import NoAvatar from "../../../../../../lib/assets/images/no_avatar.jpeg";
 import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
 import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
+import { useUsersStore, type UserDrawerMode } from "../../core/store";
+import { useUsersQuery } from "../../core/query";
+import { useCreateUserMutation, useUpdateUserMutation } from "../../core/action";
+import { useRolesStore } from "../../../roles/core/store";
 import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/message/ConfirmCreateDialog";
 import ConfirmEditDialog from "../../../../../../lib/helpers/shared/message/ConfirmEditDialog";
-import { useUsersStore, type UserDrawerMode } from "../../core/store";
-import type { FireUser } from "../../core/model";
-import { useRolesStore } from "../../../roles/core/store";
+import { statusOptions } from "../../../../../../lib/constants/Status";
+import { AlertToast } from "../../../../../../lib/helpers/shared/toaster/Toaster";
+import { IUser } from "../../core/model";
 
 type UserFormValues = {
     firstName: string;
     lastName: string;
-    username: string;
     email: string;
     role: string;
-    avatarUrl: string;
+    status: number;
+    avatar: string;
 };
-type UserFormField = Exclude<keyof UserFormValues, "avatarUrl">;
+type UserFormField = Exclude<keyof UserFormValues, "avatar">;
 
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
-const ACCEPTED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
+const ACCEPTED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const splitName = (displayName: string) => {
     const [firstName = "", ...lastNameParts] = displayName.trim().split(/\s+/);
     return { firstName, lastName: lastNameParts.join(" ") };
@@ -38,34 +42,44 @@ const splitName = (displayName: string) => {
 
 const CreateUserPage: React.FC = () => {
     const drawer = useUsersStore((state) => state.drawer);
-    const rows = useUsersStore((state) => state.rows);
+    const closeDrawer = useUsersStore((state) => state.closeDrawer);
     const roles = useRolesStore((state) => state.rows);
     const userRoles = useMemo(() => roles.map((role) => role.name), [roles]);
-    const addUser = useUsersStore((state) => state.addUser);
-    const updateUser = useUsersStore((state) => state.updateUser);
-    const closeDrawer = useUsersStore((state) => state.closeDrawer);
+
+    const { data: users = [] } = useUsersQuery();
+    const createMutation = useCreateUserMutation();
+    const updateMutation = useUpdateUserMutation();
+
     const avatarInputRef = useRef<HTMLInputElement>(null);
     const [avatarError, setAvatarError] = useState("");
     const [confirmCreateOpen, setConfirmCreateOpen] = useState(false);
-    const [pendingCreateUser, setPendingCreateUser] = useState<FireUser | null>(null);
+    const [pendingCreateUser, setPendingCreateUser] = useState<IUser | null>(null);
     const [confirmEditOpen, setConfirmEditOpen] = useState(false);
-    const [pendingEditUser, setPendingEditUser] = useState<FireUser | null>(null);
+    const [pendingEditUser, setPendingEditUser] = useState<IUser | null>(null);
+
+    const [toast, setToast] = useState<{
+        open: boolean;
+        message: string;
+        intent: "success" | "error" | "warning" | "info";
+    }>({ open: false, message: "", intent: "info" });
 
     const mode: UserDrawerMode = drawer.mode;
     const isView = mode === "view";
-    const title =
-        mode === "create" ? "Add new user" : mode === "edit" ? "Edit user" : "User details";
+    const isCreate = mode === "create";
+    const title = isCreate ? "Add new user" : mode === "edit" ? "Edit user" : "User details";
 
-    const initialValues = useMemo<UserFormValues>(
-        () => ({
-            ...splitName(drawer.user?.displayName ?? ""),
-            username: drawer.user?.username ?? "",
-            email: drawer.user?.email ?? "",
-            role: drawer.user?.role ?? userRoles[0] ?? "",
-            avatarUrl: drawer.user?.avatarUrl ?? "",
-        }),
-        [drawer.user, userRoles],
-    );
+    const initialValues = useMemo<UserFormValues>(() => {
+        const user = drawer.user;
+        const fallbackName = splitName(user?.displayName ?? "");
+        return {
+            firstName: user?.firstName ?? fallbackName.firstName,
+            lastName: user?.lastName ?? fallbackName.lastName,
+            email: user?.email ?? "",
+            role: user?.role ?? userRoles[0] ?? "",
+            status: user?.status?.key ?? 1,
+            avatar: user?.avatar ?? "",
+        };
+    }, [drawer.user, userRoles]);
 
     useEffect(() => {
         setAvatarError("");
@@ -84,32 +98,26 @@ const CreateUserPage: React.FC = () => {
                     .min(2, "Last name must be at least 2 characters")
                     .max(50, "Last name must be 50 characters or fewer")
                     .required("Last name is required"),
-                username: Yup.string()
-                    .trim()
-                    .matches(/^[a-zA-Z0-9._-]+$/, "Use letters, numbers, dots, underscores, or hyphens")
-                    .min(3, "Username must be at least 3 characters")
-                    .max(50, "Username must be 50 characters or fewer")
-                    .required("Username is required")
-                    .test(
-                        "unique-username",
-                        "This username is already in use",
-                        (value) =>
-                            !rows.some(
-                                (user) =>
-                                    user.id !== drawer.user?.id &&
-                                    user.username.toLowerCase() === value?.trim().toLowerCase(),
-                            ),
-                    ),
                 email: Yup.string()
                     .trim()
                     .email("Enter a valid email address")
                     .max(254, "Email address is too long")
-                    .required("Email address is required"),
+                    .required("Email address is required")
+                    .test(
+                        "unique-email",
+                        "This email is already in use",
+                        (value) =>
+                            !users.some(
+                                (user) =>
+                                    user.uid !== drawer.user?.uid &&
+                                    user.email.toLowerCase() === value?.trim().toLowerCase(),
+                            ),
+                    ),
                 role: Yup.string()
                     .oneOf(userRoles, "Select a valid role")
                     .required("Role is required"),
             }),
-        [drawer.user?.id, rows, userRoles],
+        [drawer.user?.uid, users, userRoles, isCreate],
     );
 
     const formik = useFormik<UserFormValues>({
@@ -118,45 +126,52 @@ const CreateUserPage: React.FC = () => {
         validationSchema,
         onSubmit: (values, { setSubmitting }) => {
             const now = new Date().toISOString();
-            const { firstName, lastName, ...userValues } = values;
-            const savedValues = {
-                ...userValues,
-                displayName: `${firstName.trim()} ${lastName.trim()}`,
+            const firstName = values.firstName.trim();
+            const lastName = values.lastName.trim();
+
+            const selectedStatus = statusOptions.find((option) => option.key === values.status)!;
+
+            const data = {
+                firstName,
+                lastName,
+                displayName: `${firstName} ${lastName}`.toUpperCase(),
+                email: values.email.trim().toLowerCase(),
+                role: values.role,
+                status: { key: selectedStatus.key, name: selectedStatus.name },
+                avatar: values.avatar,
+                updatedAt: now,
             };
 
             if (mode === "edit" && drawer.user) {
-                setPendingEditUser({
-                    ...drawer.user,
-                    ...savedValues,
-                    updatedAt: now,
-                });
+                setPendingEditUser({ ...drawer.user, ...data });
                 setConfirmEditOpen(true);
-                setSubmitting(false);
-                return;
-            } else if (mode === "create") {
+            } else if (isCreate) {
                 setPendingCreateUser({
-                    id: String(Date.now()),
-                    ...savedValues,
-                    status: "active",
+                    uid: "", // real uid is assigned in createUser (Auth uid or doc id)
+                    ...data,
                     createdAt: now,
-                    updatedAt: now,
                 });
                 setConfirmCreateOpen(true);
-                setSubmitting(false);
-                return;
             }
 
             setSubmitting(false);
-            closeDrawer();
         },
     });
 
     const confirmCreate = () => {
         if (!pendingCreateUser) return;
-        addUser(pendingCreateUser);
-        setPendingCreateUser(null);
-        setConfirmCreateOpen(false);
-        closeDrawer();
+        createMutation.mutate(pendingCreateUser, {
+            onSuccess: () => {
+                setPendingCreateUser(null);
+                setConfirmCreateOpen(false);
+                closeDrawer();
+                setToast({ open: true, message: "User created successfully.", intent: "success" });
+            },
+            onError: (error) => {
+                setConfirmCreateOpen(false)
+                setToast({ open: true, message: error.message, intent: "error" });
+            },
+        });
     };
 
     const cancelCreateConfirmation = () => {
@@ -166,10 +181,13 @@ const CreateUserPage: React.FC = () => {
 
     const confirmEdit = () => {
         if (!pendingEditUser) return;
-        updateUser(pendingEditUser);
-        setPendingEditUser(null);
-        setConfirmEditOpen(false);
-        closeDrawer();
+        updateMutation.mutate(pendingEditUser, {
+            onSuccess: () => {
+                setPendingEditUser(null);
+                setConfirmEditOpen(false);
+                closeDrawer();
+            },
+        });
     };
 
     const cancelEditConfirmation = () => {
@@ -211,7 +229,7 @@ const CreateUserPage: React.FC = () => {
                 return;
             }
 
-            formik.setFieldValue("avatarUrl", reader.result);
+            formik.setFieldValue("avatar", reader.result);
             setAvatarError("");
         };
         reader.onerror = () => {
@@ -225,7 +243,7 @@ const CreateUserPage: React.FC = () => {
             <OpenDrawer
                 open={drawer.open}
                 title={title}
-                titleIcon={mode === "create" ? <PersonAddRegular /> : undefined}
+                titleIcon={isCreate ? <PersonAddRegular /> : undefined}
                 width={480}
                 className="user-form-drawer"
                 onClose={closeDrawer}
@@ -251,7 +269,7 @@ const CreateUserPage: React.FC = () => {
                                 type="submit"
                                 label={mode === "edit" ? "Save changes" : "Create user"}
                                 form="user-form"
-                                disabled={!formik.dirty || !formik.isValid}
+                                disabled={!formik.dirty || !formik.isValid || createMutation.isPending || updateMutation.isPending}
                                 loading={formik.isSubmitting}
                                 size="medium"
                             />
@@ -272,7 +290,7 @@ const CreateUserPage: React.FC = () => {
                             validationState={avatarError ? "error" : "none"}
                             validationMessage={avatarError || undefined}
                         >
-                            <div className={`user-form-photo-uploader${formik.values.avatarUrl ? " has-photo" : ""}`}>
+                            <div className={`user-form-photo-uploader${formik.values.avatar ? " has-photo" : ""}`}>
                                 <input
                                     ref={avatarInputRef}
                                     className="user-form-photo-input"
@@ -287,12 +305,12 @@ const CreateUserPage: React.FC = () => {
                                     className="user-form-photo-upload"
                                     onClick={() => avatarInputRef.current?.click()}
                                     disabled={isView}
-                                    aria-label={formik.values.avatarUrl ? "Change profile photo" : "Add a profile photo"}
+                                    aria-label={formik.values.avatar ? "Change profile photo" : "Add a profile photo"}
                                 >
-                                    {formik.values.avatarUrl ? (
+                                    {formik.values.avatar ? (
                                         <img
                                             className="user-form-photo-image"
-                                            src={formik.values.avatarUrl}
+                                            src={formik.values.avatar}
                                             alt=""
                                         />
                                     ) : (
@@ -309,13 +327,13 @@ const CreateUserPage: React.FC = () => {
                                         appearance="subtle"
                                         size="small"
                                         icon={<CameraRegular />}
-                                        aria-label={formik.values.avatarUrl ? "Change profile photo" : "Upload profile photo"}
-                                        title={formik.values.avatarUrl ? "Change photo" : "Upload photo"}
+                                        aria-label={formik.values.avatar ? "Change profile photo" : "Upload profile photo"}
+                                        title={formik.values.avatar ? "Change photo" : "Upload photo"}
                                         className="user-form-photo-camera-button"
                                         onClick={() => avatarInputRef.current?.click()}
                                     />
                                 )}
-                                {formik.values.avatarUrl && !isView && (
+                                {formik.values.avatar && !isView && (
                                     <Button
                                         type="button"
                                         appearance="subtle"
@@ -325,7 +343,7 @@ const CreateUserPage: React.FC = () => {
                                         title="Remove photo"
                                         className="user-form-photo-remove"
                                         onClick={() => {
-                                            formik.setFieldValue("avatarUrl", "");
+                                            formik.setFieldValue("avatar", "");
                                             setAvatarError("");
                                         }}
                                     />
@@ -378,25 +396,6 @@ const CreateUserPage: React.FC = () => {
                         </Field>
 
                         <Field
-                            label="Username"
-                            required
-                            className="user-form-paired-field"
-                            {...fieldProps("username", true)}
-                        >
-                            <Input
-                                name="username"
-                                autoComplete="username"
-                                appearance="outline"
-                                size="large"
-                                value={formik.values.username}
-                                onChange={(_, data) => formik.setFieldValue("username", data.value)}
-                                onBlur={() => formik.setFieldTouched("username", true)}
-                                disabled={isView}
-                                placeholder="e.g. sokha.chan"
-                            />
-                        </Field>
-
-                        <Field
                             label="Role"
                             required
                             className="user-form-paired-field"
@@ -424,6 +423,35 @@ const CreateUserPage: React.FC = () => {
                         </Field>
 
                         <Field
+                            label="Status"
+                            required
+                            className="user-form-paired-field"
+                            {...fieldProps("status", true)}
+                        >
+                            <Dropdown
+                                aria-label="Status"
+                                appearance="outline"
+                                size="large"
+                                value={
+                                    statusOptions.find((option) => option.key === formik.values.status)?.name ?? ""
+                                }
+                                selectedOptions={[String(formik.values.status)]}
+                                onOptionSelect={(_, data) => {
+                                    formik.setFieldValue("status", Number(data.optionValue));
+                                    formik.setFieldTouched("status", true);
+                                }}
+                                onBlur={() => formik.setFieldTouched("status", true)}
+                                disabled={isView}
+                            >
+                                {statusOptions.map((option) => (
+                                    <Option key={option.key} value={String(option.key)}>
+                                        {option.name}
+                                    </Option>
+                                ))}
+                            </Dropdown>
+                        </Field>
+
+                        <Field
                             label="Email address"
                             required
                             className="user-form-email-field"
@@ -442,14 +470,9 @@ const CreateUserPage: React.FC = () => {
                                 placeholder="name@immigration.gov.com"
                             />
                         </Field>
-                    </div>
 
-                    {mode === "create" && (
-                        <div className="user-form-note">
-                            <span className="user-form-note-indicator" />
-                            <span>New accounts are created with active status.</span>
-                        </div>
-                    )}
+
+                    </div>
                 </form>
             </OpenDrawer>
             <ConfirmCreateDialog
@@ -458,6 +481,7 @@ const CreateUserPage: React.FC = () => {
                 name={pendingCreateUser?.displayName}
                 onConfirm={confirmCreate}
                 onCancel={cancelCreateConfirmation}
+                loading={createMutation.isPending}
             />
             <ConfirmEditDialog
                 open={confirmEditOpen}
@@ -465,6 +489,12 @@ const CreateUserPage: React.FC = () => {
                 name={pendingEditUser?.displayName}
                 onConfirm={confirmEdit}
                 onCancel={cancelEditConfirmation}
+            />
+
+            <AlertToast
+                open={toast.open}
+                message={toast.message}
+                intent={toast.intent}
             />
         </>
     );
