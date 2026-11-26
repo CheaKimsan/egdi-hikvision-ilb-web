@@ -7,8 +7,11 @@ import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
 import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/message/ConfirmCreateDialog";
 import ConfirmEditDialog from "../../../../../../lib/helpers/shared/message/ConfirmEditDialog";
 import { CAMBODIA_PROVINCES } from "../../../../../../lib/data/CambodiaProvinces";
-import type { Vehicle } from "../../core/model";
+import type { IVehicle } from "../../core/model";
+import type { VehicleDrawerMode } from "../../core/store";
+
 import { CarTaxiFront } from "lucide-react";
+import { STATUS_ACTIVE, StatusOption, vehicleStatusOptions } from "../../../../../../lib/constants/Status";
 
 type VehicleFormValues = {
     vehicleCode: string;
@@ -16,15 +19,16 @@ type VehicleFormValues = {
     licensePlate: string;
     vehicleType: string;
     province: string;
-    status: Vehicle["status"];
+    status: StatusOption;
 };
 
 type Props = {
     open: boolean;
-    vehicle: Vehicle | null;
-    vehicles: Vehicle[];
+    mode: VehicleDrawerMode;
+    vehicle: IVehicle | null;
+    vehicles: IVehicle[];
     onClose: () => void;
-    onSave: (vehicle: Vehicle) => void;
+    onSave: (vehicle: IVehicle) => Promise<void>;
 };
 
 const emptyValues: VehicleFormValues = {
@@ -33,20 +37,27 @@ const emptyValues: VehicleFormValues = {
     licensePlate: "",
     vehicleType: "",
     province: "",
-    status: "active",
+    status: STATUS_ACTIVE,
 };
 
-const statuses: Vehicle["status"][] = ["active", "inactive", "maintenance"];
+const titles: Record<VehicleDrawerMode, string> = {
+    create: "Add vehicle",
+    edit: "Edit vehicle",
+    view: "Vehicle details",
+};
 
 const CreateVehiclePage: React.FC<Props> = ({
     open,
+    mode,
     vehicle,
     vehicles,
     onClose,
     onSave,
 }) => {
-    const isEditing = vehicle !== null;
-    const [pendingVehicle, setPendingVehicle] = useState<Vehicle | null>(null);
+    const isEditing = mode === "edit";
+    const readOnly = mode === "view";
+
+    const [pendingVehicle, setPendingVehicle] = useState<IVehicle | null>(null);
     const [confirmCreateOpen, setConfirmCreateOpen] = useState(false);
     const [confirmEditOpen, setConfirmEditOpen] = useState(false);
 
@@ -55,8 +66,8 @@ const CreateVehiclePage: React.FC<Props> = ({
             vehicle
                 ? {
                     vehicleCode: vehicle.vehicleCode,
-                    name: vehicle.name,
-                    licensePlate: vehicle.licensePlate,
+                    name: vehicle.name ?? "",
+                    licensePlate: vehicle.licensePlate ?? "",
                     vehicleType: vehicle.vehicleType ?? "",
                     province: vehicle.province ?? "",
                     status: vehicle.status,
@@ -78,7 +89,7 @@ const CreateVehiclePage: React.FC<Props> = ({
                         (value) =>
                             !vehicles.some(
                                 (item) =>
-                                    item.id !== vehicle?.id &&
+                                    item.key !== vehicle?.key &&
                                     item.vehicleCode.toLowerCase() === value?.trim().toLowerCase(),
                             ),
                     ),
@@ -93,20 +104,24 @@ const CreateVehiclePage: React.FC<Props> = ({
                         (value) =>
                             !vehicles.some(
                                 (item) =>
-                                    item.id !== vehicle?.id &&
-                                    item.licensePlate.toLowerCase() === value?.trim().toLowerCase(),
+                                    item.key !== vehicle?.key &&
+                                    (item.licensePlate ?? "").toLowerCase() ===
+                                    value?.trim().toLowerCase(),
                             ),
                     ),
                 vehicleType: Yup.string().max(50, "Vehicle type must be 50 characters or fewer"),
-                province: Yup.string().oneOf([
-                    "",
-                    ...CAMBODIA_PROVINCES.map((province) => province.name),
-                ], "Select a valid province"),
-                status: Yup.mixed<Vehicle["status"]>()
-                    .oneOf(statuses)
-                    .required("Status is required"),
+                province: Yup.string().oneOf(
+                    ["", ...CAMBODIA_PROVINCES.map((province) => province.name)],
+                    "Select a valid province",
+                ),
+                status: Yup.object({
+                    key: Yup.number()
+                        .oneOf(vehicleStatusOptions.map((s) => s.key))
+                        .required(),
+                    name: Yup.string().required(),
+                }).required("Status is required"),
             }),
-        [vehicle?.id, vehicles],
+        [vehicle?.key, vehicles],
     );
 
     const formik = useFormik<VehicleFormValues>({
@@ -114,17 +129,17 @@ const CreateVehiclePage: React.FC<Props> = ({
         enableReinitialize: true,
         validationSchema,
         onSubmit: (values, { setSubmitting }) => {
-            const now = new Date().toISOString();
-            const nextVehicle: Vehicle = {
-                id: vehicle?.id ?? `vehicle-${Date.now()}`,
+            // createdAt / updatedAt are set by the service with serverTimestamp()
+            const nextVehicle: IVehicle = {
+                key: vehicle?.key ?? "",
                 vehicleCode: values.vehicleCode.trim(),
                 name: values.name.trim(),
                 licensePlate: values.licensePlate.trim(),
-                vehicleType: values.vehicleType.trim() || undefined,
-                province: values.province.trim() || undefined,
+                vehicleType: values.vehicleType.trim(), // "" instead of undefined (Firestore rejects undefined)
+                province: values.province.trim(),
                 status: values.status,
-                createdAt: vehicle?.createdAt ?? now,
-                updatedAt: now,
+                createdAt: vehicle?.createdAt,
+                updatedAt: vehicle?.updatedAt,
             };
             setPendingVehicle(nextVehicle);
             if (isEditing) setConfirmEditOpen(true);
@@ -144,47 +159,61 @@ const CreateVehiclePage: React.FC<Props> = ({
         setConfirmEditOpen(false);
     };
 
-    const confirmSave = () => {
+    const confirmSave = async () => {
         if (!pendingVehicle) return;
-        onSave(pendingVehicle);
-        closeConfirmation();
-        onClose();
+        try {
+            await onSave(pendingVehicle);
+            closeConfirmation();
+            onClose();
+        } catch (error) {
+            console.error("Save vehicle failed", error); // swap for your toast/message component
+            closeConfirmation();
+        }
     };
 
-    const fieldProps = (field: keyof VehicleFormValues) => ({
-        validationState:
-            formik.touched[field] && formik.errors[field]
-                ? "error" as const
-                : "none" as const,
-        validationMessage: formik.touched[field] ? formik.errors[field] : undefined,
-    });
+    // formik.errors.status is an object, so only pass strings as the message
+    const fieldProps = (field: keyof VehicleFormValues) => {
+        const error = formik.errors[field];
+        const message =
+            typeof error === "string" ? error : error ? "Invalid value" : undefined;
+
+        return {
+            validationState:
+                formik.touched[field] && error ? ("error" as const) : ("none" as const),
+            validationMessage: formik.touched[field] ? message : undefined,
+        };
+    };
 
     return (
         <>
             <OpenDrawer
                 open={open}
-                title={isEditing ? "Edit vehicle" : "Add vehicle"}
+                title={titles[mode]}
                 titleIcon={<CarTaxiFront />}
                 width={620}
                 className="user-form-drawer device-form-drawer vehicle-form-drawer"
                 onClose={onClose}
                 footer={
-                    <>
-                        <CustomBtn
-                            type="cancel"
-                            label="Cancel"
-                            onClick={onClose}
-                            size="medium"
-                        />
-                        <CustomBtn
-                            type="submit"
-                            label={isEditing ? "Save changes" : "Save vehicle"}
-                            form="vehicle-form"
-                            disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
-                            loading={formik.isSubmitting}
-                            size="medium"
-                        />
-                    </>
+                    readOnly ? (
+                        <CustomBtn type="cancel" label="Close" onClick={onClose} size="medium" />
+                    ) : (
+                        <>
+                            <CustomBtn
+                                type="cancel"
+                                label="Cancel"
+                                onClick={onClose}
+                                size="medium"
+                            />
+                            <CustomBtn
+                                type="submit"
+                                label={isEditing ? "Save changes" : "Save vehicle"}
+                                form="vehicle-form"
+                                disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
+                                loading={formik.isSubmitting}
+                                size="medium"
+                            />
+                        </>
+                    )
                 }
             >
                 <form
@@ -196,7 +225,8 @@ const CreateVehiclePage: React.FC<Props> = ({
                     <div className="device-form-fields">
                         <Field label="Vehicle code" required {...fieldProps("vehicleCode")}>
                             <Input
-                                autoFocus
+                                autoFocus={!readOnly}
+                                disabled={readOnly}
                                 appearance="outline"
                                 size="large"
                                 value={formik.values.vehicleCode}
@@ -207,6 +237,7 @@ const CreateVehiclePage: React.FC<Props> = ({
                         </Field>
                         <Field label="Vehicle name" required {...fieldProps("name")}>
                             <Input
+                                disabled={readOnly}
                                 appearance="outline"
                                 size="large"
                                 value={formik.values.name}
@@ -217,6 +248,7 @@ const CreateVehiclePage: React.FC<Props> = ({
                         </Field>
                         <Field label="License plate" required {...fieldProps("licensePlate")}>
                             <Input
+                                disabled={readOnly}
                                 appearance="outline"
                                 size="large"
                                 value={formik.values.licensePlate}
@@ -227,6 +259,7 @@ const CreateVehiclePage: React.FC<Props> = ({
                         </Field>
                         <Field label="Vehicle type" {...fieldProps("vehicleType")}>
                             <Input
+                                disabled={readOnly}
                                 appearance="outline"
                                 size="large"
                                 value={formik.values.vehicleType}
@@ -238,14 +271,15 @@ const CreateVehiclePage: React.FC<Props> = ({
                         <Field label="Province" {...fieldProps("province")}>
                             <Dropdown
                                 aria-label="Province"
+                                disabled={readOnly}
                                 appearance="outline"
                                 size="large"
                                 value={formik.values.province}
                                 selectedOptions={formik.values.province ? [formik.values.province] : []}
                                 placeholder="Select a province"
-                                onOptionSelect={(_, data) => {
-                                    formik.setFieldValue("province", data.optionValue ?? "");
-                                }}
+                                onOptionSelect={(_, data) =>
+                                    formik.setFieldValue("province", data.optionValue ?? "")
+                                }
                                 onBlur={() => formik.setFieldTouched("province", true)}
                             >
                                 {CAMBODIA_PROVINCES.map((province) => (
@@ -262,20 +296,22 @@ const CreateVehiclePage: React.FC<Props> = ({
                         <Field label="Status" required {...fieldProps("status")}>
                             <Dropdown
                                 aria-label="Vehicle status"
+                                disabled={readOnly}
                                 appearance="outline"
                                 size="large"
-                                value={formik.values.status}
-                                selectedOptions={[formik.values.status]}
+                                value={formik.values.status.name}
+                                selectedOptions={[String(formik.values.status.key)]}
                                 onOptionSelect={(_, data) => {
-                                    if (data.optionValue) {
-                                        formik.setFieldValue("status", data.optionValue);
-                                    }
+                                    const selected = vehicleStatusOptions.find(
+                                        (s) => String(s.key) === data.optionValue,
+                                    );
+                                    if (selected) formik.setFieldValue("status", selected);
                                 }}
                                 onBlur={() => formik.setFieldTouched("status", true)}
                             >
-                                {statuses.map((status) => (
-                                    <Option key={status} value={status}>
-                                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                                {vehicleStatusOptions.map((s) => (
+                                    <Option key={s.key} value={String(s.key)}>
+                                        {s.name}
                                     </Option>
                                 ))}
                             </Dropdown>

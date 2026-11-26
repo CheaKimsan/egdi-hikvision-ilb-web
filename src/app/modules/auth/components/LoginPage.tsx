@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Button, Field, Input, Spinner } from "@fluentui/react-components";
 import { Eye20Regular, EyeOff20Regular } from "@fluentui/react-icons";
 import { Link, useLocation, useNavigate, type Location } from "react-router-dom";
-import { formatDate, formatTime } from "../../../../lib/helpers/services/formation/fmtDateTime";
+import { formatDate, formatTime } from "../../../../lib/helpers/services/fmtDateTime";
 import Logo from "../../../../lib/assets/images/GDI.png";
 import { AppConfig } from "../../../../config/ilb.config";
 import { useAuth } from "../AuthContext";

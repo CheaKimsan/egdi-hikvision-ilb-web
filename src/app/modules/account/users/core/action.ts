@@ -10,7 +10,6 @@ import {
 import { IUser } from "./model";
 import { usersKeys } from "./query";
 
-// Create user
 const useCreateUserMutation = () => {
     const queryClient = useQueryClient();
 

@@ -1,61 +1,67 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { AddCircleRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
 import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
-import type { Vehicle } from "../core/model";
+import type { IVehicle } from "../core/model";
+import { useVehiclesQuery } from "../core/query";
+import {
+    useCreateVehicleMutation,
+    useDeleteVehicleMutation,
+    useUpdateVehicleMutation,
+} from "../core/action";
 import { useVehicleStore } from "../core/store";
 import CreateVehiclePage from "./form/CreateVehiclePage";
 import { Columns } from "./table/Column";
 
 const VehiclePage: React.FC = () => {
-    const vehicles = useVehicleStore((state) => state.rows);
-    const addVehicle = useVehicleStore((state) => state.addVehicle);
-    const updateVehicle = useVehicleStore((state) => state.updateVehicle);
-    const deleteVehicle = useVehicleStore((state) => state.deleteVehicle);
-    const [search, setSearch] = useState("");
-    const [formOpen, setFormOpen] = useState(false);
-    const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+    const { data: vehicles = [], isLoading } = useVehiclesQuery(); // call once, it opens a listener
+    const createMutation = useCreateVehicleMutation();
+    const updateMutation = useUpdateVehicleMutation();
+    const { mutate: removeVehicle } = useDeleteVehicleMutation(); // .mutate is stable
+
+    const search = useVehicleStore((s) => s.search);
+    const setSearch = useVehicleStore((s) => s.setSearch);
+    const drawer = useVehicleStore((s) => s.drawer);
+    const openCreate = useVehicleStore((s) => s.openCreate);
+    const openView = useVehicleStore((s) => s.openView);
+    const openEdit = useVehicleStore((s) => s.openEdit);
+    const closeDrawer = useVehicleStore((s) => s.closeDrawer);
 
     const filteredVehicles = useMemo(() => {
-        const query = search.trim().toLowerCase();
-        if (!query) return vehicles;
+        const q = search.trim().toLowerCase();
+        if (!q) return vehicles;
 
         return vehicles.filter((vehicle) =>
             [
-                vehicle.id,
                 vehicle.vehicleCode,
                 vehicle.name,
                 vehicle.licensePlate,
-                vehicle.vehicleType ?? "",
-                vehicle.province ?? "",
-                vehicle.status,
-            ].some((value) => value.toLowerCase().includes(query)),
+                vehicle.vehicleType,
+                vehicle.province,
+                vehicle.status.name,
+            ].some((value) => (value ?? "").toLowerCase().includes(q)),
         );
     }, [search, vehicles]);
 
-    const openCreate = () => {
-        setEditingVehicle(null);
-        setFormOpen(true);
-    };
-
-    const openEdit = useCallback((vehicle: Vehicle) => {
-        setEditingVehicle(vehicle);
-        setFormOpen(true);
-    }, []);
-
-    const saveVehicle = (vehicle: Vehicle) => {
-        if (editingVehicle) updateVehicle(vehicle);
-        else addVehicle(vehicle);
+    // The form closes the drawer itself after a successful save
+    const saveVehicle = async (vehicle: IVehicle) => {
+        if (drawer.mode === "edit") {
+            await updateMutation.mutateAsync(vehicle);
+        } else {
+            const { key: _key, createdAt: _c, updatedAt: _u, ...data } = vehicle;
+            await createMutation.mutateAsync(data);
+        }
     };
 
     const columns = useMemo(
         () =>
             Columns({
+                onView: openView,
                 onEdit: openEdit,
-                onDelete: deleteVehicle,
+                onDelete: removeVehicle,
             }),
-        [deleteVehicle, openEdit],
+        [openView, openEdit, removeVehicle],
     );
 
     return (
@@ -84,20 +90,24 @@ const VehiclePage: React.FC = () => {
                 />
             </div>
 
+
             <div className="vehicle-management-table">
                 <MainTable
                     rows={filteredVehicles}
                     columns={columns}
-                    rowKey={(vehicle) => vehicle.id}
+                    rowKey={(vehicle) => vehicle.key}
                     emptyText="No vehicles found"
                     pagination
+                    loading={isLoading}
                 />
             </div>
+
             <CreateVehiclePage
-                open={formOpen}
-                vehicle={editingVehicle}
+                open={drawer.open}
+                mode={drawer.mode}
+                vehicle={drawer.vehicle}
                 vehicles={vehicles}
-                onClose={() => setFormOpen(false)}
+                onClose={closeDrawer}
                 onSave={saveVehicle}
             />
         </section>

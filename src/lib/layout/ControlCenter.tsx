@@ -15,13 +15,14 @@ import { useVideoControls } from "../../app/modules/control-center/core/useVideo
 import StreamControls from "../../app/modules/control-center/components/StreamControl";
 import { useHeaderStore } from "../store/useHeaderStore";
 import { AlertToast } from "../helpers/shared/toaster/Toaster";
+import { useVehiclesQuery } from "../../app/modules/account/vehicle/core/query";
 
 const ControlCenter: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
     const installations = useInstallationStore((state) => state.rows);
-    const vehicles = useVehicleStore((state) => state.rows);
+    const { data: vehicles = [] } = useVehiclesQuery();
     const [mainCameraId, setMainCameraId] = useState(cameraFeeds[0].id);
     const [liveSubCameras, setLiveSubCameras] = useState<Record<string, boolean>>({});
     const [isMainCameraLive, setIsMainCameraLive] = useState(false);
