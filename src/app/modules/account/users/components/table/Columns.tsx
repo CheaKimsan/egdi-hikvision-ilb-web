@@ -1,5 +1,5 @@
 import { ShieldCheck, UserRound } from "lucide-react";
-import { formatDateTime, formatRelativeTime } from "../../../../../../lib/helpers/services/formation/fmtDateTime";
+import { formatDateTime, formatRelativeTime } from "../../../../../../lib/helpers/services/fmtDateTime";
 import { Column } from "../../../../../../lib/helpers/shared/table/MainTable";
 import { IUser } from "../../core/model";
 import ActionCell from "./ActionCell";

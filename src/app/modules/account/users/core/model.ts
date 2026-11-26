@@ -2,6 +2,12 @@
 
 import { Timestamp } from "firebase/firestore";
 
+export type AuditUser = {
+    uid: string;
+    name: string;
+    email: string
+};
+
 export interface IFireStatus {
     key: number;
     name: string;
@@ -39,7 +45,7 @@ export interface IUser {
     lastName: string;
     email: string;
     password?: string;
-    displayName?: string;
+    displayName: string;
     avatar?: string | null;
     role: string;
     session?: {

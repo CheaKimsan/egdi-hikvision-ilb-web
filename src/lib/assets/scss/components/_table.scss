@@ -199,6 +199,11 @@
     background: #fff1f2;
     color: #9f1239;
   }
+  &.Maintenance {
+    background: #fffbeb;   
+    color: #b45309;
+}
+
 }
 
 @media (max-width: 480px) {

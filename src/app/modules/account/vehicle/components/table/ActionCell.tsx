@@ -10,15 +10,16 @@ import {
 import {
     DeleteRegular,
     EditRegular,
+    EyeRegular,
     MoreVertical20Regular,
 } from "@fluentui/react-icons";
 import ConfirmDeleteDialog from "../../../../../../lib/helpers/shared/message/ConfirmDeleteDialog";
-import type { Vehicle } from "../../core/model";
+import type { IVehicle } from "../../core/model";
 
 type Props = {
-    row: Vehicle;
-    onEdit: (vehicle: Vehicle) => void;
-    onDelete: (id: string) => void;
+    row: IVehicle;
+    onEdit: (vehicle: IVehicle) => void;
+    onDelete: (key: string) => void;
 };
 
 export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
@@ -59,9 +60,9 @@ export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
             <ConfirmDeleteDialog
                 open={deleteOpen}
                 title="vehicle"
-                name={`${row.name} (${row.licensePlate})`}
+                name={`${row.name ?? "-"} (${row.licensePlate ?? "-"})`}
                 onConfirm={() => {
-                    onDelete(row.id);
+                    onDelete(row.key);
                     setDeleteOpen(false);
                 }}
                 onCancel={() => setDeleteOpen(false)}

@@ -1,13 +1,13 @@
 
 import { create } from "zustand";
-import type { FireUser } from "./model";
+import type { IUser } from "./model";
 
 export type UserDrawerMode = "create" | "view" | "edit";
 
 type UserDrawerState = {
     open: boolean;
     mode: UserDrawerMode;
-    user: FireUser | null;
+    user: IUser | null;
 };
 
 type UsersState = {
@@ -21,8 +21,8 @@ type UsersState = {
     setPageSize: (size: number) => void;
 
     openCreate: () => void;
-    openView: (user: FireUser) => void;
-    openEdit: (user: FireUser) => void;
+    openView: (user: IUser) => void;
+    openEdit: (user: IUser) => void;
     closeDrawer: () => void;
 };
 
