@@ -20,13 +20,13 @@ import {
     EditRegular,
     MoreVertical20Regular,
 } from "@fluentui/react-icons";
-import type { ManagedDevice } from "../../core/model";
+import type { IDevice } from "../../core/model";
 
 type Props = {
-    row: ManagedDevice;
-    onEdit: (row: ManagedDevice) => void;
-    onDelete: (id: string) => Promise<void> | void;
-    onToggleActivation: (id: string, activated: boolean) => void;
+    row: IDevice;
+    onEdit: (row: IDevice) => void;
+    onDelete: (key: string) => Promise<void> | void;
+    onToggleActivation: (key: string, activated: boolean) => void;
 };
 
 export default memo(function ActionCell({
@@ -44,7 +44,7 @@ export default memo(function ActionCell({
     async function handleConfirmDelete() {
         setLoading(true);
         try {
-            await onDelete(row.id);
+            await onDelete(row.key);
             setOpenDelete(false);
         } finally {
             setLoading(false);
@@ -143,7 +143,7 @@ export default memo(function ActionCell({
                             <Button
                                 appearance="primary"
                                 onClick={() => {
-                                    onToggleActivation(row.id, nextActivated);
+                                    onToggleActivation(row.key, nextActivated);
                                     setOpenStatusConfirmation(false);
                                 }}
                             >

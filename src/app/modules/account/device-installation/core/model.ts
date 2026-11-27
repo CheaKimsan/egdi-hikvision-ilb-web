@@ -1,19 +1,26 @@
-export type Installation = {
-    id: string;
-    deviceId: string;
-    vehicleCode: string;
+import type { Timestamp } from "firebase/firestore";
+import type { IVehicle } from "../../vehicle/core/model";
+import { AuditUser } from "../../users/core/model";
+
+export interface IInstallation {
+    key: string;
+    deviceKey: string;
+    vehicleKey: string;
     label: string;
     position: string;
-    parentId?: string;
-    ip?: string;
-    username?: string;
-    httpPort?: number;
-    sdkPort?: number;
+    parentDeviceKey: string;
+    ip: string;
+    username: string;
+    httpPort: number | null;
+    sdkPort: number | null;
     hasPassword: boolean;
-    online: boolean;
-    lastSeen?: string;
-    installedAt: string;
-    installedBy: string;
-    removedAt?: string;
-    notes?: string;
-};
+    online: boolean;                  // written by a backend poller, not the form
+    lastSeen: Timestamp | null;       // written by a backend poller, not the form
+    installedAt: Timestamp;
+    removedAt: Timestamp | null;      // null = still installed
+    notes: string;
+    createdAt?: Timestamp;
+    updatedAt?: Timestamp;
+    createdBy?: AuditUser;
+    updatedBy?: AuditUser;
+}

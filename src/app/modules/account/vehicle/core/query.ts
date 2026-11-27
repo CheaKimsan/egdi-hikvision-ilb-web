@@ -1,4 +1,3 @@
-// vehicle/core/query.ts
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -7,14 +6,13 @@ import {
     onSnapshot,
     orderBy,
     query,
-    Timestamp,
     type DocumentData,
     type QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { db } from "../../../../../config/firebase.config";
 import { COLLECTIONS } from "../../../../../config/firestore.constant";
 import type { IVehicle } from "./model";
-
+ 
 export const vehiclesKeys = {
     all: ["vehicles"] as const,
 };
@@ -28,27 +26,21 @@ const mapDocs = (docs: QueryDocumentSnapshot<DocumentData>[]): IVehicle[] =>
         return {
             ...data,
             key: d.id,
-            createdAt: Timestamp.now(),
-            updatedAt: Timestamp.now(),
         } as IVehicle;
     });
 
 export const useVehiclesQuery = () => {
     const queryClient = useQueryClient();
-
-    // Initial load: gives you real isLoading / error states
     const result = useQuery<IVehicle[]>({
         queryKey: vehiclesKeys.all,
         queryFn: async () => mapDocs((await getDocs(vehiclesQuery())).docs),
-        staleTime: Infinity, // the listener keeps it fresh
+        staleTime: Infinity,
     });
 
-    // Live updates
     useEffect(() => {
         const unsubscribe = onSnapshot(
             vehiclesQuery(),
             (snapshot) => {
-                // Wait for the server timestamp on local writes
                 if (snapshot.metadata.hasPendingWrites) return;
                 queryClient.setQueryData(vehiclesKeys.all, mapDocs(snapshot.docs));
             },

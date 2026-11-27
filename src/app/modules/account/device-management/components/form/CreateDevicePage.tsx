@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Dropdown, Field, Input, Option } from "@fluentui/react-components";
@@ -7,128 +7,121 @@ import OpenDrawer from "../../../../../../lib/helpers/shared/drawer/OpenDrawer";
 import CustomBtn from "../../../../../../lib/helpers/shared/button/CustomBtn";
 import ConfirmCreateDialog from "../../../../../../lib/helpers/shared/message/ConfirmCreateDialog";
 import ConfirmEditDialog from "../../../../../../lib/helpers/shared/message/ConfirmEditDialog";
-import type { ManagedDevice } from "../../core/model";
+import type { DeviceType, IDevice } from "../../core/model";
+import type { DeviceDrawerMode } from "../../core/store";
 
-const deviceTypes: ManagedDevice["type"][] = [
-    "mvr",
-    "camera",
-    "lightbar",
-];
+const deviceTypes: DeviceType[] = ["mvr", "camera", "lightbar"];
 
 type DeviceFormValues = {
+    deviceCode: string;
     name: string;
-    type: ManagedDevice["type"];
+    type: DeviceType;
     model: string;
     serialNo: string;
-    siteId: string;
-    siteName: string;
     firmware: string;
-    ip: string;
-    httpPort: string;
-    sdkPort: string;
-    username: string;
-    hasPassword: boolean;
 };
 
-type CreateDevicePageProps = {
+type Props = {
     open: boolean;
-    device?: ManagedDevice | null;
-    devices: ManagedDevice[];
+    mode: DeviceDrawerMode;
+    device: IDevice | null;
+    devices: IDevice[];
     onClose: () => void;
-    onSave: (device: ManagedDevice) => void;
+    onSave: (device: IDevice) => Promise<void>;
 };
 
 const emptyValues: DeviceFormValues = {
+    deviceCode: "",
     name: "",
     type: "camera",
     model: "",
     serialNo: "",
-    siteId: "",
-    siteName: "",
     firmware: "",
-    ip: "",
-    httpPort: "80",
-    sdkPort: "8000",
-    username: "Administrator",
-    hasPassword: false,
 };
 
-const toFormValues = (
-    device: ManagedDevice | null | undefined,
-): DeviceFormValues =>
-    device
-        ? {
-            name: device.name,
-            type: device.type,
-            model: device.model,
-            serialNo: device.serialNo ?? "",
-            siteId: device.siteId,
-            siteName: device.siteName,
-            firmware: device.firmware ?? "",
-            ip: device.ip ?? "",
-            httpPort: String(device.httpPort),
-            sdkPort: String(device.sdkPort),
-            username: device.username,
-            hasPassword: device.hasPassword,
-        }
-        : emptyValues;
+const titles: Record<DeviceDrawerMode, string> = {
+    create: "Create device",
+    edit: "Edit device",
+    view: "Device details",
+};
 
-const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
+const CreateDevicePage: React.FC<Props> = ({
     open,
+    mode,
     device,
     devices,
     onClose,
     onSave,
 }) => {
-    const isEditing = Boolean(device);
-    const [pendingDevice, setPendingDevice] = useState<ManagedDevice | null>(null);
+    const isEditing = mode === "edit";
+    const readOnly = mode === "view";
+
+    const [pendingDevice, setPendingDevice] = useState<IDevice | null>(null);
     const [confirmCreateOpen, setConfirmCreateOpen] = useState(false);
     const [confirmEditOpen, setConfirmEditOpen] = useState(false);
-    const initialValues = useMemo(() => toFormValues(device), [device]);
+
+    const initialValues = useMemo<DeviceFormValues>(
+        () =>
+            device
+                ? {
+                    deviceCode: device.deviceCode ?? "",
+                    name: device.name ?? "",
+                    type: device.type,
+                    model: device.model ?? "",
+                    serialNo: device.serialNo ?? "",
+                    firmware: device.firmware ?? "",
+                }
+                : emptyValues,
+        [device],
+    );
 
     const validationSchema = useMemo(
         () =>
             Yup.object({
+                deviceCode: Yup.string()
+                    .trim()
+                    .required("Device code is required")
+                    .max(30, "Device code must be 30 characters or fewer")
+                    .test(
+                        "unique-code",
+                        "Device code already exists",
+                        (value) =>
+                            !devices.some(
+                                (item) =>
+                                    item.key !== device?.key &&
+                                    (item.deviceCode ?? "").toLowerCase() ===
+                                    value?.trim().toLowerCase(),
+                            ),
+                    ),
                 name: Yup.string()
                     .trim()
-                    .max(100, "Device name must be 100 characters or fewer")
-                    .required("Device name is required"),
+                    .required("Device name is required")
+                    .max(100, "Device name must be 100 characters or fewer"),
                 type: Yup.string()
                     .oneOf(deviceTypes, "Select a valid device type")
                     .required("Device type is required"),
                 model: Yup.string()
                     .trim()
-                    .max(100, "Model must be 100 characters or fewer")
-                    .required("Model is required"),
+                    .required("Model is required")
+                    .max(100, "Model must be 100 characters or fewer"),
                 serialNo: Yup.string()
                     .trim()
                     .max(100, "Serial number must be 100 characters or fewer")
-                    .test("unique-serial-number", "This serial number is already in use", (value) =>
-                        !devices.some(
-                            (item) =>
-                                item.id !== device?.id &&
-                                item.serialNo?.toLowerCase() === value?.trim().toLowerCase(),
-                        ),
+                    .test(
+                        "unique-serial-number",
+                        "This serial number is already in use",
+                        (value) =>
+                            !value ||
+                            !devices.some(
+                                (item) =>
+                                    item.key !== device?.key &&
+                                    (item.serialNo ?? "").toLowerCase() ===
+                                    value.trim().toLowerCase(),
+                            ),
                     ),
-                siteId: Yup.string().trim().required("Site ID is required"),
-                siteName: Yup.string().trim().required("Site name is required"),
                 firmware: Yup.string().max(100, "Firmware must be 100 characters or fewer"),
-                httpPort: Yup.number()
-                    .typeError("Enter a valid HTTP port")
-                    .integer("Use a whole number")
-                    .min(1, "Port must be between 1 and 65535")
-                    .max(65535, "Port must be between 1 and 65535")
-                    .required("HTTP port is required"),
-                sdkPort: Yup.number()
-                    .typeError("Enter a valid SDK port")
-                    .integer("Use a whole number")
-                    .min(1, "Port must be between 1 and 65535")
-                    .max(65535, "Port must be between 1 and 65535")
-                    .required("SDK port is required"),
-                ip: Yup.string().max(100, "IP address must be 100 characters or fewer"),
-                username: Yup.string().max(100, "Username must be 100 characters or fewer"),
             }),
-        [device?.id, devices],
+        [device?.key, devices],
     );
 
     const formik = useFormik<DeviceFormValues>({
@@ -136,34 +129,32 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
         enableReinitialize: true,
         validationSchema,
         onSubmit: (values, { setSubmitting }) => {
-            const savedDevice: ManagedDevice = {
-                id: device?.id ?? `device-${Date.now()}`,
+            // createdAt / updatedAt are set by the service with serverTimestamp()
+            const nextDevice: IDevice = {
+                key: device?.key ?? "",
+                deviceCode: values.deviceCode.trim(),
                 name: values.name.trim(),
                 type: values.type,
                 model: values.model.trim(),
-                serialNo: values.serialNo.trim() || undefined,
-                siteId: values.siteId.trim(),
-                siteName: values.siteName.trim(),
-                firmware: values.firmware.trim() || undefined,
-                ip: values.ip.trim() || undefined,
-                httpPort: Number(values.httpPort),
-                sdkPort: Number(values.sdkPort),
-                username: values.username.trim(),
-                hasPassword: values.hasPassword,
+                serialNo: values.serialNo.trim(),
+                firmware: values.firmware.trim(),
                 activated: device?.activated ?? false,
-                online: device?.online ?? false,
-                lastSeen: device?.lastSeen,
+                createdAt: device?.createdAt,
+                updatedAt: device?.updatedAt,
+                createdBy: device?.createdBy,
+                updatedBy: device?.updatedBy,
             };
-
-            setPendingDevice(savedDevice);
-            if (isEditing) {
-                setConfirmEditOpen(true);
-            } else {
-                setConfirmCreateOpen(true);
-            }
+            setPendingDevice(nextDevice);
+            if (isEditing) setConfirmEditOpen(true);
+            else setConfirmCreateOpen(true);
             setSubmitting(false);
         },
     });
+
+    const resetForm = formik.resetForm;
+    useEffect(() => {
+        if (open) resetForm({ values: initialValues });
+    }, [open, initialValues, resetForm]);
 
     const closeConfirmation = () => {
         setPendingDevice(null);
@@ -171,39 +162,44 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
         setConfirmEditOpen(false);
     };
 
-    const confirmSave = () => {
+    const confirmSave = async () => {
         if (!pendingDevice) return;
-        onSave(pendingDevice);
-        closeConfirmation();
-        onClose();
+        try {
+            await onSave(pendingDevice);
+            closeConfirmation();
+            onClose();
+        } catch (error) {
+            console.error("Save device failed", error); // swap for your toast/message component
+            closeConfirmation();
+        }
     };
 
-    const fieldProps = (field: keyof DeviceFormValues) => ({
-        validationState: formik.touched[field] && formik.errors[field] ? "error" as const : "none" as const,
-        validationMessage: formik.touched[field] ? formik.errors[field] : undefined,
-    });
+    const fieldProps = (field: keyof DeviceFormValues) => {
+        const error = formik.errors[field];
+        const message = typeof error === "string" ? error : undefined;
+
+        return {
+            validationState:
+                formik.touched[field] && error ? ("error" as const) : ("none" as const),
+            validationMessage: formik.touched[field] ? message : undefined,
+        };
+    };
 
     const textField = (
-        name: Exclude<keyof DeviceFormValues, "type" | "hasPassword">,
+        name: Exclude<keyof DeviceFormValues, "type">,
         label: string,
-        options: { required?: boolean; numeric?: boolean; min?: number; max?: number } = {},
+        options: { required?: boolean; placeholder?: string; autoFocus?: boolean } = {},
     ) => (
-        <Field
-            label={label}
-            required={options.required}
-            {...fieldProps(name)}
-        >
+        <Field label={label} required={options.required} {...fieldProps(name)}>
             <Input
-                type={options.numeric ? "number" : "text"}
-                min={options.min ?? (options.numeric ? 0 : undefined)}
-                max={options.max}
-                step={options.numeric ? 1 : undefined}
+                autoFocus={options.autoFocus && !readOnly}
+                disabled={readOnly}
                 appearance="outline"
                 size="large"
                 value={formik.values[name]}
+                placeholder={options.placeholder ?? label}
                 onChange={(_, data) => formik.setFieldValue(name, data.value)}
                 onBlur={() => formik.setFieldTouched(name, true)}
-                placeholder={label}
             />
         </Field>
     );
@@ -212,28 +208,32 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
         <>
             <OpenDrawer
                 open={open}
-                title={isEditing ? "Edit device" : "Create device"}
+                title={titles[mode]}
                 titleIcon={<ServerRegular />}
                 width={620}
                 className="user-form-drawer device-form-drawer"
                 onClose={onClose}
                 footer={
-                    <>
-                        <CustomBtn
-                            type="cancel"
-                            label="Cancel"
-                            onClick={onClose}
-                            size="medium"
-                        />
-                        <CustomBtn
-                            type="submit"
-                            label={isEditing ? "Save changes" : "Create device"}
-                            form="device-form"
-                            disabled={!formik.dirty || !formik.isValid}
-                            loading={formik.isSubmitting}
-                            size="medium"
-                        />
-                    </>
+                    readOnly ? (
+                        <CustomBtn type="cancel" label="Close" onClick={onClose} size="medium" />
+                    ) : (
+                        <>
+                            <CustomBtn
+                                type="cancel"
+                                label="Cancel"
+                                onClick={onClose}
+                                size="medium"
+                            />
+                            <CustomBtn
+                                type="submit"
+                                label={isEditing ? "Save changes" : "Create device"}
+                                form="device-form"
+                                disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
+                                loading={formik.isSubmitting}
+                                size="medium"
+                            />
+                        </>
+                    )
                 }
             >
                 <form
@@ -243,39 +243,41 @@ const CreateDevicePage: React.FC<CreateDevicePageProps> = ({
                     onSubmit={formik.handleSubmit}
                 >
                     <div className="device-form-fields">
-                        <div className="device-form-full-width">
-                            {textField("name", "Device name", { required: true })}
-                        </div>
+                        {textField("deviceCode", "Device code", {
+                            required: true,
+                            placeholder: "DEV-001",
+                            autoFocus: true,
+                        })}
+                        {textField("name", "Device name", { required: true })}
                         {textField("model", "Model", { required: true })}
+
                         <Field label="Device type" required {...fieldProps("type")}>
                             <Dropdown
                                 aria-label="Device type"
+                                disabled={readOnly}
                                 appearance="outline"
                                 size="large"
-                                value={formik.values.type}
+                                value={formik.values.type.toUpperCase()}
                                 selectedOptions={[formik.values.type]}
                                 onOptionSelect={(_, data) =>
-                                    formik.setFieldValue("type", data.optionValue ?? "")
+                                    formik.setFieldValue("type", data.optionValue ?? "camera")
                                 }
                                 onBlur={() => formik.setFieldTouched("type", true)}
                             >
                                 {deviceTypes.map((type) => (
-                                    <Option key={type} value={type}>
+                                    <Option key={type} value={type} text={type.toUpperCase()}>
                                         {type.toUpperCase()}
                                     </Option>
                                 ))}
                             </Dropdown>
                         </Field>
+
                         {textField("serialNo", "Serial number")}
                         {textField("firmware", "Firmware")}
-                        {/* {textField("siteId", "Site ID", { required: true })} */}
-                        {/* {textField("siteName", "Site name", { required: true })} */}
-                        {/* {textField("ip", "IP address")} */}
-                        {/* {textField("httpPort", "HTTP port", { required: true, numeric: true, min: 1, max: 65535 })} */}
-                        {/* {textField("sdkPort", "SDK port", { required: true, numeric: true, min: 1, max: 65535 })} */}
                     </div>
                 </form>
             </OpenDrawer>
+
             <ConfirmCreateDialog
                 open={confirmCreateOpen}
                 title="device"

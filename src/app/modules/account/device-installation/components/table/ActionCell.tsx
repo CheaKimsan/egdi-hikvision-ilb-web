@@ -13,12 +13,12 @@ import {
     MoreVertical20Regular,
 } from "@fluentui/react-icons";
 import ConfirmDeleteDialog from "../../../../../../lib/helpers/shared/message/ConfirmDeleteDialog";
-import type { Installation } from "../../core/model";
+import { IInstallation } from "../../core/model";
 
 type Props = {
-    row: Installation;
-    onEdit: (installation: Installation) => void;
-    onDelete: (id: string) => void;
+    row: IInstallation;
+    onEdit: (installation: IInstallation) => void;
+    onDelete: (key: string) => void;
 };
 
 export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
@@ -61,7 +61,7 @@ export default memo(function ActionCell({ row, onEdit, onDelete }: Props) {
                 title="device installation"
                 name={row.label}
                 onConfirm={() => {
-                    onDelete(row.id);
+                    onDelete(row.key);
                     setDeleteOpen(false);
                 }}
                 onCancel={() => setDeleteOpen(false)}

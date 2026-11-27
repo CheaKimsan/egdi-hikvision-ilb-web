@@ -9,8 +9,18 @@ type Handlers = {
     onDelete: (key: string) => void;
 };
 
+const Dash = () => <span className="cell-dash">—</span>;
+
+
 export function Columns({ onView, onEdit, onDelete }: Handlers): TableColumn<IVehicle>[] {
     return [
+        {
+            key: "No",
+            title: "No",
+            width: 60,
+            align: "left",
+            render: (_row, index) => index + 1,
+        },
         {
             key: "vehicleCode",
             title: "Vehicle code",
@@ -30,7 +40,7 @@ export function Columns({ onView, onEdit, onDelete }: Handlers): TableColumn<IVe
         {
             key: "vehicleType",
             title: "Type",
-            render: (vehicle) => vehicle.vehicleType || "—",
+            render: (vehicle) => vehicle.vehicleType || Dash(),
         },
         {
             key: "province",
@@ -48,10 +58,15 @@ export function Columns({ onView, onEdit, onDelete }: Handlers): TableColumn<IVe
         },
         {
             key: "createdAt",
-            title: "Create At",
-            render: (row) => formatDateTime(row.createdAt),
-
+            title: "Created At",
+            render: (vehicle) => formatDateTime(vehicle?.createdAt),
         },
+        {
+            key: "createdBy",
+            title: "Create By",
+            render: (vehicle) => vehicle.createdBy?.name || Dash(),
+        },
+
         {
             key: "actions",
             title: "Actions",

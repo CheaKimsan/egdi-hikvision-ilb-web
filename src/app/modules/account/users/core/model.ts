@@ -1,10 +1,8 @@
-
-
 import { Timestamp } from "firebase/firestore";
 
 export type AuditUser = {
     uid: string;
-    name: string;
+    name: string | null;
     email: string
 };
 

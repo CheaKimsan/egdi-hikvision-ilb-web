@@ -135,11 +135,13 @@ const CreateVehiclePage: React.FC<Props> = ({
                 vehicleCode: values.vehicleCode.trim(),
                 name: values.name.trim(),
                 licensePlate: values.licensePlate.trim(),
-                vehicleType: values.vehicleType.trim(), // "" instead of undefined (Firestore rejects undefined)
+                vehicleType: values.vehicleType.trim(),
                 province: values.province.trim(),
                 status: values.status,
                 createdAt: vehicle?.createdAt,
                 updatedAt: vehicle?.updatedAt,
+                createdBy: vehicle?.createdBy,
+                updatedBy: vehicle?.updatedBy,
             };
             setPendingVehicle(nextVehicle);
             if (isEditing) setConfirmEditOpen(true);

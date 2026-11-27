@@ -1,82 +1,104 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { ServerPlus } from "lucide-react";
 import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
-import type { ManagedDevice } from "../core/model";
-import { Columns } from "./table/Columns";
-import { dummyDevices } from "../../../../../lib/data/dummy";
 import SearchField from "../../../../../lib/helpers/shared/search/SearchField";
+import type { DeviceType, IDevice } from "../core/model";
+import { useDevicesQuery } from "../core/query";
+import {
+    useCreateDeviceMutation,
+    useDeleteDeviceMutation,
+    useToggleDeviceActivationMutation,
+    useUpdateDeviceMutation,
+} from "../core/action";
+import { useDeviceStore } from "../core/store";
+import { Columns } from "./table/Columns";
 import CreateDevicePage from "./form/CreateDevicePage";
-import { ServerPlus } from "lucide-react";
+import StatusFilter, {
+    ALL_STATUS,
+} from "../../../../../lib/helpers/shared/filter/status/StatusFilter";
+import { activationFilterOptions } from "../../../../../lib/constants/Status";
+
+const DEVICE_TYPES: DeviceType[] = ["mvr", "camera", "lightbar"];
+
+const typeFilterOptions = DEVICE_TYPES.map((type, index) => ({
+    key: index,
+    name: type.toUpperCase(),
+}));
+
+
 
 const DeviceManagementPage: React.FC = () => {
-    const [search, setSearch] = useState("");
-    const [devices, setDevices] = useState<ManagedDevice[]>(() => [...dummyDevices]);
-    const [deviceFormOpen, setDeviceFormOpen] = useState(false);
-    const [editingDevice, setEditingDevice] = useState<ManagedDevice | null>(null);
+    const { data: devices = [], isLoading } = useDevicesQuery(); // call once, it opens a listener
+    const createMutation = useCreateDeviceMutation();
+    const updateMutation = useUpdateDeviceMutation();
+    const { mutate: removeDevice } = useDeleteDeviceMutation();
+    const { mutate: toggleActivation } = useToggleDeviceActivationMutation();
 
-    const handleEdit = useCallback((row: ManagedDevice) => {
-        setEditingDevice(row);
-        setDeviceFormOpen(true);
-    }, []);
+    const search = useDeviceStore((s) => s.search);
+    const setSearch = useDeviceStore((s) => s.setSearch);
+    const drawer = useDeviceStore((s) => s.drawer);
+    const openCreate = useDeviceStore((s) => s.openCreate);
+    const openEdit = useDeviceStore((s) => s.openEdit);
+    const closeDrawer = useDeviceStore((s) => s.closeDrawer);
 
-    const handleCreate = useCallback(() => {
-        setEditingDevice(null);
-        setDeviceFormOpen(true);
-    }, []);
+    const [typeFilter, setTypeFilter] = useState<string>(ALL_STATUS);
+    const [statusFilter, setStatusFilter] = useState<string>(ALL_STATUS);
 
-    const handleSave = useCallback((device: ManagedDevice) => {
-        setDevices((current) => {
-            const exists = current.some((item) => item.id === device.id);
-            return exists
-                ? current.map((item) => (item.id === device.id ? device : item))
-                : [...current, device];
+    const filteredDevices = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        const selectedType =
+            typeFilter === ALL_STATUS ? null : DEVICE_TYPES[Number(typeFilter)];
+
+        return devices.filter((d) => {
+            if (selectedType && d.type !== selectedType) return false;
+
+            if (
+                statusFilter !== ALL_STATUS &&
+                String(d.activated ? 1 : 0) !== statusFilter
+            ) {
+                return false;
+            }
+
+            if (!q) return true;
+
+            return [
+                d.deviceCode,
+                d.name,
+                d.type,
+                d.model,
+                d.serialNo,
+                d.firmware,
+                d.activated ? "activated" : "not activated",
+            ].some((v) => (v ?? "").toLowerCase().includes(q));
         });
-    }, []);
+    }, [search, typeFilter, statusFilter, devices]);
 
-    const handleDelete = useCallback((id: string) => {
-        setDevices((current) => current.filter((device) => device.id !== id));
-    }, []);
-
-    const handleToggleActivation = useCallback(
-        (id: string, activated: boolean) => {
-            setDevices((current) =>
-                current.map((device) =>
-                    device.id === id
-                        ? { ...device, activated }
-                        : device,
-                ),
-            );
-        },
-        [],
-    );
+    const saveDevice = async (device: IDevice) => {
+        if (drawer.mode === "edit") {
+            await updateMutation.mutateAsync(device);
+        } else {
+            const {
+                key: _k,
+                createdAt: _c,
+                updatedAt: _u,
+                createdBy: _cb,
+                updatedBy: _ub,
+                ...data
+            } = device;
+            await createMutation.mutateAsync(data);
+        }
+    };
 
     const columns = useMemo(
         () =>
             Columns({
-                onEdit: handleEdit,
-                onDelete: handleDelete,
-                onToggleActivation: handleToggleActivation,
+                onEdit: openEdit,
+                onDelete: removeDevice,
+                onToggleActivation: (key, activated) =>
+                    toggleActivation({ key, activated }),
             }),
-        [handleEdit, handleDelete, handleToggleActivation],
-    );
-
-    const filteredDevices = devices.filter((device) =>
-        [
-            device.id,
-            device.name,
-            device.type,
-            device.model,
-            device.serialNo ?? "",
-            device.siteId,
-            device.siteName,
-            device.firmware ?? "",
-            device.ip ?? "",
-            String(device.httpPort),
-            String(device.sdkPort),
-            device.username,
-            device.activated ? "activated" : "not activated",
-            device.online ? "online" : "offline",
-        ].some((value) => value.toLowerCase().includes(search.trim().toLowerCase())),
+        [openEdit, removeDevice, toggleActivation],
     );
 
     return (
@@ -92,29 +114,48 @@ const DeviceManagementPage: React.FC = () => {
                     icon={<ServerPlus size={18} />}
                     className="device-management-create-button"
                     size="medium"
-                    onClick={handleCreate}
+                    onClick={openCreate}
                 />
             </header>
 
             <div className="search-toolbar">
-                <SearchField value={search} onChange={setSearch} placeholder="Search devices..." />
+                <SearchField
+                    value={search}
+                    onChange={setSearch}
+                    placeholder="Search devices..."
+                />
+                <StatusFilter
+                    value={typeFilter}
+                    onChange={setTypeFilter}
+                    statuses={typeFilterOptions}
+                    allLabel="All Types"
+                />
+                <StatusFilter
+                    value={statusFilter}
+                    onChange={setStatusFilter}
+                    statuses={activationFilterOptions}
+                    allLabel="All Status"
+                />
             </div>
 
             <div className="device-management-table">
                 <MainTable
                     rows={filteredDevices}
                     columns={columns}
-                    rowKey={(device) => device.id}
+                    rowKey={(d) => d.key}
                     emptyText="No devices found"
                     pagination
+                    loading={isLoading}
                 />
             </div>
+
             <CreateDevicePage
-                open={deviceFormOpen}
-                device={editingDevice}
+                open={drawer.open}
+                mode={drawer.mode}
+                device={drawer.device}
                 devices={devices}
-                onClose={() => setDeviceFormOpen(false)}
-                onSave={handleSave}
+                onClose={closeDrawer}
+                onSave={saveDevice}
             />
         </section>
     );
