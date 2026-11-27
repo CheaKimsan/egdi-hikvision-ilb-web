@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { AddCircleRegular } from "@fluentui/react-icons";
 import CustomBtn from "../../../../../lib/helpers/shared/button/CustomBtn";
 import MainTable from "../../../../../lib/helpers/shared/table/MainTable";
@@ -13,12 +13,16 @@ import {
 import { useVehicleStore } from "../core/store";
 import CreateVehiclePage from "./form/CreateVehiclePage";
 import { Columns } from "./table/Column";
+import StatusFilter, { ALL_STATUS, matchesStatus } from "../../../../../lib/helpers/shared/filter/status/StatusFilter";
+import { vehicleStatusOptions } from "../../../../../lib/constants/Status";
 
 const VehiclePage: React.FC = () => {
     const { data: vehicles = [], isLoading } = useVehiclesQuery(); // call once, it opens a listener
     const createMutation = useCreateVehicleMutation();
     const updateMutation = useUpdateVehicleMutation();
     const { mutate: removeVehicle } = useDeleteVehicleMutation(); // .mutate is stable
+    const [statusFilter, setStatusFilter] = useState<string>(ALL_STATUS);
+
 
     const search = useVehicleStore((s) => s.search);
     const setSearch = useVehicleStore((s) => s.setSearch);
@@ -30,21 +34,22 @@ const VehiclePage: React.FC = () => {
 
     const filteredVehicles = useMemo(() => {
         const q = search.trim().toLowerCase();
-        if (!q) return vehicles;
 
-        return vehicles.filter((vehicle) =>
-            [
+        return vehicles.filter((vehicle) => {
+            if (!matchesStatus(vehicle.status, statusFilter)) return false;
+            if (!q) return true;
+
+            return [
                 vehicle.vehicleCode,
                 vehicle.name,
                 vehicle.licensePlate,
                 vehicle.vehicleType,
                 vehicle.province,
                 vehicle.status.name,
-            ].some((value) => (value ?? "").toLowerCase().includes(q)),
-        );
-    }, [search, vehicles]);
+            ].some((value) => (value ?? "").toLowerCase().includes(q));
+        });
+    }, [search, statusFilter, vehicles]);
 
-    // The form closes the drawer itself after a successful save
     const saveVehicle = async (vehicle: IVehicle) => {
         if (drawer.mode === "edit") {
             await updateMutation.mutateAsync(vehicle);
@@ -88,6 +93,7 @@ const VehiclePage: React.FC = () => {
                     placeholder="Search vehicles..."
                     ariaLabel="Search vehicles"
                 />
+                <StatusFilter value={statusFilter} onChange={setStatusFilter} statuses={vehicleStatusOptions} />
             </div>
 
 

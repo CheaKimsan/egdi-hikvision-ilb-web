@@ -1,5 +1,7 @@
 export const COLLECTIONS = {
     USERS: "users",
     VEHICLES: "vehicles",
-    Role: "roles",
+    ROLE: "roles",
+    DEVICES: "devices",
+    INSTALLATIONS: "deviceInstallations"
 } as const;
